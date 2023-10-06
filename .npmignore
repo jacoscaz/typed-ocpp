@@ -1,0 +1,5 @@
+src/**/*.*
+dist/**/*.test.js
+dist/**/*.test.d.ts
+tsconfig.json
+node_modules

@@ -1,0 +1,36 @@
+{
+  "name": "typed-ocpp",
+  "version": "0.1.0",
+  "description": "A library for type-aware parsing, serialization and validation of OCPP messages",
+  "main": "dist/index.js",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^20.8.2",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "test": "node --test --test-reporter=spec ./dist",
+    "build": "rm -r ./dist && tsc",
+    "publish:alpha": "npm run build && npm publish --tag alpha"
+  },
+  "author": "Jacopo Scazzosi <jacopo@scazzosi.com>",
+  "license": "MIT",
+  "keywords": [
+    "OCPP",
+    "OCPP 1.6",
+    "OCPP 1.6-J",
+    "EV",
+    "EVSE",
+    "Central Station",
+    "ajv",
+    "validation",
+    "serialization",
+    "parsing",
+    "typescript",
+    "typed",
+    "JSON",
+    "JSON Schema"
+  ]
+}
