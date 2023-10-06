@@ -17,6 +17,12 @@
   },
   "author": "Jacopo Scazzosi <jacopo@scazzosi.com>",
   "license": "MIT",
+  "homepage": "https://github.com/jacoscaz/typed-ocpp",
+  "bugs": "https://github.com/jacoscaz/typed-ocpp/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jacoscaz/typed-ocpp.git"
+  },
   "keywords": [
     "OCPP",
     "OCPP 1.6",
