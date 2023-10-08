@@ -41,7 +41,7 @@ import {
 } from 'typed-ocpp';
 ```
 
-### `OCPP.parse()`
+### `OCPP.parse()`
 
 The `OCPP.parse()` function returns a fully-typed "view" of the original array.
 No additional transformation is applied beside the eventual `JSON.parse()` if a
@@ -58,10 +58,7 @@ import type {
   OCPP,                     // parse() and stringify() functions (like JSON but for OCPP)
 } from 'typed-ocpp';
 
-const raw = `[2, 'test', 'BootNotification', {
-  chargePointModel: 'model',
-  chargePointVendor: 'vendor',
-}]`;
+const raw = '[2,"test","BootNotification",{"chargePointModel":"model","chargePointVendor":"vendor"}]';
 
 const parsed = OCPP.parse(raw);
 
@@ -103,7 +100,7 @@ if (parsed[0] === OCPPMessageType.CALLRESULT) {
 }
 ```
 
-### `OCPP.stringify()`
+### `OCPP.stringify()`
 
 Returns the JSON serialization of the provided OCPP object.
 
