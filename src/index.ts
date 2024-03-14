@@ -1,5 +1,5 @@
 
-export {
+export type {
   OCPPAuthorizeCall,
   OCPPBootNotificationCall,
   OCPPCancelReservationCall,
@@ -30,7 +30,7 @@ export {
   OCPPUpdateFirmwareCall,
 } from './call.js';
 
-export {
+export type {
   OCPPAuthorizeCallResult,
   OCPPBootNotificationCallResult,
   OCPPCancelReservationCallResult,
@@ -61,14 +61,40 @@ export {
   OCPPUpdateFirmwareCallResult,
 } from './callresult.js';
 
+export type {
+  OCPPContext, 
+  OCPPMeasurand, 
+  OCPPPhase, 
+  OCPPLocation, 
+  OCPPUnit, 
+  OCPPFormat, 
+  OCPPSampledValue, 
+  OCPPMeterValue,
+} from './types/MeterValues.js';
+
+import type { OCPPCall } from './call.js';
+import type { OCPPCallError } from './callerror.js';
+import type { OCPPUncheckedCallResult, OCPPCallResult } from './callresult.js';
+
+export type { 
+  OCPPCall, 
+  OCPPCallError, 
+  OCPPUncheckedCallResult, 
+  OCPPCallResult, 
+};
+
 import * as ensure from './ensure.js';
 import { setAjv } from './ajv.js';
+import { parseCall } from './call.js';
+import { parseCallError } from './callerror.js';
+import { parseCallResult, checkCallResult } from './callresult.js';
 import { OCPPMessageType, OCPPAction, OCPPErrorCode } from './utils.js';
-import { OCPPCall, parseCall } from './call.js';
-import { OCPPCallError, parseCallError } from './callerror.js';
-import { OCPPUncheckedCallResult, OCPPCallResult, parseCallResult, checkCallResult } from './callresult.js';
 
-export { OCPPMessageType, OCPPAction, OCPPCall, OCPPCallError, OCPPUncheckedCallResult, checkCallResult, OCPPCallResult, OCPPErrorCode };
+export {
+  OCPPMessageType, 
+  OCPPAction, 
+  OCPPErrorCode,
+}
 
 const maybeParse = (data: string | any[]): any[] => {
   const parsed = typeof data === 'string' ? JSON.parse(data) : data;
