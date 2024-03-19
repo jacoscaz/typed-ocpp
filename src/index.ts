@@ -165,17 +165,18 @@ export declare namespace OCPP {
     CallError,
     CallResult,
     UncheckedCallResult,
-  }
+  };
 
 };
 
 export namespace OCPP {
 
+  export import MessageType = MessageType_; 
+  export import Action = Action_; 
+  export import ErrorCode = ErrorCode_;
+
   export const setAjv = setAjv_;
   export const checkCallResult = checkCallResult_;
-  export const MessageType = MessageType_; 
-  export const Action = Action_; 
-  export const ErrorCode = ErrorCode_;
 
   export const maybeParse = (data: string | any[]): any[] => {
     const parsed = typeof data === 'string' ? JSON.parse(data) : data;
