@@ -2,6 +2,6 @@
 import Ajv from 'ajv';
 import formats from 'ajv-formats';
 
-import { setAjv } from './ajv.js';
+import { OCPP } from './index.js';
 
-setAjv(formats(new Ajv()));
+OCPP.setAjv(formats(new Ajv()));

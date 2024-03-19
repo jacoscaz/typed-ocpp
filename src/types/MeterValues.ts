@@ -1,5 +1,5 @@
 
-export type OCPPContext =
+export type Context =
   | "Interruption.Begin"
   | "Interruption.End"
   | "Sample.Clock"
@@ -9,7 +9,7 @@ export type OCPPContext =
   | "Trigger"
   | "Other";
 
-export type OCPPMeasurand =
+export type Measurand =
   | "Energy.Active.Export.Register"
   | "Energy.Active.Import.Register"
   | "Energy.Reactive.Export.Register"
@@ -33,39 +33,39 @@ export type OCPPMeasurand =
   | "SoC"
   | "RPM";
 
-export type OCPPPhase = 
+export type Phase = 
   | "L1" | "L2" | "L3" | "N" | "L1-N" | "L2-N" | "L3-N" | "L1-L2" | "L2-L3" 
   | "L3-L1";
 
-export type OCPPLocation = 
+export type Location = 
   | "Cable" | "EV" | "Inlet" | "Outlet" | "Body";
 
-export type OCPPUnit =
+export type Unit =
   | "Wh" | "kWh" | "varh" | "kvarh" | "W" | "kW" | "VA" | "kVA" | "var" 
   | "kvar" | "A" | "V" | "K" | "Celcius" | "Celsius" | "Fahrenheit" | "Percent";
 
-export type OCPPFormat = "Raw" | "SignedData";
+export type Format = "Raw" | "SignedData";
 
 
-export interface OCPPSampledValue {
+export interface SampledValue {
   value: string;
-  context?: OCPPContext;
-  format?: OCPPFormat;
-  measurand?: OCPPMeasurand;
-  phase?: OCPPPhase;
-  location?: OCPPLocation;
-  unit?: OCPPUnit;
+  context?: Context;
+  format?: Format;
+  measurand?: Measurand;
+  phase?: Phase;
+  location?: Location;
+  unit?: Unit;
   [k: string]: unknown;
 }
 
-export interface OCPPMeterValue {
+export interface MeterValue {
   timestamp: string;
-  sampledValue: OCPPSampledValue[];
+  sampledValue: SampledValue[];
   [k: string]: unknown;
 }
 
 export interface MeterValues {
   connectorId: number;
   transactionId?: number;
-  meterValue: OCPPMeterValue[];
+  meterValue: MeterValue[];
 }

@@ -1,5 +1,5 @@
 
-export enum OCPPAction {
+export enum Action {
   Authorize = 'Authorize',
   BootNotification = 'BootNotification',
   CancelReservation = 'CancelReservation',
@@ -30,7 +30,7 @@ export enum OCPPAction {
   UpdateFirmware = 'UpdateFirmware'
 }
 
-export enum OCPPErrorCode {
+export enum ErrorCode {
   NotImplemented = 'NotImplemented',
   NotSupported = 'NotSupported',
   InternalError = 'InternalError',
@@ -43,10 +43,10 @@ export enum OCPPErrorCode {
   GenericError = 'GenericError',
 }
 
-export enum OCPPMessageType {
+export enum MessageType {
   CALL = 2,
   CALLRESULT = 3,
   CALLERROR = 4,
 }
 
-export type OCPPBaseMessage<T extends OCPPMessageType, R extends any[]> = [msg_type: T, call_id: string, ...rest: R];
+export type BaseMessage<T extends MessageType, R extends any[]> = [msg_type: T, call_id: string, ...rest: R];

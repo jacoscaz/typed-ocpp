@@ -1,123 +1,200 @@
 
-export type {
-  OCPPAuthorizeCall,
-  OCPPBootNotificationCall,
-  OCPPCancelReservationCall,
-  OCPPChangeAvailabilityCall,
-  OCPPChangeConfigurationCall,
-  OCPPClearCacheCall,
-  OCPPClearChargingProfileCall,
-  OCPPDataTransferCall,
-  OCPPDiagnosticsStatusNotificationCall,
-  OCPPFirmwareStatusNotificationCall,
-  OCPPGetCompositeScheduleCall,
-  OCPPGetConfigurationCall,
-  OCPPGetDiagnosticsCall,
-  OCPPGetLocalListVersionCall,
-  OCPPHeartbeatCall,
-  OCPPMeterValuesCall,
-  OCPPRemoteStartTransactionCall,
-  OCPPRemoteStopTransactionCall,
-  OCPPReserveNowCall,
-  OCPPResetCall,
-  OCPPSendLocalListCall,
-  OCPPSetChargingProfileCall,
-  OCPPStartTransactionCall,
-  OCPPStatusNotificationCall,
-  OCPPStopTransactionCall,
-  OCPPTriggerMessageCall,
-  OCPPUnlockConnectorCall,
-  OCPPUpdateFirmwareCall,
+import type {
+  AuthorizeCall,
+  BootNotificationCall,
+  CancelReservationCall,
+  ChangeAvailabilityCall,
+  ChangeConfigurationCall,
+  ClearCacheCall,
+  ClearChargingProfileCall,
+  DataTransferCall,
+  DiagnosticsStatusNotificationCall,
+  FirmwareStatusNotificationCall,
+  GetCompositeScheduleCall,
+  GetConfigurationCall,
+  GetDiagnosticsCall,
+  GetLocalListVersionCall,
+  HeartbeatCall,
+  MeterValuesCall,
+  RemoteStartTransactionCall,
+  RemoteStopTransactionCall,
+  ReserveNowCall,
+  ResetCall,
+  SendLocalListCall,
+  SetChargingProfileCall,
+  StartTransactionCall,
+  StatusNotificationCall,
+  StopTransactionCall,
+  TriggerMessageCall,
+  UnlockConnectorCall,
+  UpdateFirmwareCall,
 } from './call.js';
 
-export type {
-  OCPPAuthorizeCallResult,
-  OCPPBootNotificationCallResult,
-  OCPPCancelReservationCallResult,
-  OCPPChangeAvailabilityCallResult,
-  OCPPChangeConfigurationCallResult,
-  OCPPClearCacheCallResult,
-  OCPPClearChargingProfileCallResult,
-  OCPPDataTransferCallResult,
-  OCPPDiagnosticsStatusNotificationCallResult,
-  OCPPFirmwareStatusNotificationCallResult,
-  OCPPGetCompositeScheduleCallResult,
-  OCPPGetConfigurationCallResult,
-  OCPPGetDiagnosticsCallResult,
-  OCPPGetLocalListVersionCallResult,
-  OCPPHeartbeatCallResult,
-  OCPPMeterValuesCallResult,
-  OCPPRemoteStartTransactionCallResult,
-  OCPPRemoteStopTransactionCallResult,
-  OCPPReserveNowCallResult,
-  OCPPResetCallResult,
-  OCPPSendLocalListCallResult,
-  OCPPSetChargingProfileCallResult,
-  OCPPStartTransactionCallResult,
-  OCPPStatusNotificationCallResult,
-  OCPPStopTransactionCallResult,
-  OCPPTriggerMessageCallResult,
-  OCPPUnlockConnectorCallResult,
-  OCPPUpdateFirmwareCallResult,
+import type {
+  AuthorizeCallResult,
+  BootNotificationCallResult,
+  CancelReservationCallResult,
+  ChangeAvailabilityCallResult,
+  ChangeConfigurationCallResult,
+  ClearCacheCallResult,
+  ClearChargingProfileCallResult,
+  DataTransferCallResult,
+  DiagnosticsStatusNotificationCallResult,
+  FirmwareStatusNotificationCallResult,
+  GetCompositeScheduleCallResult,
+  GetConfigurationCallResult,
+  GetDiagnosticsCallResult,
+  GetLocalListVersionCallResult,
+  HeartbeatCallResult,
+  MeterValuesCallResult,
+  RemoteStartTransactionCallResult,
+  RemoteStopTransactionCallResult,
+  ReserveNowCallResult,
+  ResetCallResult,
+  SendLocalListCallResult,
+  SetChargingProfileCallResult,
+  StartTransactionCallResult,
+  StatusNotificationCallResult,
+  StopTransactionCallResult,
+  TriggerMessageCallResult,
+  UnlockConnectorCallResult,
+  UpdateFirmwareCallResult,
 } from './callresult.js';
 
-export type {
-  OCPPContext, 
-  OCPPMeasurand, 
-  OCPPPhase, 
-  OCPPLocation, 
-  OCPPUnit, 
-  OCPPFormat, 
-  OCPPSampledValue, 
-  OCPPMeterValue,
+import type {
+  Context, 
+  Measurand, 
+  Phase, 
+  Location, 
+  Unit, 
+  Format, 
+  SampledValue, 
+  MeterValue,
 } from './types/MeterValues.js';
 
-import type { OCPPCall } from './call.js';
-import type { OCPPCallError } from './callerror.js';
-import type { OCPPUncheckedCallResult, OCPPCallResult } from './callresult.js';
+import type { Call } from './call.js';
 
-export type { 
-  OCPPCall, 
-  OCPPCallError, 
-  OCPPUncheckedCallResult, 
-  OCPPCallResult, 
-};
+import type { CallError } from './callerror.js';
+
+import type { UncheckedCallResult, CallResult } from './callresult.js';
 
 import * as ensure from './ensure.js';
-import { setAjv } from './ajv.js';
-import { parseCall } from './call.js';
-import { parseCallError } from './callerror.js';
-import { parseCallResult, checkCallResult } from './callresult.js';
-import { OCPPMessageType, OCPPAction, OCPPErrorCode } from './utils.js';
+import { setAjv as setAjv_ } from './ajv.js';
+import { parseCall as parseCall_ } from './call.js';
+import { parseCallError as parseCallError_ } from './callerror.js';
+import { parseCallResult as parseCallResult_, checkCallResult as checkCallResult_ } from './callresult.js';
+import { Action as Action_, MessageType as MessageType_, ErrorCode as ErrorCode_ } from './utils.js';
 
-export {
-  OCPPMessageType, 
-  OCPPAction, 
-  OCPPErrorCode,
-}
+export declare namespace OCPP {
 
-const maybeParse = (data: string | any[]): any[] => {
-  const parsed = typeof data === 'string' ? JSON.parse(data) : data;
-  return ensure.array(parsed, 'Invalid OCPP message: not an array');
+  export type {
+    AuthorizeCall,
+    BootNotificationCall,
+    CancelReservationCall,
+    ChangeAvailabilityCall,
+    ChangeConfigurationCall,
+    ClearCacheCall,
+    ClearChargingProfileCall,
+    DataTransferCall,
+    DiagnosticsStatusNotificationCall,
+    FirmwareStatusNotificationCall,
+    GetCompositeScheduleCall,
+    GetConfigurationCall,
+    GetDiagnosticsCall,
+    GetLocalListVersionCall,
+    HeartbeatCall,
+    MeterValuesCall,
+    RemoteStartTransactionCall,
+    RemoteStopTransactionCall,
+    ReserveNowCall,
+    ResetCall,
+    SendLocalListCall,
+    SetChargingProfileCall,
+    StartTransactionCall,
+    StatusNotificationCall,
+    StopTransactionCall,
+    TriggerMessageCall,
+    UnlockConnectorCall,
+    UpdateFirmwareCall,
+  };
+
+  export type {
+    AuthorizeCallResult,
+    BootNotificationCallResult,
+    CancelReservationCallResult,
+    ChangeAvailabilityCallResult,
+    ChangeConfigurationCallResult,
+    ClearCacheCallResult,
+    ClearChargingProfileCallResult,
+    DataTransferCallResult,
+    DiagnosticsStatusNotificationCallResult,
+    FirmwareStatusNotificationCallResult,
+    GetCompositeScheduleCallResult,
+    GetConfigurationCallResult,
+    GetDiagnosticsCallResult,
+    GetLocalListVersionCallResult,
+    HeartbeatCallResult,
+    MeterValuesCallResult,
+    RemoteStartTransactionCallResult,
+    RemoteStopTransactionCallResult,
+    ReserveNowCallResult,
+    ResetCallResult,
+    SendLocalListCallResult,
+    SetChargingProfileCallResult,
+    StartTransactionCallResult,
+    StatusNotificationCallResult,
+    StopTransactionCallResult,
+    TriggerMessageCallResult,
+    UnlockConnectorCallResult,
+    UpdateFirmwareCallResult,
+  };
+
+  export type {
+    Context, 
+    Measurand, 
+    Phase, 
+    Location, 
+    Unit, 
+    Format, 
+    SampledValue, 
+    MeterValue,
+  };
+
 };
 
-const parse = (data: string | any[]): OCPPCall | OCPPCallError | OCPPUncheckedCallResult<any> => {
-  const arr = maybeParse(data);
-  ensure.string(arr[1], 'Invalid OCPP message: invalid message id');
-  switch (arr[0]) {
-    case OCPPMessageType.CALL:
-      return parseCall(arr as [OCPPMessageType.CALL, string, ...any]);
-    case OCPPMessageType.CALLERROR:
-      return parseCallError(arr as [OCPPMessageType.CALLERROR, string, ...any]);
-    case OCPPMessageType.CALLRESULT:
-      return parseCallResult(arr as [OCPPMessageType.CALLRESULT, string, ...any]);
-    default:
-      throw new Error('Invalid OCPP message: invalid message type');
-  }
-};
+export namespace OCPP {
 
-const stringify = (arr: OCPPCall | OCPPCallError | OCPPCallResult | OCPPUncheckedCallResult<any>): string => {
-  return JSON.stringify(arr);
-};
+  export const setAjv = setAjv_;
+  export const checkCallResult = checkCallResult_;
+  export const parseCall = parseCall_;
+  export const parseCallError = parseCallError_;
+  export const parseCallResult = parseCallResult_;
+  export const MessageType = MessageType_; 
+  export const Action = Action_; 
+  export const ErrorCode = ErrorCode_;
 
-export const OCPP = { setAjv, parse, stringify, checkCallResult };
+  export const maybeParse = (data: string | any[]): any[] => {
+    const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+    return ensure.array(parsed, 'Invalid OCPP message: not an array');
+  };
+
+  export const parse = (data: string | any[]): Call | CallError | UncheckedCallResult<any> => {
+    const arr = maybeParse(data);
+    ensure.string(arr[1], 'Invalid OCPP message: invalid message id');
+    switch (arr[0]) {
+      case MessageType_.CALL:
+        return parseCall_(arr as [MessageType_.CALL, string, ...any]);
+      case MessageType_.CALLERROR:
+        return parseCallError_(arr as [MessageType_.CALLERROR, string, ...any]);
+      case MessageType_.CALLRESULT:
+        return parseCallResult_(arr as [MessageType_.CALLRESULT, string, ...any]);
+      default:
+        throw new Error('Invalid OCPP message: invalid message type');
+    }
+  };
+
+  export const stringify = (arr: Call | CallError | CallResult | UncheckedCallResult<any>): string => {
+    return JSON.stringify(arr);
+  };
+
+};

@@ -58,108 +58,108 @@ import {
   UpdateFirmwareSchema,
 } from './payloads.js';
 
-import { OCPPAction, OCPPBaseMessage, OCPPMessageType } from './utils.js';
+import { Action, BaseMessage, MessageType } from './utils.js';
 import { ajvErrorsToString, getAjv } from './ajv.js';
 import * as ensure from './ensure.js';
 
-export type OCPPAuthorizeCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.Authorize, payload: Authorize]>;
-export type OCPPBootNotificationCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.BootNotification, payload: BootNotification]>;
-export type OCPPCancelReservationCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.CancelReservation, payload: CancelReservation]>;
-export type OCPPChangeAvailabilityCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.ChangeAvailability, payload: ChangeAvailability]>;
-export type OCPPChangeConfigurationCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.ChangeConfiguration, payload: ChangeConfiguration]>;
-export type OCPPClearCacheCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.ClearCache, payload: ClearCache]>;
-export type OCPPClearChargingProfileCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.ClearChargingProfile, payload: ClearChargingProfile]>;
-export type OCPPDataTransferCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.DataTransfer, payload: DataTransfer]>;
-export type OCPPDiagnosticsStatusNotificationCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.DiagnosticsStatusNotification, payload: DiagnosticsStatusNotification]>;
-export type OCPPFirmwareStatusNotificationCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.FirmwareStatusNotification, payload: FirmwareStatusNotification]>;
-export type OCPPGetCompositeScheduleCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.GetCompositeSchedule, payload: GetCompositeSchedule]>;
-export type OCPPGetConfigurationCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.GetConfiguration, payload: GetConfiguration]>;
-export type OCPPGetDiagnosticsCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.GetDiagnostics, payload: GetDiagnostics]>;
-export type OCPPGetLocalListVersionCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.GetLocalListVersion, payload: GetLocalListVersion]>;
-export type OCPPHeartbeatCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.Heartbeat, payload: Heartbeat]>;
-export type OCPPMeterValuesCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.MeterValues, payload: MeterValues]>;
-export type OCPPRemoteStartTransactionCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.RemoteStartTransaction, payload: RemoteStartTransaction]>;
-export type OCPPRemoteStopTransactionCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.RemoteStopTransaction, payload: RemoteStopTransaction]>;
-export type OCPPReserveNowCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.ReserveNow, payload: ReserveNow]>;
-export type OCPPResetCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.Reset, payload: Reset]>;
-export type OCPPSendLocalListCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.SendLocalList, payload: SendLocalList]>;
-export type OCPPSetChargingProfileCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.SetChargingProfile, payload: SetChargingProfile]>;
-export type OCPPStartTransactionCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.StartTransaction, payload: StartTransaction]>;
-export type OCPPStatusNotificationCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.StatusNotification, payload: StatusNotification]>;
-export type OCPPStopTransactionCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.StopTransaction, payload: StopTransaction]>;
-export type OCPPTriggerMessageCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.TriggerMessage, payload: TriggerMessage]>;
-export type OCPPUnlockConnectorCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.UnlockConnector, payload: UnlockConnector]>;
-export type OCPPUpdateFirmwareCall = OCPPBaseMessage<OCPPMessageType.CALL, [action: OCPPAction.UpdateFirmware, payload: UpdateFirmware]>;
+export type AuthorizeCall = BaseMessage<MessageType.CALL, [action: Action.Authorize, payload: Authorize]>;
+export type BootNotificationCall = BaseMessage<MessageType.CALL, [action: Action.BootNotification, payload: BootNotification]>;
+export type CancelReservationCall = BaseMessage<MessageType.CALL, [action: Action.CancelReservation, payload: CancelReservation]>;
+export type ChangeAvailabilityCall = BaseMessage<MessageType.CALL, [action: Action.ChangeAvailability, payload: ChangeAvailability]>;
+export type ChangeConfigurationCall = BaseMessage<MessageType.CALL, [action: Action.ChangeConfiguration, payload: ChangeConfiguration]>;
+export type ClearCacheCall = BaseMessage<MessageType.CALL, [action: Action.ClearCache, payload: ClearCache]>;
+export type ClearChargingProfileCall = BaseMessage<MessageType.CALL, [action: Action.ClearChargingProfile, payload: ClearChargingProfile]>;
+export type DataTransferCall = BaseMessage<MessageType.CALL, [action: Action.DataTransfer, payload: DataTransfer]>;
+export type DiagnosticsStatusNotificationCall = BaseMessage<MessageType.CALL, [action: Action.DiagnosticsStatusNotification, payload: DiagnosticsStatusNotification]>;
+export type FirmwareStatusNotificationCall = BaseMessage<MessageType.CALL, [action: Action.FirmwareStatusNotification, payload: FirmwareStatusNotification]>;
+export type GetCompositeScheduleCall = BaseMessage<MessageType.CALL, [action: Action.GetCompositeSchedule, payload: GetCompositeSchedule]>;
+export type GetConfigurationCall = BaseMessage<MessageType.CALL, [action: Action.GetConfiguration, payload: GetConfiguration]>;
+export type GetDiagnosticsCall = BaseMessage<MessageType.CALL, [action: Action.GetDiagnostics, payload: GetDiagnostics]>;
+export type GetLocalListVersionCall = BaseMessage<MessageType.CALL, [action: Action.GetLocalListVersion, payload: GetLocalListVersion]>;
+export type HeartbeatCall = BaseMessage<MessageType.CALL, [action: Action.Heartbeat, payload: Heartbeat]>;
+export type MeterValuesCall = BaseMessage<MessageType.CALL, [action: Action.MeterValues, payload: MeterValues]>;
+export type RemoteStartTransactionCall = BaseMessage<MessageType.CALL, [action: Action.RemoteStartTransaction, payload: RemoteStartTransaction]>;
+export type RemoteStopTransactionCall = BaseMessage<MessageType.CALL, [action: Action.RemoteStopTransaction, payload: RemoteStopTransaction]>;
+export type ReserveNowCall = BaseMessage<MessageType.CALL, [action: Action.ReserveNow, payload: ReserveNow]>;
+export type ResetCall = BaseMessage<MessageType.CALL, [action: Action.Reset, payload: Reset]>;
+export type SendLocalListCall = BaseMessage<MessageType.CALL, [action: Action.SendLocalList, payload: SendLocalList]>;
+export type SetChargingProfileCall = BaseMessage<MessageType.CALL, [action: Action.SetChargingProfile, payload: SetChargingProfile]>;
+export type StartTransactionCall = BaseMessage<MessageType.CALL, [action: Action.StartTransaction, payload: StartTransaction]>;
+export type StatusNotificationCall = BaseMessage<MessageType.CALL, [action: Action.StatusNotification, payload: StatusNotification]>;
+export type StopTransactionCall = BaseMessage<MessageType.CALL, [action: Action.StopTransaction, payload: StopTransaction]>;
+export type TriggerMessageCall = BaseMessage<MessageType.CALL, [action: Action.TriggerMessage, payload: TriggerMessage]>;
+export type UnlockConnectorCall = BaseMessage<MessageType.CALL, [action: Action.UnlockConnector, payload: UnlockConnector]>;
+export type UpdateFirmwareCall = BaseMessage<MessageType.CALL, [action: Action.UpdateFirmware, payload: UpdateFirmware]>;
 
-export type OCPPCall = OCPPAuthorizeCall
-  | OCPPBootNotificationCall
-  | OCPPCancelReservationCall
-  | OCPPChangeAvailabilityCall
-  | OCPPChangeConfigurationCall
-  | OCPPClearCacheCall
-  | OCPPClearChargingProfileCall
-  | OCPPDataTransferCall
-  | OCPPDiagnosticsStatusNotificationCall
-  | OCPPFirmwareStatusNotificationCall
-  | OCPPGetCompositeScheduleCall
-  | OCPPGetConfigurationCall
-  | OCPPGetDiagnosticsCall
-  | OCPPGetLocalListVersionCall
-  | OCPPHeartbeatCall
-  | OCPPMeterValuesCall
-  | OCPPRemoteStartTransactionCall
-  | OCPPRemoteStopTransactionCall
-  | OCPPReserveNowCall
-  | OCPPResetCall
-  | OCPPSendLocalListCall
-  | OCPPSetChargingProfileCall
-  | OCPPStartTransactionCall
-  | OCPPStatusNotificationCall
-  | OCPPStopTransactionCall
-  | OCPPTriggerMessageCall
-  | OCPPUnlockConnectorCall
-  | OCPPUpdateFirmwareCall
+export type Call = AuthorizeCall
+  | BootNotificationCall
+  | CancelReservationCall
+  | ChangeAvailabilityCall
+  | ChangeConfigurationCall
+  | ClearCacheCall
+  | ClearChargingProfileCall
+  | DataTransferCall
+  | DiagnosticsStatusNotificationCall
+  | FirmwareStatusNotificationCall
+  | GetCompositeScheduleCall
+  | GetConfigurationCall
+  | GetDiagnosticsCall
+  | GetLocalListVersionCall
+  | HeartbeatCall
+  | MeterValuesCall
+  | RemoteStartTransactionCall
+  | RemoteStopTransactionCall
+  | ReserveNowCall
+  | ResetCall
+  | SendLocalListCall
+  | SetChargingProfileCall
+  | StartTransactionCall
+  | StatusNotificationCall
+  | StopTransactionCall
+  | TriggerMessageCall
+  | UnlockConnectorCall
+  | UpdateFirmwareCall
 ;
 
-const schemasByCommand: Record<OCPPAction, object> = {
-  [OCPPAction.Authorize]: AuthorizeSchema,
-  [OCPPAction.BootNotification]: BootNotificationSchema,
-  [OCPPAction.CancelReservation]: CancelReservationSchema,
-  [OCPPAction.ChangeAvailability]: ChangeAvailabilitySchema,
-  [OCPPAction.ChangeConfiguration]: ChangeConfigurationSchema,
-  [OCPPAction.ClearCache]: ClearCacheSchema,
-  [OCPPAction.ClearChargingProfile]: ClearChargingProfileSchema,
-  [OCPPAction.DataTransfer]: DataTransferSchema,
-  [OCPPAction.DiagnosticsStatusNotification]: DiagnosticsStatusNotificationSchema,
-  [OCPPAction.FirmwareStatusNotification]: FirmwareStatusNotificationSchema,
-  [OCPPAction.GetCompositeSchedule]: GetCompositeScheduleSchema,
-  [OCPPAction.GetConfiguration]: GetConfigurationSchema,
-  [OCPPAction.GetDiagnostics]: GetDiagnosticsSchema,
-  [OCPPAction.GetLocalListVersion]: GetLocalListVersionSchema,
-  [OCPPAction.Heartbeat]: HeartbeatSchema,
-  [OCPPAction.MeterValues]: MeterValuesSchema,
-  [OCPPAction.RemoteStartTransaction]: RemoteStartTransactionSchema,
-  [OCPPAction.RemoteStopTransaction]: RemoteStopTransactionSchema,
-  [OCPPAction.ReserveNow]: ReserveNowSchema,
-  [OCPPAction.Reset]: ResetSchema,
-  [OCPPAction.SendLocalList]: SendLocalListSchema,
-  [OCPPAction.SetChargingProfile]: SetChargingProfileSchema,
-  [OCPPAction.StartTransaction]: StartTransactionSchema,
-  [OCPPAction.StatusNotification]: StatusNotificationSchema,
-  [OCPPAction.StopTransaction]: StopTransactionSchema,
-  [OCPPAction.TriggerMessage]: TriggerMessageSchema,
-  [OCPPAction.UnlockConnector]: UnlockConnectorSchema,
-  [OCPPAction.UpdateFirmware]: UpdateFirmwareSchema,
+const schemasByCommand: Record<Action, object> = {
+  [Action.Authorize]: AuthorizeSchema,
+  [Action.BootNotification]: BootNotificationSchema,
+  [Action.CancelReservation]: CancelReservationSchema,
+  [Action.ChangeAvailability]: ChangeAvailabilitySchema,
+  [Action.ChangeConfiguration]: ChangeConfigurationSchema,
+  [Action.ClearCache]: ClearCacheSchema,
+  [Action.ClearChargingProfile]: ClearChargingProfileSchema,
+  [Action.DataTransfer]: DataTransferSchema,
+  [Action.DiagnosticsStatusNotification]: DiagnosticsStatusNotificationSchema,
+  [Action.FirmwareStatusNotification]: FirmwareStatusNotificationSchema,
+  [Action.GetCompositeSchedule]: GetCompositeScheduleSchema,
+  [Action.GetConfiguration]: GetConfigurationSchema,
+  [Action.GetDiagnostics]: GetDiagnosticsSchema,
+  [Action.GetLocalListVersion]: GetLocalListVersionSchema,
+  [Action.Heartbeat]: HeartbeatSchema,
+  [Action.MeterValues]: MeterValuesSchema,
+  [Action.RemoteStartTransaction]: RemoteStartTransactionSchema,
+  [Action.RemoteStopTransaction]: RemoteStopTransactionSchema,
+  [Action.ReserveNow]: ReserveNowSchema,
+  [Action.Reset]: ResetSchema,
+  [Action.SendLocalList]: SendLocalListSchema,
+  [Action.SetChargingProfile]: SetChargingProfileSchema,
+  [Action.StartTransaction]: StartTransactionSchema,
+  [Action.StatusNotification]: StatusNotificationSchema,
+  [Action.StopTransaction]: StopTransactionSchema,
+  [Action.TriggerMessage]: TriggerMessageSchema,
+  [Action.UnlockConnector]: UnlockConnectorSchema,
+  [Action.UpdateFirmware]: UpdateFirmwareSchema,
 };
 
-export const parseCall = (arr: [OCPPMessageType.CALL, string, ...any]): OCPPCall => {
+export const parseCall = (arr: [MessageType.CALL, string, ...any]): Call => {
   arr = ensure.length(arr, 4, 'Invalid OCPP call: bad length');
-  const action = ensure.keyOf(arr[2], OCPPAction, 'Invalid OCPP call: unknown action');
+  const action = ensure.keyOf(arr[2], Action, 'Invalid OCPP call: unknown action');
   const payload = ensure.object(arr[3], 'Invalid OCPP call: bad payload');
   const schema = schemasByCommand[action];
   const ajv = getAjv();
   if (!ajv.validate(schema, payload)) {
     throw new Error(`Invalid OCPP call: ${ajvErrorsToString(ajv)}`);
   }
-  return arr as OCPPCall;
+  return arr as Call;
 };
