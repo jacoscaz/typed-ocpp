@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 
 import './ajv.test.js';
 
-const { MessageType, Action, parseCall } = OCPP;
+const { MessageType, Action, parse } = OCPP;
 
 describe('BootNotification', () => {
 
@@ -16,7 +16,7 @@ describe('BootNotification', () => {
   });
 
   it('parsing - minimal notification', () => {
-    parseCall([MessageType.CALL, 'test', Action.BootNotification, {
+    parse([MessageType.CALL, 'test', Action.BootNotification, {
       chargePointModel: 'test',
       chargePointVendor: '55',
     }]);

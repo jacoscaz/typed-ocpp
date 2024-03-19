@@ -160,15 +160,19 @@ export declare namespace OCPP {
     MeterValue,
   };
 
+  export type {
+    Call,
+    CallError,
+    CallResult,
+    UncheckedCallResult,
+  }
+
 };
 
 export namespace OCPP {
 
   export const setAjv = setAjv_;
   export const checkCallResult = checkCallResult_;
-  export const parseCall = parseCall_;
-  export const parseCallError = parseCallError_;
-  export const parseCallResult = parseCallResult_;
   export const MessageType = MessageType_; 
   export const Action = Action_; 
   export const ErrorCode = ErrorCode_;
@@ -195,6 +199,18 @@ export namespace OCPP {
 
   export const stringify = (arr: Call | CallError | CallResult | UncheckedCallResult<any>): string => {
     return JSON.stringify(arr);
+  };
+
+  export const isCall = (msg: Call | CallError | UncheckedCallResult<any>): msg is Call => {
+    return msg[0] === MessageType_.CALL;
+  };
+
+  export const isCallError = (msg: Call | CallError | UncheckedCallResult<any>): msg is CallError => {
+    return msg[0] === MessageType_.CALLERROR;
+  };
+
+  export const isCallResult = (msg: Call | CallError | UncheckedCallResult<any>): msg is CallResult => {
+    return msg[0] === MessageType_.CALLRESULT;
   };
 
 };
