@@ -33,16 +33,16 @@ export enum Action {
 }
 
 export enum ErrorCode {
+  FormationViolation = 'FormationViolation',
+  GenericError = 'GenericError',
+  InternalError = 'InternalError',
   NotImplemented = 'NotImplemented',
   NotSupported = 'NotSupported',
-  InternalError = 'InternalError',
+  OccurrenceConstraintViolation = 'OccurrenceConstraintViolation',
+  PropertyConstraintViolation = 'PropertyConstraintViolation',
   ProtocolError = 'ProtocolError',
   SecurityError = 'SecurityError',
-  FormationViolation = 'FormationViolation',
-  PropertyConstraintViolation = 'PropertyConstraintViolation',
-  OccurrenceConstraintViolation = 'OccurrenceConstraintViolation',
   TypeConstraintViolation = 'TypeConstraintViolation',
-  GenericError = 'GenericError',
 }
 
 export enum MessageType {

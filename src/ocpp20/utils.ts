@@ -67,16 +67,18 @@ export enum Action {
 }
 
 export enum ErrorCode {
+  FormationViolation = 'FormationViolation',
+  GenericError = 'GenericError',
+  InternalError = 'InternalError',
+  MessageTypeNotSupported = 'MessageTypeNotSupported',
   NotImplemented = 'NotImplemented',
   NotSupported = 'NotSupported',
-  InternalError = 'InternalError',
-  ProtocolError = 'ProtocolError',
-  SecurityError = 'SecurityError',
-  FormationViolation = 'FormationViolation',
-  PropertyConstraintViolation = 'PropertyConstraintViolation',
   OccurrenceConstraintViolation = 'OccurrenceConstraintViolation',
+  PropertyConstraintViolation = 'PropertyConstraintViolation',
+  ProtocolError = 'ProtocolError',
+  RpcFrameworkError = 'RpcFrameworkError',
+  SecurityError = 'SecurityError',
   TypeConstraintViolation = 'TypeConstraintViolation',
-  GenericError = 'GenericError',
 }
 
 export enum MessageType {
