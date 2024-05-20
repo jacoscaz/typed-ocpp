@@ -49,7 +49,7 @@ const output_dir_abspath = resolve(process.cwd(), output_dir_path);
     
     const output_file_data = await compile(input_schema, {});
       
-    const output_file_abspath = join(output_dir_abspath, `${schema_name}.ts`);
+    const output_file_abspath = join(output_dir_abspath, `${schema_name}.d.ts`);
 
     await writeFile(output_file_abspath, output_file_data, 'utf8');
 
