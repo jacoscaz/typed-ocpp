@@ -2,19 +2,11 @@
 # Typed OCPP
 
 A library for type-aware parsing, serialization and validation of OCPP 1.6-J
-messages.
+and OCPP 2.0.1-J messages.
 
 ## Usage
 
-### `OCPP` namespace
-
-This library exports all functions and typings under the `OCPP` namespace:
-
-```typescript
-import { OCPP } from 'typed-ocpp';
-```
-
-### `OCPP.setAjv()`
+### `setAjv()`
 
 This library requires an instance of `Ajv` with support for string formats,
 as provided by the `ajv-formats` plugin. See [https://npm.im/ajv][a1] and 
@@ -30,6 +22,15 @@ OCPP.setAjv(formats(new Ajv()));
 
 [a1]: https://npm.im/ajv
 [a2]: https://npm.im/ajv-formats
+
+### `OCPP16` and `OCPP20` namespaces
+
+This library exports all functions and typings related to OCPP 1.6 and
+OCPP 2.0.1 under the respective `OCPP16` and `OCPP20` namespaces:
+
+```typescript
+import { OCPP16, OCPP20 } from 'typed-ocpp';
+```
 
 ### `OCPP.parse()`
 

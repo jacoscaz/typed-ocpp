@@ -1,0 +1,8 @@
+export const MeterValuesResponse = {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "urn:OCPP:1.6:2019:12:MeterValuesResponse",
+    "title": "MeterValuesResponse",
+    "type": "object",
+    "properties": {},
+    "additionalProperties": false
+}
