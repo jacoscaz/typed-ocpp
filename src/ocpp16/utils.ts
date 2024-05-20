@@ -53,11 +53,11 @@ export enum MessageType {
 
 export type BaseMessage<T extends MessageType, R extends any[]> = [msg_type: T, call_id: string, ...rest: R];
 
-export type MeterValue = MeterValuesRequest['meterValue'][number];
-export type SampledValue = MeterValue['sampledValue'][number];
-export type Format = SampledValue['format'];
-export type Unit = SampledValue['unit'];
-export type Phase = SampledValue['phase'];
-export type Measurand = SampledValue['measurand'];
-export type Location = SampledValue['location'];
-export type Context = SampledValue['context'];
+export type MeterValue = Exclude<MeterValuesRequest['meterValue'][number], undefined>;
+export type SampledValue = Exclude<MeterValue['sampledValue'][number], undefined>;
+export type Format = Exclude<SampledValue['format'], undefined>;
+export type Unit = Exclude<SampledValue['unit'], undefined>;
+export type Phase = Exclude<SampledValue['phase'], undefined>;
+export type Measurand = Exclude<SampledValue['measurand'], undefined>;
+export type Location = Exclude<SampledValue['location'], undefined>;
+export type Context = Exclude<SampledValue['context'], undefined>;
