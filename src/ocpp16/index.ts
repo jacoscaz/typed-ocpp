@@ -79,6 +79,7 @@ import type { CallError } from './callerror.js';
 import type { UncheckedCallResult, CallResult } from './callresult.js';
 
 import * as ensure from '../common/ensure.js';
+import * as schemas_ from './schemas.js';
 import { setAjv as setAjv_ } from '../common/ajv.js';
 import { parseCall as parseCall_ } from './call.js';
 import { parseCallError as parseCallError_ } from './callerror.js';
@@ -177,6 +178,7 @@ export namespace OCPP16 {
 
   export const setAjv = setAjv_;
   export const checkCallResult = checkCallResult_;
+  export const schemas = schemas_;
 
   export const maybeParse = (data: string | any[]): any[] => {
     const parsed = typeof data === 'string' ? JSON.parse(data) : data;

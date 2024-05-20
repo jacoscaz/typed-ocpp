@@ -150,6 +150,7 @@ import type {
   SignedMeterValueType,  
 } from './types/MeterValuesRequest.js';
 
+import * as schemas_ from './schemas.js';
 import * as ensure from '../common/ensure.js';
 import { setAjv as setAjv_ } from '../common/ajv.js';
 import { parseCall as parseCall_ } from './call.js';
@@ -320,6 +321,7 @@ export namespace OCPP20 {
   export import ErrorCode = ErrorCode_;
 
   export const setAjv = setAjv_;
+  export const schemas = schemas_;
   export const checkCallResult = checkCallResult_;
 
   export const maybeParse = (data: string | any[]): any[] => {
