@@ -1,5 +1,5 @@
 
-# Typed OCPP
+# `typed-ocpp`
 
 A library for type-aware parsing, serialization and validation of OCPP 1.6-J
 and OCPP 2.0.1-J messages.
@@ -190,7 +190,8 @@ OCPP16.MeterValue           // individual entry of the "meterValue" array
 ### JSON Schema(s) 
 
 Both the `OCPP16` and the `OCPP20` namespaces export the official JSON Schema
-documents provided by the OCPP Alliance as ready-to-use objects:
+documents provided by the OCPP Alliance as ready-to-use objects, slightly
+tweaked to maximize compat with different versions and configurations of Ajv:
 
 ```typescript
 import { OCPP16, OCPP20 } from 'typed-ocpp';
@@ -202,38 +203,6 @@ OCPP16.schemas.AuthorizeResponse;
 OCPP20.schemas.AuthorizeRequest;
 OCPP20.schemas.AuthorizeResponse;
 /* ... */
-```
-
-Note that these schemas have been slightly tweaked to maximize compatibility
-with Ajv; see [./json2esm.js](./json2esm.js).
-
-## Building
-
-The `schemas/ocpp16` and `schemas/ocpp20` contain the original JSON Schema
-documents taken from, respectively, the archives for the OCPP 1.6 and OCPP
-2.0.1 specifications as published by the OCPP alliance.
-
-The `specgen` script converts those JSON Schema documents into source files
-and types declarations, populating the following folders:
-
-- `src/ocpp16/types`
-- `src/ocpp16/schemas`
-- `src/ocpp20/types`
-- `src/ocpp20/schemas`
-
-The `build` script takes care of standard TS transpilation into JS.
-
-```sh
-npm run specgen
-npm run build
-```
-
-## Testing
-
-Requires `node >= 18.17`.
-
-```sh
-npm test
 ```
 
 ## License
