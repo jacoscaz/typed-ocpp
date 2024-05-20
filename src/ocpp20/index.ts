@@ -152,7 +152,6 @@ import type {
 
 import * as schemas_ from './schemas.js';
 import * as ensure from '../common/ensure.js';
-import { setAjv as setAjv_ } from '../common/ajv.js';
 import { parseCall as parseCall_ } from './call.js';
 import { parseCallError as parseCallError_ } from './callerror.js';
 import { parseCallResult as parseCallResult_, checkCallResult as checkCallResult_ } from './callresult.js';
@@ -320,7 +319,6 @@ export namespace OCPP20 {
   export import Action = Action_; 
   export import ErrorCode = ErrorCode_;
 
-  export const setAjv = setAjv_;
   export const schemas = schemas_;
   export const checkCallResult = checkCallResult_;
 
