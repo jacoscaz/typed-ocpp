@@ -1,11 +1,7 @@
 export const TransactionEventRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:TransactionEventRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const TransactionEventRequest = {
     },
     "ChargingStateEnumType": {
       "description": "Transaction. State. Transaction_ State_ Code\r\nurn:x-oca:ocpp:uid:1:569419\r\nCurrent charging state, is required when state\r\nhas changed.\r\n",
-      "javaType": "ChargingStateEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -32,7 +27,6 @@ export const TransactionEventRequest = {
     },
     "IdTokenEnumType": {
       "description": "Enumeration of possible idToken types.\r\n",
-      "javaType": "IdTokenEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -48,7 +42,6 @@ export const TransactionEventRequest = {
     },
     "LocationEnumType": {
       "description": "Sampled_ Value. Location. Location_ Code\r\nurn:x-oca:ocpp:uid:1:569265\r\nIndicates where the measured value has been sampled. Default =  \"Outlet\"\r\n\r\n",
-      "javaType": "LocationEnum",
       "type": "string",
       "default": "Outlet",
       "additionalProperties": false,
@@ -62,7 +55,6 @@ export const TransactionEventRequest = {
     },
     "MeasurandEnumType": {
       "description": "Sampled_ Value. Measurand. Measurand_ Code\r\nurn:x-oca:ocpp:uid:1:569263\r\nType of measurement. Default = \"Energy.Active.Import.Register\"\r\n",
-      "javaType": "MeasurandEnum",
       "type": "string",
       "default": "Energy.Active.Import.Register",
       "additionalProperties": false,
@@ -96,7 +88,6 @@ export const TransactionEventRequest = {
     },
     "PhaseEnumType": {
       "description": "Sampled_ Value. Phase. Phase_ Code\r\nurn:x-oca:ocpp:uid:1:569264\r\nIndicates how the measured value is to be interpreted. For instance between L1 and neutral (L1-N) Please note that not all values of phase are applicable to all Measurands. When phase is absent, the measured value is interpreted as an overall value.\r\n",
-      "javaType": "PhaseEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -114,7 +105,6 @@ export const TransactionEventRequest = {
     },
     "ReadingContextEnumType": {
       "description": "Sampled_ Value. Context. Reading_ Context_ Code\r\nurn:x-oca:ocpp:uid:1:569261\r\nType of detail value: start, end or sample. Default = \"Sample.Periodic\"\r\n",
-      "javaType": "ReadingContextEnum",
       "type": "string",
       "default": "Sample.Periodic",
       "additionalProperties": false,
@@ -131,7 +121,6 @@ export const TransactionEventRequest = {
     },
     "ReasonEnumType": {
       "description": "Transaction. Stopped_ Reason. EOT_ Reason_ Code\r\nurn:x-oca:ocpp:uid:1:569413\r\nThis contains the reason why the transaction was stopped. MAY only be omitted when Reason is \"Local\".\r\n",
-      "javaType": "ReasonEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -158,7 +147,6 @@ export const TransactionEventRequest = {
     },
     "TransactionEventEnumType": {
       "description": "This contains the type of this event.\r\nThe first TransactionEvent of a transaction SHALL contain: \"Started\" The last TransactionEvent of a transaction SHALL contain: \"Ended\" All others SHALL contain: \"Updated\"\r\n",
-      "javaType": "TransactionEventEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -169,7 +157,6 @@ export const TransactionEventRequest = {
     },
     "TriggerReasonEnumType": {
       "description": "Reason the Charging Station sends this message to the CSMS\r\n",
-      "javaType": "TriggerReasonEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -198,7 +185,6 @@ export const TransactionEventRequest = {
     },
     "AdditionalInfoType": {
       "description": "Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.\r\n",
-      "javaType": "AdditionalInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -223,7 +209,6 @@ export const TransactionEventRequest = {
     },
     "EVSEType": {
       "description": "EVSE\r\nurn:x-oca:ocpp:uid:2:233123\r\nElectric Vehicle Supply Equipment\r\n",
-      "javaType": "EVSE",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -245,7 +230,6 @@ export const TransactionEventRequest = {
     },
     "IdTokenType": {
       "description": "Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.\r\n",
-      "javaType": "IdToken",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -276,7 +260,6 @@ export const TransactionEventRequest = {
     },
     "MeterValueType": {
       "description": "Meter_ Value\r\nurn:x-oca:ocpp:uid:2:233265\r\nCollection of one or more sampled values in MeterValuesRequest and TransactionEvent. All sampled values in a MeterValue are sampled at the same point in time.\r\n",
-      "javaType": "MeterValue",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -304,7 +287,6 @@ export const TransactionEventRequest = {
     },
     "SampledValueType": {
       "description": "Sampled_ Value\r\nurn:x-oca:ocpp:uid:2:233266\r\nSingle sampled value in MeterValues. Each value can be accompanied by optional fields.\r\n\r\nTo save on mobile data usage, default values of all of the optional fields are such that. The value without any additional fields will be interpreted, as a register reading of active import energy in Wh (Watt-hour) units.\r\n",
-      "javaType": "SampledValue",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -340,7 +322,6 @@ export const TransactionEventRequest = {
     },
     "SignedMeterValueType": {
       "description": "Represent a signed version of the meter value.\r\n",
-      "javaType": "SignedMeterValue",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -377,7 +358,6 @@ export const TransactionEventRequest = {
     },
     "TransactionType": {
       "description": "Transaction\r\nurn:x-oca:ocpp:uid:2:233318\r\n",
-      "javaType": "Transaction",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -410,7 +390,6 @@ export const TransactionEventRequest = {
     },
     "UnitOfMeasureType": {
       "description": "Represents a UnitOfMeasure with a multiplier\r\n",
-      "javaType": "UnitOfMeasure",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -494,4 +473,4 @@ export const TransactionEventRequest = {
     "seqNo",
     "transactionInfo"
   ]
-}
+};

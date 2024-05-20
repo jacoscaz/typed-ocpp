@@ -1,11 +1,7 @@
 export const GetDisplayMessagesRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:GetDisplayMessagesRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const GetDisplayMessagesRequest = {
     },
     "MessagePriorityEnumType": {
       "description": "If provided the Charging Station shall return Display Messages with the given priority only.\r\n",
-      "javaType": "MessagePriorityEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -30,7 +25,6 @@ export const GetDisplayMessagesRequest = {
     },
     "MessageStateEnumType": {
       "description": "If provided the Charging Station shall return Display Messages with the given state only. \r\n",
-      "javaType": "MessageStateEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -70,4 +64,4 @@ export const GetDisplayMessagesRequest = {
   "required": [
     "requestId"
   ]
-}
+};

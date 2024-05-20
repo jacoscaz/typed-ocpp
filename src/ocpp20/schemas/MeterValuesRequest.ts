@@ -1,12 +1,8 @@
 export const MeterValuesRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:MeterValuesRequest",
   "description": "Request_ Body\r\nurn:x-enexis:ecdm:uid:2:234744\r\n",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -20,7 +16,6 @@ export const MeterValuesRequest = {
     },
     "LocationEnumType": {
       "description": "Sampled_ Value. Location. Location_ Code\r\nurn:x-oca:ocpp:uid:1:569265\r\nIndicates where the measured value has been sampled. Default =  \"Outlet\"\r\n\r\n",
-      "javaType": "LocationEnum",
       "type": "string",
       "default": "Outlet",
       "additionalProperties": false,
@@ -34,7 +29,6 @@ export const MeterValuesRequest = {
     },
     "MeasurandEnumType": {
       "description": "Sampled_ Value. Measurand. Measurand_ Code\r\nurn:x-oca:ocpp:uid:1:569263\r\nType of measurement. Default = \"Energy.Active.Import.Register\"\r\n",
-      "javaType": "MeasurandEnum",
       "type": "string",
       "default": "Energy.Active.Import.Register",
       "additionalProperties": false,
@@ -68,7 +62,6 @@ export const MeterValuesRequest = {
     },
     "PhaseEnumType": {
       "description": "Sampled_ Value. Phase. Phase_ Code\r\nurn:x-oca:ocpp:uid:1:569264\r\nIndicates how the measured value is to be interpreted. For instance between L1 and neutral (L1-N) Please note that not all values of phase are applicable to all Measurands. When phase is absent, the measured value is interpreted as an overall value.\r\n",
-      "javaType": "PhaseEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -86,7 +79,6 @@ export const MeterValuesRequest = {
     },
     "ReadingContextEnumType": {
       "description": "Sampled_ Value. Context. Reading_ Context_ Code\r\nurn:x-oca:ocpp:uid:1:569261\r\nType of detail value: start, end or sample. Default = \"Sample.Periodic\"\r\n",
-      "javaType": "ReadingContextEnum",
       "type": "string",
       "default": "Sample.Periodic",
       "additionalProperties": false,
@@ -103,7 +95,6 @@ export const MeterValuesRequest = {
     },
     "MeterValueType": {
       "description": "Meter_ Value\r\nurn:x-oca:ocpp:uid:2:233265\r\nCollection of one or more sampled values in MeterValuesRequest and TransactionEvent. All sampled values in a MeterValue are sampled at the same point in time.\r\n",
-      "javaType": "MeterValue",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -131,7 +122,6 @@ export const MeterValuesRequest = {
     },
     "SampledValueType": {
       "description": "Sampled_ Value\r\nurn:x-oca:ocpp:uid:2:233266\r\nSingle sampled value in MeterValues. Each value can be accompanied by optional fields.\r\n\r\nTo save on mobile data usage, default values of all of the optional fields are such that. The value without any additional fields will be interpreted, as a register reading of active import energy in Wh (Watt-hour) units.\r\n",
-      "javaType": "SampledValue",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -167,7 +157,6 @@ export const MeterValuesRequest = {
     },
     "SignedMeterValueType": {
       "description": "Represent a signed version of the meter value.\r\n",
-      "javaType": "SignedMeterValue",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -204,7 +193,6 @@ export const MeterValuesRequest = {
     },
     "UnitOfMeasureType": {
       "description": "Represents a UnitOfMeasure with a multiplier\r\n",
-      "javaType": "UnitOfMeasure",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -248,4 +236,4 @@ export const MeterValuesRequest = {
     "evseId",
     "meterValue"
   ]
-}
+};

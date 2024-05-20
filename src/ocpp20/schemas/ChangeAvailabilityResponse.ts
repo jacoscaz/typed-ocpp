@@ -1,11 +1,7 @@
 export const ChangeAvailabilityResponse = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:ChangeAvailabilityResponse",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const ChangeAvailabilityResponse = {
     },
     "ChangeAvailabilityStatusEnumType": {
       "description": "This indicates whether the Charging Station is able to perform the availability change.\r\n",
-      "javaType": "ChangeAvailabilityStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -30,7 +25,6 @@ export const ChangeAvailabilityResponse = {
     },
     "StatusInfoType": {
       "description": "Element providing more information about the status.\r\n",
-      "javaType": "StatusInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -69,4 +63,4 @@ export const ChangeAvailabilityResponse = {
   "required": [
     "status"
   ]
-}
+};

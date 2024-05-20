@@ -1,11 +1,7 @@
 export const ClearVariableMonitoringRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:ClearVariableMonitoringRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -37,4 +33,4 @@ export const ClearVariableMonitoringRequest = {
   "required": [
     "id"
   ]
-}
+};

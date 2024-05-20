@@ -1,11 +1,7 @@
 export const NotifyEVChargingScheduleResponse = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:NotifyEVChargingScheduleResponse",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const NotifyEVChargingScheduleResponse = {
     },
     "GenericStatusEnumType": {
       "description": "Returns whether the CSMS has been able to process the message successfully. It does not imply any approval of the charging schedule.\r\n",
-      "javaType": "GenericStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -29,7 +24,6 @@ export const NotifyEVChargingScheduleResponse = {
     },
     "StatusInfoType": {
       "description": "Element providing more information about the status.\r\n",
-      "javaType": "StatusInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -68,4 +62,4 @@ export const NotifyEVChargingScheduleResponse = {
   "required": [
     "status"
   ]
-}
+};

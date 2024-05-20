@@ -2,11 +2,11 @@
 import { OCPP16 } from './index.js';
 import { describe, it } from 'node:test';
 
-import './ajv.test.js';
+import '../common/ajv.test.js';
 
 const { MessageType, Action, parse } = OCPP16;
 
-describe('BootNotification', () => {
+describe('OCPP16 - BootNotification', () => {
 
   it('type - minimal notification', () => {
     [MessageType.CALL, 'test', Action.BootNotification, {

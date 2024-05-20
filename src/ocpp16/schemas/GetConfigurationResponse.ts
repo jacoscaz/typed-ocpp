@@ -1,40 +1,39 @@
 export const GetConfigurationResponse = {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "id": "urn:OCPP:1.6:2019:12:GetConfigurationResponse",
-    "title": "GetConfigurationResponse",
-    "type": "object",
-    "properties": {
-        "configurationKey": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "key": {
-                        "type": "string",
-                        "maxLength": 50
-                    },
-                    "readonly": {
-                        "type": "boolean"
-                    },
-                    "value": {
-                        "type": "string",
-                        "maxLength": 500
-                    }
-                },
-                "additionalProperties": false,
-                "required": [
-                    "key",
-                    "readonly"
-                ]
-            }
+  "title": "GetConfigurationResponse",
+  "type": "object",
+  "properties": {
+    "configurationKey": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "readonly": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 500
+          }
         },
-        "unknownKey": {
-            "type": "array",
-            "items": {
-                "type": "string",
-                "maxLength": 50
-            }
-        }
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "readonly"
+        ]
+      }
     },
-    "additionalProperties": false
-}
+    "unknownKey": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 50
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$id": "urn:OCPP:1.6:2019:12:GetConfigurationResponse"
+};

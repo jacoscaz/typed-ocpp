@@ -1,11 +1,7 @@
 export const SendLocalListRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:SendLocalListRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const SendLocalListRequest = {
     },
     "AuthorizationStatusEnumType": {
       "description": "ID_ Token. Status. Authorization_ Status\r\nurn:x-oca:ocpp:uid:1:569372\r\nCurrent status of the ID Token.\r\n",
-      "javaType": "AuthorizationStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -37,7 +32,6 @@ export const SendLocalListRequest = {
     },
     "IdTokenEnumType": {
       "description": "Enumeration of possible idToken types.\r\n",
-      "javaType": "IdTokenEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -53,7 +47,6 @@ export const SendLocalListRequest = {
     },
     "MessageFormatEnumType": {
       "description": "Message_ Content. Format. Message_ Format_ Code\r\nurn:x-enexis:ecdm:uid:1:570848\r\nFormat of the message.\r\n",
-      "javaType": "MessageFormatEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -65,7 +58,6 @@ export const SendLocalListRequest = {
     },
     "UpdateEnumType": {
       "description": "This contains the type of update (full or differential) of this request.\r\n",
-      "javaType": "UpdateEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -75,7 +67,6 @@ export const SendLocalListRequest = {
     },
     "AdditionalInfoType": {
       "description": "Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.\r\n",
-      "javaType": "AdditionalInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -100,7 +91,6 @@ export const SendLocalListRequest = {
     },
     "AuthorizationData": {
       "description": "Contains the identifier to use for authorization.\r\n",
-      "javaType": "AuthorizationData",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -120,7 +110,6 @@ export const SendLocalListRequest = {
     },
     "IdTokenInfoType": {
       "description": "ID_ Token\r\nurn:x-oca:ocpp:uid:2:233247\r\nContains status information about an identifier.\r\nIt is advised to not stop charging for a token that expires during charging, as ExpiryDate is only used for caching purposes. If ExpiryDate is not given, the status has no end date.\r\n",
-      "javaType": "IdTokenInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -171,7 +160,6 @@ export const SendLocalListRequest = {
     },
     "IdTokenType": {
       "description": "Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.\r\n",
-      "javaType": "IdToken",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -202,7 +190,6 @@ export const SendLocalListRequest = {
     },
     "MessageContentType": {
       "description": "Message_ Content\r\nurn:x-enexis:ecdm:uid:2:234490\r\nContains message details, for a message to be displayed on a Charging Station.\r\n\r\n",
-      "javaType": "MessageContent",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -255,4 +242,4 @@ export const SendLocalListRequest = {
     "versionNumber",
     "updateType"
   ]
-}
+};

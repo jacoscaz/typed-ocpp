@@ -1,11 +1,7 @@
 export const ClearChargingProfileRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:ClearChargingProfileRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const ClearChargingProfileRequest = {
     },
     "ChargingProfilePurposeEnumType": {
       "description": "Charging_ Profile. Charging_ Profile_ Purpose. Charging_ Profile_ Purpose_ Code\r\nurn:x-oca:ocpp:uid:1:569231\r\nSpecifies to purpose of the charging profiles that will be cleared, if they meet the other criteria in the request.\r\n",
-      "javaType": "ChargingProfilePurposeEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -31,7 +26,6 @@ export const ClearChargingProfileRequest = {
     },
     "ClearChargingProfileType": {
       "description": "Charging_ Profile\r\nurn:x-oca:ocpp:uid:2:233255\r\nA ChargingProfile consists of a ChargingSchedule, describing the amount of power or current that can be delivered per time interval.\r\n",
-      "javaType": "ClearChargingProfile",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -66,4 +60,4 @@ export const ClearChargingProfileRequest = {
       "$ref": "#/definitions/ClearChargingProfileType"
     }
   }
-}
+};

@@ -35,11 +35,31 @@ const output_dir_abspath = resolve(process.cwd(), output_dir_path);
     const input_file_abspath = join(input_dir_abspath, file_name);
     const input_file_data = await readFile(input_file_abspath, 'utf8');
 
-    // Ensure that the file's contents is actually valid JSON
-    JSON.parse(input_file_data);
+    // Ensure that the file's contents is actually valid JSON and cleanup 
+    // keywords that break Ajv in strict mode.
+
+    const schema = JSON.parse(input_file_data);
+
+    // Schema objects within the OCPP 1.6 spec use the "id" property in place
+    // of the $id property
+    schema.$id = schema.id;
+
+    // Maximize compatibility with externally-provided Ajv instances that might
+    // not have loaded the definitions for the various versions of JSON Schema.
+    delete schema.$schema;
+
+    // These are not supported by Ajv when running in strictMode.
+    delete schema.id;
+    delete schema.comment;
+    delete schema.javaType;
+    if (schema.definitions) {
+      Object.values(schema.definitions).forEach((def_schema) => {
+        delete def_schema.javaType;
+      });
+    }
 
     const output_file_abspath = join(output_dir_abspath, `${schema_name}.ts`);
-    const output_file_data = `export const ${schema_name} = ${input_file_data}`;
+    const output_file_data = `export const ${schema_name} = ${JSON.stringify(schema, null, 2)};`;
     
     await writeFile(output_file_abspath, output_file_data, 'utf8');
 

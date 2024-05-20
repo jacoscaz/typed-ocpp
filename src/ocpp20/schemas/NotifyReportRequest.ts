@@ -1,11 +1,7 @@
 export const NotifyReportRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:NotifyReportRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const NotifyReportRequest = {
     },
     "AttributeEnumType": {
       "description": "Attribute: Actual, MinSet, MaxSet, etc.\r\nDefaults to Actual if absent.\r\n",
-      "javaType": "AttributeEnum",
       "type": "string",
       "default": "Actual",
       "additionalProperties": false,
@@ -32,7 +27,6 @@ export const NotifyReportRequest = {
     },
     "DataEnumType": {
       "description": "Data type of this variable.\r\n",
-      "javaType": "DataEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -48,7 +42,6 @@ export const NotifyReportRequest = {
     },
     "MutabilityEnumType": {
       "description": "Defines the mutability of this attribute. Default is ReadWrite when omitted.\r\n",
-      "javaType": "MutabilityEnum",
       "type": "string",
       "default": "ReadWrite",
       "additionalProperties": false,
@@ -60,7 +53,6 @@ export const NotifyReportRequest = {
     },
     "ComponentType": {
       "description": "A physical or logical component\r\n",
-      "javaType": "Component",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -87,7 +79,6 @@ export const NotifyReportRequest = {
     },
     "EVSEType": {
       "description": "EVSE\r\nurn:x-oca:ocpp:uid:2:233123\r\nElectric Vehicle Supply Equipment\r\n",
-      "javaType": "EVSE",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -109,7 +100,6 @@ export const NotifyReportRequest = {
     },
     "ReportDataType": {
       "description": "Class to report components, variables and variable attributes and characteristics.\r\n",
-      "javaType": "ReportData",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -143,7 +133,6 @@ export const NotifyReportRequest = {
     },
     "VariableAttributeType": {
       "description": "Attribute data of a variable.\r\n",
-      "javaType": "VariableAttribute",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -175,7 +164,6 @@ export const NotifyReportRequest = {
     },
     "VariableCharacteristicsType": {
       "description": "Fixed read-only parameters of a variable.\r\n",
-      "javaType": "VariableCharacteristics",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -215,7 +203,6 @@ export const NotifyReportRequest = {
     },
     "VariableType": {
       "description": "Reference key to a component-variable.\r\n",
-      "javaType": "Variable",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -276,4 +263,4 @@ export const NotifyReportRequest = {
     "generatedAt",
     "seqNo"
   ]
-}
+};

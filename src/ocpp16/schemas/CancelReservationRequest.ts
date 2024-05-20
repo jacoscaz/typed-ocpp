@@ -1,15 +1,14 @@
 export const CancelReservationRequest = {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "id": "urn:OCPP:1.6:2019:12:CancelReservationRequest",
-    "title": "CancelReservationRequest",
-    "type": "object",
-    "properties": {
-        "reservationId": {
-            "type": "integer"
-        }
-    },
-    "additionalProperties": false,
-    "required": [
-        "reservationId"
-    ]
-}
+  "title": "CancelReservationRequest",
+  "type": "object",
+  "properties": {
+    "reservationId": {
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "reservationId"
+  ],
+  "$id": "urn:OCPP:1.6:2019:12:CancelReservationRequest"
+};

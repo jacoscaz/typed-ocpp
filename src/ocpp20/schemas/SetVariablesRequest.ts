@@ -1,11 +1,7 @@
 export const SetVariablesRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:SetVariablesRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const SetVariablesRequest = {
     },
     "AttributeEnumType": {
       "description": "Type of attribute: Actual, Target, MinSet, MaxSet. Default is Actual when omitted.\r\n",
-      "javaType": "AttributeEnum",
       "type": "string",
       "default": "Actual",
       "additionalProperties": false,
@@ -32,7 +27,6 @@ export const SetVariablesRequest = {
     },
     "ComponentType": {
       "description": "A physical or logical component\r\n",
-      "javaType": "Component",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -59,7 +53,6 @@ export const SetVariablesRequest = {
     },
     "EVSEType": {
       "description": "EVSE\r\nurn:x-oca:ocpp:uid:2:233123\r\nElectric Vehicle Supply Equipment\r\n",
-      "javaType": "EVSE",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -80,7 +73,6 @@ export const SetVariablesRequest = {
       ]
     },
     "SetVariableDataType": {
-      "javaType": "SetVariableData",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -110,7 +102,6 @@ export const SetVariablesRequest = {
     },
     "VariableType": {
       "description": "Reference key to a component-variable.\r\n",
-      "javaType": "Variable",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -151,4 +142,4 @@ export const SetVariablesRequest = {
   "required": [
     "setVariableData"
   ]
-}
+};

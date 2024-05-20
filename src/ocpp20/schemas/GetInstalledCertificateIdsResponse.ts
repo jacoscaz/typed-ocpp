@@ -1,11 +1,7 @@
 export const GetInstalledCertificateIdsResponse = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:GetInstalledCertificateIdsResponse",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const GetInstalledCertificateIdsResponse = {
     },
     "GetCertificateIdUseEnumType": {
       "description": "Indicates the type of the requested certificate(s).\r\n",
-      "javaType": "GetCertificateIdUseEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -32,7 +27,6 @@ export const GetInstalledCertificateIdsResponse = {
     },
     "GetInstalledCertificateStatusEnumType": {
       "description": "Charging Station indicates if it can process the request.\r\n",
-      "javaType": "GetInstalledCertificateStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -42,7 +36,6 @@ export const GetInstalledCertificateIdsResponse = {
     },
     "HashAlgorithmEnumType": {
       "description": "Used algorithms for the hashes provided.\r\n",
-      "javaType": "HashAlgorithmEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -52,7 +45,6 @@ export const GetInstalledCertificateIdsResponse = {
       ]
     },
     "CertificateHashDataChainType": {
-      "javaType": "CertificateHashDataChain",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -81,7 +73,6 @@ export const GetInstalledCertificateIdsResponse = {
       ]
     },
     "CertificateHashDataType": {
-      "javaType": "CertificateHashData",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -116,7 +107,6 @@ export const GetInstalledCertificateIdsResponse = {
     },
     "StatusInfoType": {
       "description": "Element providing more information about the status.\r\n",
-      "javaType": "StatusInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -163,4 +153,4 @@ export const GetInstalledCertificateIdsResponse = {
   "required": [
     "status"
   ]
-}
+};

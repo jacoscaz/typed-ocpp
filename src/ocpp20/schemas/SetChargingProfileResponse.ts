@@ -1,11 +1,7 @@
 export const SetChargingProfileResponse = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:SetChargingProfileResponse",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const SetChargingProfileResponse = {
     },
     "ChargingProfileStatusEnumType": {
       "description": "Returns whether the Charging Station has been able to process the message successfully. This does not guarantee the schedule will be followed to the letter. There might be other constraints the Charging Station may need to take into account.\r\n",
-      "javaType": "ChargingProfileStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -29,7 +24,6 @@ export const SetChargingProfileResponse = {
     },
     "StatusInfoType": {
       "description": "Element providing more information about the status.\r\n",
-      "javaType": "StatusInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -68,4 +62,4 @@ export const SetChargingProfileResponse = {
   "required": [
     "status"
   ]
-}
+};

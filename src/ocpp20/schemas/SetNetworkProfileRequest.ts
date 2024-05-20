@@ -1,11 +1,7 @@
 export const SetNetworkProfileRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:SetNetworkProfileRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const SetNetworkProfileRequest = {
     },
     "APNAuthenticationEnumType": {
       "description": "APN. APN_ Authentication. APN_ Authentication_ Code\r\nurn:x-oca:ocpp:uid:1:568828\r\nAuthentication method.\r\n",
-      "javaType": "APNAuthenticationEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -31,7 +26,6 @@ export const SetNetworkProfileRequest = {
     },
     "OCPPInterfaceEnumType": {
       "description": "Applicable Network Interface.\r\n",
-      "javaType": "OCPPInterfaceEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -47,7 +41,6 @@ export const SetNetworkProfileRequest = {
     },
     "OCPPTransportEnumType": {
       "description": "Communication_ Function. OCPP_ Transport. OCPP_ Transport_ Code\r\nurn:x-oca:ocpp:uid:1:569356\r\nDefines the transport protocol (e.g. SOAP or JSON). Note: SOAP is not supported in OCPP 2.0, but is supported by other versions of OCPP.\r\n",
-      "javaType": "OCPPTransportEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -57,7 +50,6 @@ export const SetNetworkProfileRequest = {
     },
     "OCPPVersionEnumType": {
       "description": "Communication_ Function. OCPP_ Version. OCPP_ Version_ Code\r\nurn:x-oca:ocpp:uid:1:569355\r\nDefines the OCPP version used for this communication function.\r\n",
-      "javaType": "OCPPVersionEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -69,7 +61,6 @@ export const SetNetworkProfileRequest = {
     },
     "VPNEnumType": {
       "description": "VPN. Type. VPN_ Code\r\nurn:x-oca:ocpp:uid:1:569277\r\nType of VPN\r\n",
-      "javaType": "VPNEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -81,7 +72,6 @@ export const SetNetworkProfileRequest = {
     },
     "APNType": {
       "description": "APN\r\nurn:x-oca:ocpp:uid:2:233134\r\nCollection of configuration data needed to make a data-connection over a cellular network.\r\n\r\nNOTE: When asking a GSM modem to dial in, it is possible to specify which mobile operator should be used. This can be done with the mobile country code (MCC) in combination with a mobile network code (MNC). Example: If your preferred network is Vodafone Netherlands, the MCC=204 and the MNC=04 which means the key PreferredNetwork = 20404 Some modems allows to specify a preferred network, which means, if this network is not available, a different network is used. If you specify UseOnlyPreferredNetwork and this network is not available, the modem will not dial in.\r\n",
-      "javaType": "APN",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -128,7 +118,6 @@ export const SetNetworkProfileRequest = {
     },
     "NetworkConnectionProfileType": {
       "description": "Communication_ Function\r\nurn:x-oca:ocpp:uid:2:233304\r\nThe NetworkConnectionProfile defines the functional and technical parameters of a communication link.\r\n",
-      "javaType": "NetworkConnectionProfile",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -175,7 +164,6 @@ export const SetNetworkProfileRequest = {
     },
     "VPNType": {
       "description": "VPN\r\nurn:x-oca:ocpp:uid:2:233268\r\nVPN Configuration settings\r\n",
-      "javaType": "VPN",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -238,4 +226,4 @@ export const SetNetworkProfileRequest = {
     "configurationSlot",
     "connectionData"
   ]
-}
+};

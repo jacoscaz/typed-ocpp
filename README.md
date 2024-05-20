@@ -26,20 +26,23 @@ OCPP.setAjv(formats(new Ajv()));
 ### `OCPP16` and `OCPP20` namespaces
 
 This library exports all functions and typings related to OCPP 1.6 and
-OCPP 2.0.1 under the respective `OCPP16` and `OCPP20` namespaces:
+OCPP 2.0.1 under, respectively, the `OCPP16` and `OCPP20` namespaces:
 
 ```typescript
 import { OCPP16, OCPP20 } from 'typed-ocpp';
 ```
 
-### `OCPP.parse()`
+Both namespaces export identical APIs while typings and schemas differ
+according to the differences in the respective OCPP versions.
 
-The `OCPP.parse()` function returns a fully-typed and validated "view" of the
-original array. No additional transformation is applied beside the eventual 
+### `parse()`
+
+The `parse()` function return a fully-typed and validated "view" of the
+original array. No additional transformation is applied beside the eventual
 `JSON.parse()` if a string is provided.
 
 ```typescript
-import { OCPP } from 'typed-ocpp';
+import { OCPP16 } from 'typed-ocpp';
 
 const raw = '[2,"test","BootNotification",{"chargePointModel":"model","chargePointVendor":"vendor"}]';
 const parsed = OCPP.parse(raw);
@@ -47,21 +50,34 @@ const parsed = OCPP.parse(raw);
 Array.isArray(parsed); // true
 ```
 
-Values returned by the `OCPP.parse()` function have one of the following types:
-
 ```typescript
-OCPP.Call                 // union of all types for Call messages
-OCPP.CallError            // type for Call Error messages
-OCPP.UncheckedCallResult  // generic type for Call Result messages
+import { OCPP20 } from 'typed-ocpp';
+
+const raw = '[2,"test","BootNotification",{ "chargingStation": { "model": "test", "vendorName": "test" }, "reason": "PowerUp"}]';
+const parsed = OCPP.parse(raw);
+
+Array.isArray(parsed); // true
 ```
 
-As the result is fully-typed, the TS compiler can use known types to infer
-others:
+Values returned by `parse()` have one of the following types:
 
 ```typescript
-if (parsed[0] === OCPP.MessageType.CALL) {
+OCPP16.Call                 // union of all types for Call messages
+OCPP16.CallError            // type for Call Error messages
+OCPP16.UncheckedCallResult  // generic type for Call Result messages
+
+OCPP20.Call                 // union of all types for Call messages
+OCPP20.CallError            // type for Call Error messages
+OCPP20.UncheckedCallResult  // generic type for Call Result messages
+```
+
+As returned values are fully-typed, the TS compiler can use known types to
+infer others:
+
+```typescript
+if (parsed[0] === OCPP16.MessageType.CALL) {
   parsed[2];                                        // TS gives type "OCPP.Action"          
-  if (parsed[2] === OCPP.Action.BootNotification) {
+  if (parsed[2] === OCPP16.Action.BootNotification) {
     // TS infers the shape of the call payload based on the action
     parsed[3].chargePointModel;                     // TS gives type "string"
     parsed[3].randomProp;                           // TS compilation error
@@ -69,93 +85,148 @@ if (parsed[0] === OCPP.MessageType.CALL) {
 }
 ```
 
-### `OCPP.checkCallResult()`
+### `checkCallResult()`
 
-Call Result messages are first returned as having type
-`OCPP.UncheckedCallResult` by `OCPP.parse()` and must be checked against their
-originating `OCPP.Call` objects for further validation and type-awareness.
+Call Result messages are first returned as having type `UncheckedCallResult`
+and must be checked against the originating messages of type `Call` for further
+validation and type-awareness.
 
-If `OCPP.checkCallResult()` does not throw, the resulting object is guaranteed
-to be a valid `OCPP.CallResult` object _matching the provided `OCPP.Call` 
-object_. While the `OCPP.CallResult` type is the union of all Call Result
-message types, the TS compiler will infer the specific type of Call Result
-based on the action of the provided `OCPP.Call`:
+If `checkCallResult()` does not throw the returned values are guaranteed to be
+valid `CallResult` objects _matching the provided `Call` objects_.
+
+While `CallResult` type is the union of all Call Result message types, the TS
+compiler will infer the specific type of Call Result based on the action of the
+provided `Call`:
 
 ```typescript
 const call = '[2,"test","BootNotification",{"chargePointModel":"model","chargePointVendor":"vendor"}]';
 const result = '[3, "test", { status: "Accepted", currentTime: "1970-01-01T00:00:00.000Z", interval: 10 }]';
 
-const parsedCall = OCPP.parse(call);
-const parsedResult = OCPP.parse(result);
+const parsedCall = OCPP16.parse(call);
+const parsedResult = OCPP16.parse(result);
 
-if (parsedCall[0] === OCPP.MessageType.CALL && parsedResult[0] === OCPP.MessageType.CALLRESULT) {
-  if (parsedCall[2] === OCPP.Action.BootNotification) {
-    const checkedResult = OCPP.checkCallResult(parsedResult, parsedCall);
+if (parsedCall[0] === OCPP16.MessageType.CALL && parsedResult[0] === OCPP16.MessageType.CALLRESULT) {
+  if (parsedCall[2] === OCPP16.Action.BootNotification) {
+    const checkedResult = OCPP16.checkCallResult(parsedResult, parsedCall);
     checkedResult[2].status;        // TS gives type "Accepted"|"Pending"|"Rejected"
   }
 }
 ```
 
-### `OCPP.stringify()`
+### `stringify()`
 
 Returns the JSON serialization of the provided OCPP object.
 
 ```typescript
-const serialized = OCPP.stringify(parsed);
+const serialized = OCPP16.stringify(parsed);
+```
+
+```typescript
+const serialized = OCPP20.stringify(parsed);
 ```
 
 ### Types
 
-Within the `OCPP` namespace, `typed-ocpp` exports a set of typings that covers
-all aspects of OCPP payloads.
+Within both the `OCPP16` and `OCPP20` namespaces, `typed-ocpp` provides a set
+of typings and schemas that covers most aspects of OCPP messages.
 
-We've already mentioned the primary types returned by `OCPP.parse()` and
-`OCPP.checkCallResult()`:
+We've already mentioned the primary types returned by `parse()` and
+`checkCallResult()`:
 
 ```typescript
-OCPP.Call                 // union type of all Call message types
-OCPP.CallResult           // union type of all Call Result message types
-OCPP.CallError            // type of Call Error messages
-OCPP.UncheckedCallResult  // type of unchecked Call Result messages
+OCPP16.Call                 // union type of all Call message types
+OCPP16.CallResult           // union type of all Call Result message types
+OCPP16.CallError            // type of Call Error messages
+OCPP16.UncheckedCallResult  // type of unchecked Call Result messages
+
+OCPP20.Call                 // union type of all Call message types
+OCPP20.CallResult           // union type of all Call Result message types
+OCPP20.CallError            // type of Call Error messages
+OCPP20.UncheckedCallResult  // type of unchecked Call Result messages
 ```
 
 Specific types for _Call_ and _Call Result_ messages use the `Call` and
-`CallResult` suffixes: `OCPP.AuthorizeCall`, `OCPP.AuthorizeCallResult`,  
-`OCPP.MeterValuesCall`, `OCPP.MeterValuesCallResult` and so on.
+`CallResult` suffixes: `AuthorizeCall`, `AuthorizeCallResult`,
+`MeterValuesCall`, `MeterValuesCallResult` and so on:
+
+```typescript
+OCPP16.MeterValuesCall
+OCPP16.MeterValuesCallResult
+/* ... */
+
+OCPP20.MeterValuesCall
+OCPP20.MeterValuesCallResult
+/* ... */
+```
 
 The following enumerations are used within these primary types:
 
 ```typescript
-OCPP.MessageType          // enum of message types (CALL = 2, CALLRESULT = 3, CALLERROR = 4)
-OCPP.Action               // enum of actions in Call messages ("Authorize", "BootNotification", ...)
-OCPP.ErrorCode            // enum of error code in Call Error messages ("NotImplemented", "NotSupported", ...)
+OCPP16.MessageType          // enum of message types (CALL = 2, CALLRESULT = 3, CALLERROR = 4)
+OCPP16.Action               // enum of actions in Call messages ("Authorize", "BootNotification", ...)
+OCPP16.ErrorCode            // enum of error code in Call Error messages ("NotImplemented", "NotSupported", ...)
+
+OCPP20.MessageType          // enum of message types (CALL = 2, CALLRESULT = 3, CALLERROR = 4)
+OCPP20.Action               // enum of actions in Call messages ("Authorize", "BootNotification", ...)
+OCPP20.ErrorCode            // enum of error code in Call Error messages ("NotImplemented", "NotSupported", ...)
 ```
 
-Additionally, the following types are used to model value descriptors within
+### Utility types for OCPP 1.6
+
+Additionally, the following types may be used to model value descriptors within
 `MeterValues` Call messages:
 
 ```typescript
-OCPP.Context              // sampling context ("Transaction.Begin", "Sample.Periodic", ...)
-OCPP.Measurand            // value measurand ("Power.Active.Import", "Frequency", ...)
-OCPP.Phase                // AC phase ("L1", "L2", "L1-N", ...)
-OCPP.Location             // sampling location ("Inlet", "Outlet", ...)
-OCPP.Unit                 // value unit ("Wh", "kWh", ...)
-OCPP.Format               // value format ("Raw" or "SignedData")
-OCPP.SampledValue         // individual entry of the "sampledValue" array
-OCPP.MeterValue           // individual entry of the "meterValue" array
+OCPP16.Context              // sampling context ("Transaction.Begin", "Sample.Periodic", ...)
+OCPP16.Measurand            // value measurand ("Power.Active.Import", "Frequency", ...)
+OCPP16.Phase                // AC phase ("L1", "L2", "L1-N", ...)
+OCPP16.Location             // sampling location ("Inlet", "Outlet", ...)
+OCPP16.Unit                 // value unit ("Wh", "kWh", ...)
+OCPP16.Format               // value format ("Raw" or "SignedData")
+OCPP16.SampledValue         // individual entry of the "sampledValue" array
+OCPP16.MeterValue           // individual entry of the "meterValue" array
 ```
 
 ### JSON Schema(s) 
 
-`typed-ocpp` ships with a complete collection of [JSON Schema][s1] objects,
-used for validation within `OCPP.parse()`. Schemas can be directly imported
-as follows:
+Both the `OCPP16` and the `OCPP20` namespaces export the official JSON Schema
+documents provided by the OCPP Alliance as ready-to-use objects:
 
 ```typescript
-import { AuthorizeSchema } from 'typed-ocpp/dist/schemas/Authorize.js';
+import { OCPP16, OCPP20 } from 'typed-ocpp';
+
+OCPP16.schemas.AuthorizeRequest;
+OCPP16.schemas.AuthorizeResponse;
+/* ... */
+
+OCPP20.schemas.AuthorizeRequest;
+OCPP20.schemas.AuthorizeResponse;
+/* ... */
 ```
 
-[s1]: https://json-schema.org
+Note that these schemas have been slightly tweaked to maximize compatibility
+with Ajv; see [./json2esm.js](./json2esm.js).
+
+## Building
+
+The `schemas/ocpp16` and `schemas/ocpp20` contain the original JSON Schema
+documents taken from, respectively, the archives for the OCPP 1.6 and OCPP
+2.0.1 specifications as published by the OCPP alliance.
+
+The `specgen` script converts those JSON Schema documents into source files
+and types declarations, populating the following folders:
+
+- `src/ocpp16/types`
+- `src/ocpp16/schemas`
+- `src/ocpp20/types`
+- `src/ocpp20/schemas`
+
+The `build` script takes care of standard TS transpilation into JS.
+
+```sh
+npm run specgen
+npm run build
+```
 
 ## Testing
 

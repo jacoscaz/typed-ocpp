@@ -1,11 +1,7 @@
 export const SetVariablesResponse = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:SetVariablesResponse",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const SetVariablesResponse = {
     },
     "AttributeEnumType": {
       "description": "Type of attribute: Actual, Target, MinSet, MaxSet. Default is Actual when omitted.\r\n",
-      "javaType": "AttributeEnum",
       "type": "string",
       "default": "Actual",
       "additionalProperties": false,
@@ -32,7 +27,6 @@ export const SetVariablesResponse = {
     },
     "SetVariableStatusEnumType": {
       "description": "Result status of setting the variable.\r\n",
-      "javaType": "SetVariableStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -46,7 +40,6 @@ export const SetVariablesResponse = {
     },
     "ComponentType": {
       "description": "A physical or logical component\r\n",
-      "javaType": "Component",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -73,7 +66,6 @@ export const SetVariablesResponse = {
     },
     "EVSEType": {
       "description": "EVSE\r\nurn:x-oca:ocpp:uid:2:233123\r\nElectric Vehicle Supply Equipment\r\n",
-      "javaType": "EVSE",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -94,7 +86,6 @@ export const SetVariablesResponse = {
       ]
     },
     "SetVariableResultType": {
-      "javaType": "SetVariableResult",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -125,7 +116,6 @@ export const SetVariablesResponse = {
     },
     "StatusInfoType": {
       "description": "Element providing more information about the status.\r\n",
-      "javaType": "StatusInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -149,7 +139,6 @@ export const SetVariablesResponse = {
     },
     "VariableType": {
       "description": "Reference key to a component-variable.\r\n",
-      "javaType": "Variable",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -190,4 +179,4 @@ export const SetVariablesResponse = {
   "required": [
     "setVariableResult"
   ]
-}
+};

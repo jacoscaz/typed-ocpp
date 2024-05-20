@@ -1,11 +1,7 @@
 export const GetChargingProfilesRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:GetChargingProfilesRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -18,7 +14,6 @@ export const GetChargingProfilesRequest = {
       ]
     },
     "ChargingLimitSourceEnumType": {
-      "javaType": "ChargingLimitSourceEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -30,7 +25,6 @@ export const GetChargingProfilesRequest = {
     },
     "ChargingProfilePurposeEnumType": {
       "description": "Charging_ Profile. Charging_ Profile_ Purpose. Charging_ Profile_ Purpose_ Code\r\nurn:x-oca:ocpp:uid:1:569231\r\nDefines the purpose of the schedule transferred by this profile\r\n",
-      "javaType": "ChargingProfilePurposeEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -42,7 +36,6 @@ export const GetChargingProfilesRequest = {
     },
     "ChargingProfileCriterionType": {
       "description": "Charging_ Profile\r\nurn:x-oca:ocpp:uid:2:233255\r\nA ChargingProfile consists of ChargingSchedule, describing the amount of power or current that can be delivered per time interval.\r\n",
-      "javaType": "ChargingProfileCriterion",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -100,4 +93,4 @@ export const GetChargingProfilesRequest = {
     "requestId",
     "chargingProfile"
   ]
-}
+};

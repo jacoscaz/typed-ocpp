@@ -1,11 +1,7 @@
 export const BootNotificationRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:BootNotificationRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const BootNotificationRequest = {
     },
     "BootReasonEnumType": {
       "description": "This contains the reason for sending this message to the CSMS.\r\n",
-      "javaType": "BootReasonEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -36,7 +31,6 @@ export const BootNotificationRequest = {
     },
     "ChargingStationType": {
       "description": "Charge_ Point\r\nurn:x-oca:ocpp:uid:2:233122\r\nThe physical system where an Electrical Vehicle (EV) can be charged.\r\n",
-      "javaType": "ChargingStation",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -74,7 +68,6 @@ export const BootNotificationRequest = {
     },
     "ModemType": {
       "description": "Wireless_ Communication_ Module\r\nurn:x-oca:ocpp:uid:2:233306\r\nDefines parameters required for initiating and maintaining wireless communication with other devices.\r\n",
-      "javaType": "Modem",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -111,4 +104,4 @@ export const BootNotificationRequest = {
     "reason",
     "chargingStation"
   ]
-}
+};

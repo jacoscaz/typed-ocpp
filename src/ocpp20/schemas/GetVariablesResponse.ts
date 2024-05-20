@@ -1,11 +1,7 @@
 export const GetVariablesResponse = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:GetVariablesResponse",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const GetVariablesResponse = {
     },
     "AttributeEnumType": {
       "description": "Attribute type for which value is requested. When absent, default Actual is assumed.\r\n",
-      "javaType": "AttributeEnum",
       "type": "string",
       "default": "Actual",
       "additionalProperties": false,
@@ -32,7 +27,6 @@ export const GetVariablesResponse = {
     },
     "GetVariableStatusEnumType": {
       "description": "Result status of getting the variable.\r\n\r\n",
-      "javaType": "GetVariableStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -45,7 +39,6 @@ export const GetVariablesResponse = {
     },
     "ComponentType": {
       "description": "A physical or logical component\r\n",
-      "javaType": "Component",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -72,7 +65,6 @@ export const GetVariablesResponse = {
     },
     "EVSEType": {
       "description": "EVSE\r\nurn:x-oca:ocpp:uid:2:233123\r\nElectric Vehicle Supply Equipment\r\n",
-      "javaType": "EVSE",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -94,7 +86,6 @@ export const GetVariablesResponse = {
     },
     "GetVariableResultType": {
       "description": "Class to hold results of GetVariables request.\r\n",
-      "javaType": "GetVariableResult",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -130,7 +121,6 @@ export const GetVariablesResponse = {
     },
     "StatusInfoType": {
       "description": "Element providing more information about the status.\r\n",
-      "javaType": "StatusInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -154,7 +144,6 @@ export const GetVariablesResponse = {
     },
     "VariableType": {
       "description": "Reference key to a component-variable.\r\n",
-      "javaType": "Variable",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -195,4 +184,4 @@ export const GetVariablesResponse = {
   "required": [
     "getVariableResult"
   ]
-}
+};

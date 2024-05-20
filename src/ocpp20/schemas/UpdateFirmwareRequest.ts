@@ -1,11 +1,7 @@
 export const UpdateFirmwareRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:UpdateFirmwareRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const UpdateFirmwareRequest = {
     },
     "FirmwareType": {
       "description": "Firmware\r\nurn:x-enexis:ecdm:uid:2:233291\r\nRepresents a copy of the firmware that can be loaded/updated on the Charging Station.\r\n",
-      "javaType": "Firmware",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -84,4 +79,4 @@ export const UpdateFirmwareRequest = {
     "requestId",
     "firmware"
   ]
-}
+};

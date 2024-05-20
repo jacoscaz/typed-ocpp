@@ -1,11 +1,7 @@
 export const GetCompositeScheduleResponse = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:GetCompositeScheduleResponse",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const GetCompositeScheduleResponse = {
     },
     "ChargingRateUnitEnumType": {
       "description": "The unit of measure Limit is\r\nexpressed in.\r\n",
-      "javaType": "ChargingRateUnitEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -29,7 +24,6 @@ export const GetCompositeScheduleResponse = {
     },
     "GenericStatusEnumType": {
       "description": "The Charging Station will indicate if it was\r\nable to process the request\r\n",
-      "javaType": "GenericStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -39,7 +33,6 @@ export const GetCompositeScheduleResponse = {
     },
     "ChargingSchedulePeriodType": {
       "description": "Charging_ Schedule_ Period\r\nurn:x-oca:ocpp:uid:2:233257\r\nCharging schedule period structure defines a time period in a charging schedule.\r\n",
-      "javaType": "ChargingSchedulePeriod",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -70,7 +63,6 @@ export const GetCompositeScheduleResponse = {
     },
     "CompositeScheduleType": {
       "description": "Composite_ Schedule\r\nurn:x-oca:ocpp:uid:2:233362\r\n",
-      "javaType": "CompositeSchedule",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -112,7 +104,6 @@ export const GetCompositeScheduleResponse = {
     },
     "StatusInfoType": {
       "description": "Element providing more information about the status.\r\n",
-      "javaType": "StatusInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -154,4 +145,4 @@ export const GetCompositeScheduleResponse = {
   "required": [
     "status"
   ]
-}
+};

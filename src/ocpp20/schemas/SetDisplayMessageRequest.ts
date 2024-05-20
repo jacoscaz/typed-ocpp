@@ -1,11 +1,7 @@
 export const SetDisplayMessageRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:SetDisplayMessageRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const SetDisplayMessageRequest = {
     },
     "MessageFormatEnumType": {
       "description": "Message_ Content. Format. Message_ Format_ Code\r\nurn:x-enexis:ecdm:uid:1:570848\r\nFormat of the message.\r\n",
-      "javaType": "MessageFormatEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -31,7 +26,6 @@ export const SetDisplayMessageRequest = {
     },
     "MessagePriorityEnumType": {
       "description": "Message_ Info. Priority. Message_ Priority_ Code\r\nurn:x-enexis:ecdm:uid:1:569253\r\nWith what priority should this message be shown\r\n",
-      "javaType": "MessagePriorityEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -42,7 +36,6 @@ export const SetDisplayMessageRequest = {
     },
     "MessageStateEnumType": {
       "description": "Message_ Info. State. Message_ State_ Code\r\nurn:x-enexis:ecdm:uid:1:569254\r\nDuring what state should this message be shown. When omitted this message should be shown in any state of the Charging Station.\r\n",
-      "javaType": "MessageStateEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -54,7 +47,6 @@ export const SetDisplayMessageRequest = {
     },
     "ComponentType": {
       "description": "A physical or logical component\r\n",
-      "javaType": "Component",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -81,7 +73,6 @@ export const SetDisplayMessageRequest = {
     },
     "EVSEType": {
       "description": "EVSE\r\nurn:x-oca:ocpp:uid:2:233123\r\nElectric Vehicle Supply Equipment\r\n",
-      "javaType": "EVSE",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -103,7 +94,6 @@ export const SetDisplayMessageRequest = {
     },
     "MessageContentType": {
       "description": "Message_ Content\r\nurn:x-enexis:ecdm:uid:2:234490\r\nContains message details, for a message to be displayed on a Charging Station.\r\n\r\n",
-      "javaType": "MessageContent",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -131,7 +121,6 @@ export const SetDisplayMessageRequest = {
     },
     "MessageInfoType": {
       "description": "Message_ Info\r\nurn:x-enexis:ecdm:uid:2:233264\r\nContains message details, for a message to be displayed on a Charging Station.\r\n",
-      "javaType": "MessageInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -190,4 +179,4 @@ export const SetDisplayMessageRequest = {
   "required": [
     "message"
   ]
-}
+};

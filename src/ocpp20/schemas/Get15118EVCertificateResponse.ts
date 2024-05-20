@@ -1,11 +1,7 @@
 export const Get15118EVCertificateResponse = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:Get15118EVCertificateResponse",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const Get15118EVCertificateResponse = {
     },
     "Iso15118EVCertificateStatusEnumType": {
       "description": "Indicates whether the message was processed properly.\r\n",
-      "javaType": "Iso15118EVCertificateStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -29,7 +24,6 @@ export const Get15118EVCertificateResponse = {
     },
     "StatusInfoType": {
       "description": "Element providing more information about the status.\r\n",
-      "javaType": "StatusInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -74,4 +68,4 @@ export const Get15118EVCertificateResponse = {
     "status",
     "exiResponse"
   ]
-}
+};

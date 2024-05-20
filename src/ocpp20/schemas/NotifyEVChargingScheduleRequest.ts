@@ -1,11 +1,7 @@
 export const NotifyEVChargingScheduleRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:NotifyEVChargingScheduleRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const NotifyEVChargingScheduleRequest = {
     },
     "ChargingRateUnitEnumType": {
       "description": "Charging_ Schedule. Charging_ Rate_ Unit. Charging_ Rate_ Unit_ Code\r\nurn:x-oca:ocpp:uid:1:569238\r\nThe unit of measure Limit is expressed in.\r\n",
-      "javaType": "ChargingRateUnitEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -29,7 +24,6 @@ export const NotifyEVChargingScheduleRequest = {
     },
     "CostKindEnumType": {
       "description": "Cost. Cost_ Kind. Cost_ Kind_ Code\r\nurn:x-oca:ocpp:uid:1:569243\r\nThe kind of cost referred to in the message element amount\r\n",
-      "javaType": "CostKindEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -40,7 +34,6 @@ export const NotifyEVChargingScheduleRequest = {
     },
     "ChargingSchedulePeriodType": {
       "description": "Charging_ Schedule_ Period\r\nurn:x-oca:ocpp:uid:2:233257\r\nCharging schedule period structure defines a time period in a charging schedule.\r\n",
-      "javaType": "ChargingSchedulePeriod",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -71,7 +64,6 @@ export const NotifyEVChargingScheduleRequest = {
     },
     "ChargingScheduleType": {
       "description": "Charging_ Schedule\r\nurn:x-oca:ocpp:uid:2:233256\r\nCharging schedule structure defines a list of charging periods, as used in: GetCompositeSchedule.conf and ChargingProfile. \r\n",
-      "javaType": "ChargingSchedule",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -119,7 +111,6 @@ export const NotifyEVChargingScheduleRequest = {
     },
     "ConsumptionCostType": {
       "description": "Consumption_ Cost\r\nurn:x-oca:ocpp:uid:2:233259\r\n",
-      "javaType": "ConsumptionCost",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -147,7 +138,6 @@ export const NotifyEVChargingScheduleRequest = {
     },
     "CostType": {
       "description": "Cost\r\nurn:x-oca:ocpp:uid:2:233258\r\n",
-      "javaType": "Cost",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -173,7 +163,6 @@ export const NotifyEVChargingScheduleRequest = {
     },
     "RelativeTimeIntervalType": {
       "description": "Relative_ Timer_ Interval\r\nurn:x-oca:ocpp:uid:2:233270\r\n",
-      "javaType": "RelativeTimeInterval",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -195,7 +184,6 @@ export const NotifyEVChargingScheduleRequest = {
     },
     "SalesTariffEntryType": {
       "description": "Sales_ Tariff_ Entry\r\nurn:x-oca:ocpp:uid:2:233271\r\n",
-      "javaType": "SalesTariffEntry",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -208,7 +196,7 @@ export const NotifyEVChargingScheduleRequest = {
         "ePriceLevel": {
           "description": "Sales_ Tariff_ Entry. E_ Price_ Level. Unsigned_ Integer\r\nurn:x-oca:ocpp:uid:1:569281\r\nDefines the price level of this SalesTariffEntry (referring to NumEPriceLevels). Small values for the EPriceLevel represent a cheaper TariffEntry. Large values for the EPriceLevel represent a more expensive TariffEntry.\r\n",
           "type": "integer",
-          "minimum": 0.0
+          "minimum": 0
         },
         "consumptionCost": {
           "type": "array",
@@ -226,7 +214,6 @@ export const NotifyEVChargingScheduleRequest = {
     },
     "SalesTariffType": {
       "description": "Sales_ Tariff\r\nurn:x-oca:ocpp:uid:2:233272\r\nNOTE: This dataType is based on dataTypes from &lt;&lt;ref-ISOIEC15118-2,ISO 15118-2&gt;&gt;.\r\n",
-      "javaType": "SalesTariff",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -286,4 +273,4 @@ export const NotifyEVChargingScheduleRequest = {
     "evseId",
     "chargingSchedule"
   ]
-}
+};

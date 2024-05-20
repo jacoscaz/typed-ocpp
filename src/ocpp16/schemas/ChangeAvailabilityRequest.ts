@@ -1,24 +1,23 @@
 export const ChangeAvailabilityRequest = {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "id": "urn:OCPP:1.6:2019:12:ChangeAvailabilityRequest",
-    "title": "ChangeAvailabilityRequest",
-    "type": "object",
-    "properties": {
-        "connectorId": {
-            "type": "integer"
-        },
-        "type": {
-            "type": "string",
-            "additionalProperties": false,
-            "enum": [
-                "Inoperative",
-                "Operative"
-            ]
-        }
+  "title": "ChangeAvailabilityRequest",
+  "type": "object",
+  "properties": {
+    "connectorId": {
+      "type": "integer"
     },
-    "additionalProperties": false,
-    "required": [
-        "connectorId",
-        "type"
-    ]
-}
+    "type": {
+      "type": "string",
+      "additionalProperties": false,
+      "enum": [
+        "Inoperative",
+        "Operative"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "connectorId",
+    "type"
+  ],
+  "$id": "urn:OCPP:1.6:2019:12:ChangeAvailabilityRequest"
+};

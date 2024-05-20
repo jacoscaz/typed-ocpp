@@ -1,11 +1,7 @@
 export const RequestStartTransactionRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:RequestStartTransactionRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const RequestStartTransactionRequest = {
     },
     "ChargingProfileKindEnumType": {
       "description": "Charging_ Profile. Charging_ Profile_ Kind. Charging_ Profile_ Kind_ Code\r\nurn:x-oca:ocpp:uid:1:569232\r\nIndicates the kind of schedule.\r\n",
-      "javaType": "ChargingProfileKindEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -30,7 +25,6 @@ export const RequestStartTransactionRequest = {
     },
     "ChargingProfilePurposeEnumType": {
       "description": "Charging_ Profile. Charging_ Profile_ Purpose. Charging_ Profile_ Purpose_ Code\r\nurn:x-oca:ocpp:uid:1:569231\r\nDefines the purpose of the schedule transferred by this profile\r\n",
-      "javaType": "ChargingProfilePurposeEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -42,7 +36,6 @@ export const RequestStartTransactionRequest = {
     },
     "ChargingRateUnitEnumType": {
       "description": "Charging_ Schedule. Charging_ Rate_ Unit. Charging_ Rate_ Unit_ Code\r\nurn:x-oca:ocpp:uid:1:569238\r\nThe unit of measure Limit is expressed in.\r\n",
-      "javaType": "ChargingRateUnitEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -52,7 +45,6 @@ export const RequestStartTransactionRequest = {
     },
     "CostKindEnumType": {
       "description": "Cost. Cost_ Kind. Cost_ Kind_ Code\r\nurn:x-oca:ocpp:uid:1:569243\r\nThe kind of cost referred to in the message element amount\r\n",
-      "javaType": "CostKindEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -63,7 +55,6 @@ export const RequestStartTransactionRequest = {
     },
     "IdTokenEnumType": {
       "description": "Enumeration of possible idToken types.\r\n",
-      "javaType": "IdTokenEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -79,7 +70,6 @@ export const RequestStartTransactionRequest = {
     },
     "RecurrencyKindEnumType": {
       "description": "Charging_ Profile. Recurrency_ Kind. Recurrency_ Kind_ Code\r\nurn:x-oca:ocpp:uid:1:569233\r\nIndicates the start point of a recurrence.\r\n",
-      "javaType": "RecurrencyKindEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -89,7 +79,6 @@ export const RequestStartTransactionRequest = {
     },
     "AdditionalInfoType": {
       "description": "Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.\r\n",
-      "javaType": "AdditionalInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -114,7 +103,6 @@ export const RequestStartTransactionRequest = {
     },
     "ChargingProfileType": {
       "description": "Charging_ Profile\r\nurn:x-oca:ocpp:uid:2:233255\r\nA ChargingProfile consists of ChargingSchedule, describing the amount of power or current that can be delivered per time interval.\r\n",
-      "javaType": "ChargingProfile",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -173,7 +161,6 @@ export const RequestStartTransactionRequest = {
     },
     "ChargingSchedulePeriodType": {
       "description": "Charging_ Schedule_ Period\r\nurn:x-oca:ocpp:uid:2:233257\r\nCharging schedule period structure defines a time period in a charging schedule.\r\n",
-      "javaType": "ChargingSchedulePeriod",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -204,7 +191,6 @@ export const RequestStartTransactionRequest = {
     },
     "ChargingScheduleType": {
       "description": "Charging_ Schedule\r\nurn:x-oca:ocpp:uid:2:233256\r\nCharging schedule structure defines a list of charging periods, as used in: GetCompositeSchedule.conf and ChargingProfile. \r\n",
-      "javaType": "ChargingSchedule",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -252,7 +238,6 @@ export const RequestStartTransactionRequest = {
     },
     "ConsumptionCostType": {
       "description": "Consumption_ Cost\r\nurn:x-oca:ocpp:uid:2:233259\r\n",
-      "javaType": "ConsumptionCost",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -280,7 +265,6 @@ export const RequestStartTransactionRequest = {
     },
     "CostType": {
       "description": "Cost\r\nurn:x-oca:ocpp:uid:2:233258\r\n",
-      "javaType": "Cost",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -306,7 +290,6 @@ export const RequestStartTransactionRequest = {
     },
     "IdTokenType": {
       "description": "Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.\r\n",
-      "javaType": "IdToken",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -337,7 +320,6 @@ export const RequestStartTransactionRequest = {
     },
     "RelativeTimeIntervalType": {
       "description": "Relative_ Timer_ Interval\r\nurn:x-oca:ocpp:uid:2:233270\r\n",
-      "javaType": "RelativeTimeInterval",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -359,7 +341,6 @@ export const RequestStartTransactionRequest = {
     },
     "SalesTariffEntryType": {
       "description": "Sales_ Tariff_ Entry\r\nurn:x-oca:ocpp:uid:2:233271\r\n",
-      "javaType": "SalesTariffEntry",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -372,7 +353,7 @@ export const RequestStartTransactionRequest = {
         "ePriceLevel": {
           "description": "Sales_ Tariff_ Entry. E_ Price_ Level. Unsigned_ Integer\r\nurn:x-oca:ocpp:uid:1:569281\r\nDefines the price level of this SalesTariffEntry (referring to NumEPriceLevels). Small values for the EPriceLevel represent a cheaper TariffEntry. Large values for the EPriceLevel represent a more expensive TariffEntry.\r\n",
           "type": "integer",
-          "minimum": 0.0
+          "minimum": 0
         },
         "consumptionCost": {
           "type": "array",
@@ -390,7 +371,6 @@ export const RequestStartTransactionRequest = {
     },
     "SalesTariffType": {
       "description": "Sales_ Tariff\r\nurn:x-oca:ocpp:uid:2:233272\r\nNOTE: This dataType is based on dataTypes from &lt;&lt;ref-ISOIEC15118-2,ISO 15118-2&gt;&gt;.\r\n",
-      "javaType": "SalesTariff",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -454,4 +434,4 @@ export const RequestStartTransactionRequest = {
     "remoteStartId",
     "idToken"
   ]
-}
+};

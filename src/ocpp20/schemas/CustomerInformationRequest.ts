@@ -1,11 +1,7 @@
 export const CustomerInformationRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:CustomerInformationRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const CustomerInformationRequest = {
     },
     "HashAlgorithmEnumType": {
       "description": "Used algorithms for the hashes provided.\r\n",
-      "javaType": "HashAlgorithmEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -30,7 +25,6 @@ export const CustomerInformationRequest = {
     },
     "IdTokenEnumType": {
       "description": "Enumeration of possible idToken types.\r\n",
-      "javaType": "IdTokenEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -46,7 +40,6 @@ export const CustomerInformationRequest = {
     },
     "AdditionalInfoType": {
       "description": "Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.\r\n",
-      "javaType": "AdditionalInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -70,7 +63,6 @@ export const CustomerInformationRequest = {
       ]
     },
     "CertificateHashDataType": {
-      "javaType": "CertificateHashData",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -105,7 +97,6 @@ export const CustomerInformationRequest = {
     },
     "IdTokenType": {
       "description": "Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.\r\n",
-      "javaType": "IdToken",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -170,4 +161,4 @@ export const CustomerInformationRequest = {
     "report",
     "clear"
   ]
-}
+};

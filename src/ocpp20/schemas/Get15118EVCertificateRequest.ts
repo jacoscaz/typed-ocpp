@@ -1,11 +1,7 @@
 export const Get15118EVCertificateRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:Get15118EVCertificateRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const Get15118EVCertificateRequest = {
     },
     "CertificateActionEnumType": {
       "description": "Defines whether certificate needs to be installed or updated.\r\n",
-      "javaType": "CertificateActionEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -53,4 +48,4 @@ export const Get15118EVCertificateRequest = {
     "action",
     "exiRequest"
   ]
-}
+};

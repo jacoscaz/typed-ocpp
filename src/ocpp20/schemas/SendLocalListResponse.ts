@@ -1,11 +1,7 @@
 export const SendLocalListResponse = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:SendLocalListResponse",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const SendLocalListResponse = {
     },
     "SendLocalListStatusEnumType": {
       "description": "This indicates whether the Charging Station has successfully received and applied the update of the Local Authorization List.\r\n",
-      "javaType": "SendLocalListStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -30,7 +25,6 @@ export const SendLocalListResponse = {
     },
     "StatusInfoType": {
       "description": "Element providing more information about the status.\r\n",
-      "javaType": "StatusInfo",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -69,4 +63,4 @@ export const SendLocalListResponse = {
   "required": [
     "status"
   ]
-}
+};

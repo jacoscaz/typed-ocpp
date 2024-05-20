@@ -1,11 +1,7 @@
 export const StatusNotificationRequest = {
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "urn:OCPP:Cp:2:2020:3:StatusNotificationRequest",
-  "comment": "OCPP 2.0.1 FINAL",
   "definitions": {
     "CustomDataType": {
       "description": "This class does not get 'AdditionalProperties = false' in the schema generation, so it can be extended with arbitrary JSON properties to allow adding custom data.",
-      "javaType": "CustomData",
       "type": "object",
       "properties": {
         "vendorId": {
@@ -19,7 +15,6 @@ export const StatusNotificationRequest = {
     },
     "ConnectorStatusEnumType": {
       "description": "This contains the current status of the Connector.\r\n",
-      "javaType": "ConnectorStatusEnum",
       "type": "string",
       "additionalProperties": false,
       "enum": [
@@ -60,4 +55,4 @@ export const StatusNotificationRequest = {
     "evseId",
     "connectorId"
   ]
-}
+};
