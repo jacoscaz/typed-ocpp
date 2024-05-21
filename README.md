@@ -15,9 +15,9 @@ as provided by the `ajv-formats` plugin. See [https://npm.im/ajv][a1] and
 ```typescript
 import Ajv from 'ajv';
 import formats from 'ajv-formats';
-import { OCPP } from 'typed-ocpp';
+import { setAjv } from 'typed-ocpp';
 
-OCPP.setAjv(formats(new Ajv()));
+setAjv(formats(new Ajv()));
 ```
 
 [a1]: https://npm.im/ajv
