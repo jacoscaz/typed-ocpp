@@ -23,7 +23,7 @@
     "specgen:ocpp20": "npm run specgen:ocpp20:clean && npm run specgen:ocpp20:types && npm run specgen:ocpp20:schemas",
     "specgen:clean": "npm run specgen:ocpp16:clean && npm run specgen:ocpp20:clean",
     "specgen": "npm run specgen:clean && npm run specgen:ocpp16 && npm run specgen:ocpp20",
-    "ts:build": "tsc",
+    "ts:build": "tsc && rm dist/ocpp16/types/*.js && rm dist/ocpp20/types/*.js",
     "clean": "rm -rf ./dist",
     "build": "npm run clean && npm run ts:build"
   },
