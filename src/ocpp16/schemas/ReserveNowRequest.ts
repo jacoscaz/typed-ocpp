@@ -1,4 +1,4 @@
-export const ReserveNowRequest = {
+export const ReserveNowRequest: any = {
   "title": "ReserveNowRequest",
   "type": "object",
   "properties": {

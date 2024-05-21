@@ -1,4 +1,4 @@
-export const SetChargingProfileResponse = {
+export const SetChargingProfileResponse: any = {
   "title": "SetChargingProfileResponse",
   "type": "object",
   "properties": {

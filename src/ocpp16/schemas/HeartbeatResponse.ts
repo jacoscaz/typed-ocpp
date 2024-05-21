@@ -1,4 +1,4 @@
-export const HeartbeatResponse = {
+export const HeartbeatResponse: any = {
   "title": "HeartbeatResponse",
   "type": "object",
   "properties": {

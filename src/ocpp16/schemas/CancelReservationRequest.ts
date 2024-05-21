@@ -1,4 +1,4 @@
-export const CancelReservationRequest = {
+export const CancelReservationRequest: any = {
   "title": "CancelReservationRequest",
   "type": "object",
   "properties": {

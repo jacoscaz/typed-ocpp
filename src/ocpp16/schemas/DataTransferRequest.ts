@@ -1,4 +1,4 @@
-export const DataTransferRequest = {
+export const DataTransferRequest: any = {
   "title": "DataTransferRequest",
   "type": "object",
   "properties": {

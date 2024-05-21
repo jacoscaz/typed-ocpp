@@ -1,4 +1,4 @@
-export const MeterValuesResponse = {
+export const MeterValuesResponse: any = {
   "title": "MeterValuesResponse",
   "type": "object",
   "properties": {},

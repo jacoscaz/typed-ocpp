@@ -1,4 +1,4 @@
-export const ResetResponse = {
+export const ResetResponse: any = {
   "title": "ResetResponse",
   "type": "object",
   "properties": {

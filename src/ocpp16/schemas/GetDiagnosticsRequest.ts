@@ -1,4 +1,4 @@
-export const GetDiagnosticsRequest = {
+export const GetDiagnosticsRequest: any = {
   "title": "GetDiagnosticsRequest",
   "type": "object",
   "properties": {

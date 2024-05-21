@@ -1,4 +1,4 @@
-export const StartTransactionResponse = {
+export const StartTransactionResponse: any = {
   "title": "StartTransactionResponse",
   "type": "object",
   "properties": {

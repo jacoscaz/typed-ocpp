@@ -1,4 +1,4 @@
-export const FirmwareStatusNotificationResponse = {
+export const FirmwareStatusNotificationResponse: any = {
   "title": "FirmwareStatusNotificationResponse",
   "type": "object",
   "properties": {},

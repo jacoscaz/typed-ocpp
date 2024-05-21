@@ -1,4 +1,4 @@
-export const GetConfigurationResponse = {
+export const GetConfigurationResponse: any = {
   "title": "GetConfigurationResponse",
   "type": "object",
   "properties": {

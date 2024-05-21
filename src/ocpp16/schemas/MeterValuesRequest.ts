@@ -1,4 +1,4 @@
-export const MeterValuesRequest = {
+export const MeterValuesRequest: any = {
   "title": "MeterValuesRequest",
   "type": "object",
   "properties": {

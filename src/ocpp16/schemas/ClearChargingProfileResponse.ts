@@ -1,4 +1,4 @@
-export const ClearChargingProfileResponse = {
+export const ClearChargingProfileResponse: any = {
   "title": "ClearChargingProfileResponse",
   "type": "object",
   "properties": {

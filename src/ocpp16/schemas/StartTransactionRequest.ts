@@ -1,4 +1,4 @@
-export const StartTransactionRequest = {
+export const StartTransactionRequest: any = {
   "title": "StartTransactionRequest",
   "type": "object",
   "properties": {

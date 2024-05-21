@@ -1,4 +1,4 @@
-export const StopTransactionRequest = {
+export const StopTransactionRequest: any = {
   "title": "StopTransactionRequest",
   "type": "object",
   "properties": {

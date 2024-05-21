@@ -1,4 +1,4 @@
-export const AuthorizeRequest = {
+export const AuthorizeRequest: any = {
   "title": "AuthorizeRequest",
   "type": "object",
   "properties": {

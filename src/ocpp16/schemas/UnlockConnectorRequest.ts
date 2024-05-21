@@ -1,4 +1,4 @@
-export const UnlockConnectorRequest = {
+export const UnlockConnectorRequest: any = {
   "title": "UnlockConnectorRequest",
   "type": "object",
   "properties": {

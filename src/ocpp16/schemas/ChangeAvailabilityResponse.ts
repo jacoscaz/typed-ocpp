@@ -1,4 +1,4 @@
-export const ChangeAvailabilityResponse = {
+export const ChangeAvailabilityResponse: any = {
   "title": "ChangeAvailabilityResponse",
   "type": "object",
   "properties": {

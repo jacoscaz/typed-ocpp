@@ -59,7 +59,7 @@ const output_dir_abspath = resolve(process.cwd(), output_dir_path);
     }
 
     const output_file_abspath = join(output_dir_abspath, `${schema_name}.ts`);
-    const output_file_data = `export const ${schema_name} = ${JSON.stringify(schema, null, 2)};`;
+    const output_file_data = `export const ${schema_name}: any = ${JSON.stringify(schema, null, 2)};`;
     
     await writeFile(output_file_abspath, output_file_data, 'utf8');
 

@@ -1,4 +1,4 @@
-export const GetLocalListVersionResponse = {
+export const GetLocalListVersionResponse: any = {
   "title": "GetLocalListVersionResponse",
   "type": "object",
   "properties": {

@@ -1,4 +1,4 @@
-export const GetLocalListVersionRequest = {
+export const GetLocalListVersionRequest: any = {
   "title": "GetLocalListVersionRequest",
   "type": "object",
   "properties": {},

@@ -1,4 +1,4 @@
-export const ChangeConfigurationRequest = {
+export const ChangeConfigurationRequest: any = {
   "title": "ChangeConfigurationRequest",
   "type": "object",
   "properties": {

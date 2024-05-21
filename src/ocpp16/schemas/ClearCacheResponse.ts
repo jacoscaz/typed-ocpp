@@ -1,4 +1,4 @@
-export const ClearCacheResponse = {
+export const ClearCacheResponse: any = {
   "title": "ClearCacheResponse",
   "type": "object",
   "properties": {

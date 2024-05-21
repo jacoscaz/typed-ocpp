@@ -1,4 +1,4 @@
-export const ClearChargingProfileRequest = {
+export const ClearChargingProfileRequest: any = {
   "title": "ClearChargingProfileRequest",
   "type": "object",
   "properties": {

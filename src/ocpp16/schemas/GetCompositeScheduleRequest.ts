@@ -1,4 +1,4 @@
-export const GetCompositeScheduleRequest = {
+export const GetCompositeScheduleRequest: any = {
   "title": "GetCompositeScheduleRequest",
   "type": "object",
   "properties": {

@@ -1,4 +1,4 @@
-export const TriggerMessageRequest = {
+export const TriggerMessageRequest: any = {
   "title": "TriggerMessageRequest",
   "type": "object",
   "properties": {

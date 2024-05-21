@@ -1,4 +1,4 @@
-export const AuthorizeResponse = {
+export const AuthorizeResponse: any = {
   "title": "AuthorizeResponse",
   "type": "object",
   "properties": {

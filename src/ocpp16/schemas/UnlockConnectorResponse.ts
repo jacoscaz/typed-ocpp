@@ -1,4 +1,4 @@
-export const UnlockConnectorResponse = {
+export const UnlockConnectorResponse: any = {
   "title": "UnlockConnectorResponse",
   "type": "object",
   "properties": {

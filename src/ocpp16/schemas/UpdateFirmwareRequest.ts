@@ -1,4 +1,4 @@
-export const UpdateFirmwareRequest = {
+export const UpdateFirmwareRequest: any = {
   "title": "UpdateFirmwareRequest",
   "type": "object",
   "properties": {

@@ -1,4 +1,4 @@
-export const GetConfigurationRequest = {
+export const GetConfigurationRequest: any = {
   "title": "GetConfigurationRequest",
   "type": "object",
   "properties": {

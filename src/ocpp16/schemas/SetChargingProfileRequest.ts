@@ -1,4 +1,4 @@
-export const SetChargingProfileRequest = {
+export const SetChargingProfileRequest: any = {
   "title": "SetChargingProfileRequest",
   "type": "object",
   "properties": {

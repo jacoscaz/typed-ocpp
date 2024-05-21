@@ -1,4 +1,4 @@
-export const SendLocalListResponse = {
+export const SendLocalListResponse: any = {
   "title": "SendLocalListResponse",
   "type": "object",
   "properties": {

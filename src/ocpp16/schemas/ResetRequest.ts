@@ -1,4 +1,4 @@
-export const ResetRequest = {
+export const ResetRequest: any = {
   "title": "ResetRequest",
   "type": "object",
   "properties": {

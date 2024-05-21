@@ -1,4 +1,4 @@
-export const ChangeAvailabilityRequest = {
+export const ChangeAvailabilityRequest: any = {
   "title": "ChangeAvailabilityRequest",
   "type": "object",
   "properties": {

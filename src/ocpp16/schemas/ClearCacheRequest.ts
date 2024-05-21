@@ -1,4 +1,4 @@
-export const ClearCacheRequest = {
+export const ClearCacheRequest: any = {
   "title": "ClearCacheRequest",
   "type": "object",
   "properties": {},

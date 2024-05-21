@@ -1,4 +1,4 @@
-export const ChangeConfigurationResponse = {
+export const ChangeConfigurationResponse: any = {
   "title": "ChangeConfigurationResponse",
   "type": "object",
   "properties": {

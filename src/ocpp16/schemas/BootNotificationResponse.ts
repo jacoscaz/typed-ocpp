@@ -1,4 +1,4 @@
-export const BootNotificationResponse = {
+export const BootNotificationResponse: any = {
   "title": "BootNotificationResponse",
   "type": "object",
   "properties": {

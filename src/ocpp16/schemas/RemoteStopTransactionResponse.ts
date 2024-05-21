@@ -1,4 +1,4 @@
-export const RemoteStopTransactionResponse = {
+export const RemoteStopTransactionResponse: any = {
   "title": "RemoteStopTransactionResponse",
   "type": "object",
   "properties": {

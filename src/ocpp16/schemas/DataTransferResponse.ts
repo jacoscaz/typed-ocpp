@@ -1,4 +1,4 @@
-export const DataTransferResponse = {
+export const DataTransferResponse: any = {
   "title": "DataTransferResponse",
   "type": "object",
   "properties": {

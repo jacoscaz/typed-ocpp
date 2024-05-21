@@ -1,4 +1,4 @@
-export const DiagnosticsStatusNotificationResponse = {
+export const DiagnosticsStatusNotificationResponse: any = {
   "title": "DiagnosticsStatusNotificationResponse",
   "type": "object",
   "properties": {},

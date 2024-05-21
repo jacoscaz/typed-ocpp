@@ -1,4 +1,4 @@
-export const MeterValuesRequest = {
+export const MeterValuesRequest: any = {
   "description": "Request_ Body\r\nurn:x-enexis:ecdm:uid:2:234744\r\n",
   "definitions": {
     "CustomDataType": {
