@@ -1,5 +1,5 @@
 
-import type { MeterValuesRequest } from './types/MeterValuesRequest';
+import type { MeterValuesRequest } from './types.js';
 
 export enum Action {
   Authorize = 'Authorize',

@@ -7,20 +7,26 @@
  * https://www.npmjs.com/package/json-schema-to-typescript
  */
 import { join, resolve } from 'node:path';
-import { readdir, writeFile, mkdir, readFile } from 'node:fs/promises';
+import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { compile } from 'json-schema-to-typescript';
+import { deduplicate_blocks } from './json2types-blocks.js';
 
 const input_dir_path = process.argv[2];
-const output_dir_path = process.argv[3];
-
 const input_dir_abspath = resolve(process.cwd(), input_dir_path);
-const output_dir_abspath = resolve(process.cwd(), output_dir_path);
+
+const output_file_path = process.argv[3];
+const output_file_abspath = resolve(process.cwd(), output_file_path);
+
+const mode = process.argv[4];
+if (mode !== 'OCPP16' && mode !== 'OCPP20') {
+  throw new Error('Mode param must either be "OCPP16" or "OCPP20"');
+}
 
 (async () => {
 
-  await mkdir(output_dir_abspath, { recursive: true });
-
   const file_names = await readdir(input_dir_abspath);
+
+  let output_file_data = '';
 
   for (const file_name of file_names) {
 
@@ -47,15 +53,26 @@ const output_dir_abspath = resolve(process.cwd(), output_dir_path);
       input_schema.$id = input_schema.$id.split(':').slice(-1)[0];
     }
     
-    const output_file_data = await compile(input_schema, {});
+    const compiled_type = await compile(input_schema, { declareExternallyReferenced: false });
+
+    output_file_data += '\n\n' + compiled_type;
       
-    const output_file_abspath = join(output_dir_abspath, `${schema_name}.ts`);
-
-    await writeFile(output_file_abspath, output_file_data, 'utf8');
-
-    console.log('Converted file %s into %s for schema %s', input_file_abspath, output_file_abspath, schema_name);
   }
 
+  // Deduplicate code blocks
+  for (const block of deduplicate_blocks[mode]) {
+    const length_before_replace = output_file_data.length;
+    output_file_data = output_file_data.replaceAll(block, '');
+    if (length_before_replace !== output_file_data.length) {
+      output_file_data += '\n\n' + block;
+    }
+  }
+
+  // Remove comments
+  output_file_data = output_file_data.replaceAll(/^\s*\/\*\*?(?:.|\n)*?\*\/$/mg, '');
+ 
+  await writeFile(output_file_abspath, output_file_data);
+ 
 })().catch((err) => {
   console.error(err.stack);
   process.exit(1);

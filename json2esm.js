@@ -5,17 +5,17 @@
  */
 
 import { join, resolve } from 'node:path';
-import { readFile, readdir, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, readdir, writeFile, mkdir, appendFile } from 'node:fs/promises';
 
 const input_dir_path = process.argv[2];
-const output_dir_path = process.argv[3];
-
 const input_dir_abspath = resolve(process.cwd(), input_dir_path);
-const output_dir_abspath = resolve(process.cwd(), output_dir_path);
+
+const output_file_path = process.argv[3];
+const output_file_abspath = resolve(process.cwd(), output_file_path);
 
 (async () => {
 
-  await mkdir(output_dir_abspath, { recursive: true });
+  // await mkdir(output_file_abspath, { recursive: true });
 
   const file_names = await readdir(input_dir_abspath);
 
@@ -58,12 +58,11 @@ const output_dir_abspath = resolve(process.cwd(), output_dir_path);
       });
     }
 
-    const output_file_abspath = join(output_dir_abspath, `${schema_name}.ts`);
-    const output_file_data = `export const ${schema_name}: any = ${JSON.stringify(schema, null, 2)};`;
+    // const output_file_abspath = join(output_file_abspath, `${schema_name}.ts`);
+    const output_file_data = `\n\nexport const ${schema_name}: any = ${JSON.stringify(schema, null, 2)};`;
     
-    await writeFile(output_file_abspath, output_file_data, 'utf8');
+    await appendFile(output_file_abspath, output_file_data, 'utf8');
 
-    console.log('Converted file %s into %s for schema %s', input_file_abspath, output_file_abspath, schema_name);
   }
 
 })().catch((err) => {

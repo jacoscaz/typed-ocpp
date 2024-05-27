@@ -148,7 +148,7 @@ import type {
   MeterValueType,
   SampledValueType,
   SignedMeterValueType,  
-} from './types/MeterValuesRequest.js';
+} from './types.js';
 
 import * as schemas_ from './schemas.js';
 import * as ensure from '../common/ensure.js';
