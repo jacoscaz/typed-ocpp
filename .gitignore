@@ -322,26 +322,7 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,macos,windows,sublimetext,webstorm,visualstudiocode,node
 
-#
-# Custom entries
-#
-
-# Dist directories built via the Typescript compiler
-dist/esm
-dist/cjs
-
-# Optional rdf-test-suite cache directory
-.rdf-test-suite-cache
-
-# Lock files
-package-lock.json
-yarn.lock
-
-test/**/*.d.ts
-test/backends/*.js
-test/browser/index.js
-test/browser/index.bundle.js
-test/others/*.js
-test/quadstore/*.js
-test/utils/*.js
-test/*.js
+src/ocpp16/types.ts
+src/ocpp16/schemas.ts
+src/ocpp20/types.ts
+src/ocpp20/schemas.ts

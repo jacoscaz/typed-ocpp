@@ -2,7 +2,11 @@
 # `typed-ocpp`
 
 A library for type-aware parsing, serialization and validation of OCPP 1.6-J
-and OCPP 2.0.1-J messages.
+and OCPP 2.0.1 messages, built against the official [JSON Schema][i2] documents
+published by the [Open Charge Alliance][i1].
+
+[i1]: https://openchargealliance.org
+[i2]: https://json-schema.org
 
 ## Usage
 
@@ -204,6 +208,12 @@ OCPP20.schemas.AuthorizeRequest;
 OCPP20.schemas.AuthorizeResponse;
 /* ... */
 ```
+
+## Building and testing
+
+See [BUILD.md][b1] file.
+
+[b1]: ./BUILD.md
 
 ## License
 

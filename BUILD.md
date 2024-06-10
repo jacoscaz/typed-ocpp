@@ -1,31 +1,32 @@
 
-# Building `typed-ocpp`
-
-## Building
-
-The `schemas/ocpp16` and `schemas/ocpp20` contain the original JSON Schema
-documents taken from, respectively, the archives for the OCPP 1.6 and OCPP
-2.0.1 specifications as published by the OCPP alliance.
-
-The `specgen` script converts those JSON Schema documents into .ts code and
-type declarations, populating the following files:
-
-- `src/ocpp16/types.ts`
-- `src/ocpp16/schemas.ts`
-- `src/ocpp20/types.ts`
-- `src/ocpp20/schemas.ts`
-
-The `build` script takes care of standard TS transpilation into JS.
+# Building and testing `typed-ocpp`
 
 ```sh
-npm run specgen
+npm run codegen
 npm run build
+npm run test
 ```
-
-## Testing
 
 Requires `node >= 18.17`.
 
-```sh
-npm test
-```
+## The `codegen` script
+
+The `schemas/ocpp16` and `schemas/ocpp20` folders contain the official
+[JSON Schema][b2] documents published by the [Open Charge Alliance][b1].
+
+The `codegen` script generates the following `.ts` source files against
+those schema documents:
+
+| file | description |
+| --- | --- |
+| `src/ocpp16/types.ts` | type declarations for OCPP 1.6 payloads | 
+| `src/ocpp16/schemas.ts` | JSON Schema objects for OCPP 1.6 payloads |
+| `src/ocpp20/types.ts` | type declarations for OCPP 2.0.1 payloads |
+| `src/ocpp20/schemas.ts` | JSON Schema objects for OCPP 2.0.1 payloads |
+
+## The `build` script
+
+The `build` script takes care of standard TS transpilation into JS.
+
+[b1]: https://openchargealliance.org
+[b2]: https://json-schema.org
