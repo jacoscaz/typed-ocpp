@@ -5,5 +5,5 @@ schemas/**/*.*
 tsconfig.json
 node_modules
 BUILD.md
-dist/specgen/**/*.*
+codegen/**/*.*
 .github
