@@ -54,7 +54,8 @@ const output_file_header = `/*
     const input_file_data = await readFile(input_file_abspath, 'utf8');
 
     const input_schema = JSON.parse(input_file_data);
-    if (input_schema.$id?.indexOf(':') > -1) {
+    
+    if (mode === 'OCPP20' && input_schema.$id.indexOf(':') > -1) {
       // The schema files within the OCPP 2.0.1 spec have namespaced $id
       // attributes such as `urn:OCPP:Cp:2:2020:3:CancelReservationRequest`.
       // Here we get rid of the "urn" part of the $id so that json2ts will

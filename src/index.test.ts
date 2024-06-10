@@ -5,7 +5,7 @@ import { OCPP20 } from './index.js';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 
-import './ajv.test.js';
+import './common/ajv.test.js';
 
 describe('schemas', () => {
 

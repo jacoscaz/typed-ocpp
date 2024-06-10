@@ -1,7 +1,10 @@
 /**
  * Code blocks to be deduplicated by ./json2types.js . 
  */
-export const deduplicate_blocks = { OCPP16: [], OCPP20: [] };
+export const deduplicate_blocks = { 
+  OCPP16: [],
+  OCPP20: [],
+ };
 
 deduplicate_blocks.OCPP16.push(`export interface CustomDataType {
   vendorId: string;

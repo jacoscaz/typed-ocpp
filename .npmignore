@@ -2,9 +2,8 @@ src/**/*.*
 dist/**/*.test.js
 dist/**/*.test.d.ts
 schemas/**/*.*
-json2esm.js
-json2types.js
-json2types-blocks.js
 tsconfig.json
 node_modules
 BUILD.md
+dist/specgen/**/*.*
+.github
