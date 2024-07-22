@@ -76,7 +76,7 @@ import type { Call } from './call.js';
 
 import type { CallError } from './callerror.js';
 
-import type { UncheckedCallResult, CallResult } from './callresult.js';
+import type { UncheckedCallResult, CheckedCallResult, CallResult } from './callresult.js';
 
 import * as ensure from '../common/ensure.js';
 import * as schemas_ from './schemas.js';
@@ -164,6 +164,7 @@ export declare namespace OCPP16 {
     Call,
     CallError,
     CallResult,
+    CheckedCallResult,
     UncheckedCallResult,
   };
 

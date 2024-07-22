@@ -69,7 +69,9 @@ Values returned by `parse()` have one of the following types:
 OCPP16.Call                 // union of all types for Call messages
 OCPP16.CallError            // type for Call Error messages
 OCPP16.UncheckedCallResult  // generic type for Call Result messages
+```
 
+```typescript
 OCPP20.Call                 // union of all types for Call messages
 OCPP20.CallError            // type for Call Error messages
 OCPP20.UncheckedCallResult  // generic type for Call Result messages
@@ -117,6 +119,10 @@ if (parsedCall[0] === OCPP16.MessageType.CALL && parsedResult[0] === OCPP16.Mess
 }
 ```
 
+The `checkCallResult()` function returns values of the
+`CheckedCallResult<C extends Call>` type, which may also be used on its own to
+model Call Result messages matching a specific Call message. See below.
+
 ### `stringify()`
 
 Returns the JSON serialization of the provided OCPP object.
@@ -131,6 +137,8 @@ const serialized = OCPP20.stringify(parsed);
 
 ### Types
 
+#### Primary types
+
 Within both the `OCPP16` and `OCPP20` namespaces, `typed-ocpp` provides a set
 of typings and schemas that covers most aspects of OCPP messages.
 
@@ -142,12 +150,20 @@ OCPP16.Call                 // union type of all Call message types
 OCPP16.CallResult           // union type of all Call Result message types
 OCPP16.CallError            // type of Call Error messages
 OCPP16.UncheckedCallResult  // type of unchecked Call Result messages
+OCPP16.CheckedCallResult    // generic type for Call Result messages matching
+                            //     a specific type of Call messages
+```                            
 
+```typescript
 OCPP20.Call                 // union type of all Call message types
 OCPP20.CallResult           // union type of all Call Result message types
 OCPP20.CallError            // type of Call Error messages
 OCPP20.UncheckedCallResult  // type of unchecked Call Result messages
+OCPP20.CheckedCallResult    // generic type for Call Result messages matching
+                            //     a specific type of Call messages
 ```
+
+#### Message-specific types
 
 Specific types for _Call_ and _Call Result_ messages use the `Call` and
 `CallResult` suffixes: `AuthorizeCall`, `AuthorizeCallResult`,
@@ -157,11 +173,37 @@ Specific types for _Call_ and _Call Result_ messages use the `Call` and
 OCPP16.MeterValuesCall
 OCPP16.MeterValuesCallResult
 /* ... */
+```
 
+```typescript
 OCPP20.MeterValuesCall
 OCPP20.MeterValuesCallResult
 /* ... */
 ```
+
+#### The `CheckedCallResult<C extends Call>` type
+
+The `checkCallResult()` function returns values of the generic
+`CheckedCallResult<C extends Call>` type, which can also be used
+on its own to model a Call Result message after a known type of
+Call message:
+
+```typescript
+const result: OCPP16.CheckedCallResult<OCPP16.GetConfigurationCall> = [
+  OCPP16.MessageType.CALLRESULT, 
+  '<call_id>', 
+  { 
+    configurationKey: [
+      { key: 'some_key', value: 'some_value', readonly: true },
+    ], 
+    // the TS compiler will return an error here due to unsupported property
+    // "foobar" in OCPP16.GetConfigurationCallResult payloads.
+    foobar: 42,
+  },
+];
+```
+
+#### Utility enums
 
 The following enumerations are used within these primary types:
 
@@ -169,13 +211,15 @@ The following enumerations are used within these primary types:
 OCPP16.MessageType          // enum of message types (CALL = 2, CALLRESULT = 3, CALLERROR = 4)
 OCPP16.Action               // enum of actions in Call messages ("Authorize", "BootNotification", ...)
 OCPP16.ErrorCode            // enum of error code in Call Error messages ("NotImplemented", "NotSupported", ...)
+```
 
+```typescript
 OCPP20.MessageType          // enum of message types (CALL = 2, CALLRESULT = 3, CALLERROR = 4)
 OCPP20.Action               // enum of actions in Call messages ("Authorize", "BootNotification", ...)
 OCPP20.ErrorCode            // enum of error code in Call Error messages ("NotImplemented", "NotSupported", ...)
 ```
 
-### Utility types for OCPP 1.6
+#### Utility types for OCPP 1.6
 
 Additionally, the following types may be used to model value descriptors within
 `MeterValues` Call messages:

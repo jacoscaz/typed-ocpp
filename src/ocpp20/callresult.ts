@@ -282,8 +282,7 @@ export const parseCallResult = (arr: [MessageType.CALLRESULT, string, ...any]): 
   return arr as UncheckedCallResult<any>;
 };
 
-export const checkCallResult = <T extends Call>(result: UncheckedCallResult<any>, call: T): 
-  T extends AuthorizeCall ? AuthorizeCallResult :
+export type CheckedCallResult<T extends Call> = T extends AuthorizeCall ? AuthorizeCallResult :
   T extends BootNotificationCall ? BootNotificationCallResult :
   T extends CancelReservationCall ? CancelReservationCallResult :
   T extends CertificateSignedCall ? CertificateSignedCallResult :
@@ -347,7 +346,9 @@ export const checkCallResult = <T extends Call>(result: UncheckedCallResult<any>
   T extends UnlockConnectorCall ? UnlockConnectorCallResult :
   T extends UnpublishFirmwareCall ? UnpublishFirmwareCallResult :
   T extends UpdateFirmwareCall ? UpdateFirmwareCallResult :
-  never => {
+  never;
+
+export const checkCallResult = <T extends Call>(result: UncheckedCallResult<any>, call: T): CheckedCallResult<T> => {
   ensure.equal(result[1], call[1], `Invalid OCPP call result: id ${result[1]} does not equal call id ${call[1]}`);
   const schema = schemasByCommand[call[2]];
   const ajv = getAjv();
