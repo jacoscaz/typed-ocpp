@@ -1,76 +1,10 @@
 
-import {
-  Call,
-  AuthorizeCall,
-  BootNotificationCall,
-  CancelReservationCall,
-  CertificateSignedCall,
-  ChangeAvailabilityCall,
-  ClearCacheCall,
-  ClearChargingProfileCall,
-  ClearDisplayMessageCall,
-  ClearedChargingLimitCall,
-  ClearVariableMonitoringCall,
-  CostUpdatedCall,
-  CustomerInformationCall,
-  DataTransferCall,
-  DeleteCertificateCall,
-  FirmwareStatusNotificationCall,
-  Get15118EVCertificateCall,
-  GetBaseReportCall,
-  GetCertificateStatusCall,
-  GetChargingProfilesCall,
-  GetCompositeScheduleCall,
-  GetDisplayMessagesCall,
-  GetInstalledCertificateIdsCall,
-  GetLocalListVersionCall,
-  GetLogCall,
-  GetMonitoringReportCall,
-  GetReportCall,
-  GetTransactionStatusCall,
-  GetVariablesCall,
-  HeartbeatCall,
-  InstallCertificateCall,
-  LogStatusNotificationCall,
-  MeterValuesCall,
-  NotifyChargingLimitCall,
-  NotifyCustomerInformationCall,
-  NotifyDisplayMessagesCall,
-  NotifyEVChargingNeedsCall,
-  NotifyEVChargingScheduleCall,
-  NotifyEventCall,
-  NotifyMonitoringReportCall,
-  NotifyReportCall,
-  PublishFirmwareCall,
-  PublishFirmwareStatusNotificationCall,
-  ReportChargingProfilesCall,
-  RequestStartTransactionCall,
-  RequestStopTransactionCall,
-  ReservationStatusUpdateCall,
-  ReserveNowCall,
-  ResetCall,
-  SecurityEventNotificationCall,
-  SendLocalListCall,
-  SetChargingProfileCall,
-  SetDisplayMessageCall,
-  SetMonitoringBaseCall,
-  SetMonitoringLevelCall,
-  SetNetworkProfileCall,
-  SetVariableMonitoringCall,
-  SetVariablesCall,
-  SignCertificateCall,
-  StatusNotificationCall,
-  TransactionEventCall,
-  TriggerMessageCall,
-  UnlockConnectorCall,
-  UnpublishFirmwareCall,
-  UpdateFirmwareCall,
-} from './call.js';
-
-import { Action, BaseMessage, MessageType } from './utils.js';
 import { ajvErrorsToString, getAjv } from '../common/ajv.js';
-
 import * as ensure from '../common/ensure.js';
+import { EMPTY } from '../common/utils.js';
+
+import { Call } from './call.js';
+import { Action, BaseMessage, MessageType } from './utils.js';
 import * as schemas from './schemas.js';
 import * as types from './types.js';
 
@@ -282,71 +216,74 @@ export const parseCallResult = (arr: [MessageType.CALLRESULT, string, ...any]): 
   return arr as UncheckedCallResult<any>;
 };
 
-export type CheckedCallResult<T extends Call> = T extends AuthorizeCall ? AuthorizeCallResult :
-  T extends BootNotificationCall ? BootNotificationCallResult :
-  T extends CancelReservationCall ? CancelReservationCallResult :
-  T extends CertificateSignedCall ? CertificateSignedCallResult :
-  T extends ChangeAvailabilityCall ? ChangeAvailabilityCallResult :
-  T extends ClearCacheCall ? ClearCacheCallResult :
-  T extends ClearChargingProfileCall ? ClearChargingProfileCallResult :
-  T extends ClearDisplayMessageCall ? ClearDisplayMessageCallResult :
-  T extends ClearedChargingLimitCall ? ClearedChargingLimitCallResult :
-  T extends ClearVariableMonitoringCall ? ClearVariableMonitoringCallResult :
-  T extends CostUpdatedCall ? CostUpdatedCallResult :
-  T extends CustomerInformationCall ? CustomerInformationCallResult :
-  T extends DataTransferCall ? DataTransferCallResult :
-  T extends DeleteCertificateCall ? DeleteCertificateCallResult :
-  T extends FirmwareStatusNotificationCall ? FirmwareStatusNotificationCallResult :
-  T extends Get15118EVCertificateCall ? Get15118EVCertificateCallResult :
-  T extends GetBaseReportCall ? GetBaseReportCallResult :
-  T extends GetCertificateStatusCall ? GetCertificateStatusCallResult :
-  T extends GetChargingProfilesCall ? GetChargingProfilesCallResult :
-  T extends GetCompositeScheduleCall ? GetCompositeScheduleCallResult :
-  T extends GetDisplayMessagesCall ? GetDisplayMessagesCallResult :
-  T extends GetInstalledCertificateIdsCall ? GetInstalledCertificateIdsCallResult :
-  T extends GetLocalListVersionCall ? GetLocalListVersionCallResult :
-  T extends GetLogCall ? GetLogCallResult :
-  T extends GetMonitoringReportCall ? GetMonitoringReportCallResult :
-  T extends GetReportCall ? GetReportCallResult :
-  T extends GetTransactionStatusCall ? GetTransactionStatusCallResult :
-  T extends GetVariablesCall ? GetVariablesCallResult :
-  T extends HeartbeatCall ? HeartbeatCallResult :
-  T extends InstallCertificateCall ? InstallCertificateCallResult :
-  T extends LogStatusNotificationCall ? LogStatusNotificationCallResult :
-  T extends MeterValuesCall ? MeterValuesCallResult :
-  T extends NotifyChargingLimitCall ? NotifyChargingLimitCallResult :
-  T extends NotifyCustomerInformationCall ? NotifyCustomerInformationCallResult :
-  T extends NotifyDisplayMessagesCall ? NotifyDisplayMessagesCallResult :
-  T extends NotifyEVChargingNeedsCall ? NotifyEVChargingNeedsCallResult :
-  T extends NotifyEVChargingScheduleCall ? NotifyEVChargingScheduleCallResult :
-  T extends NotifyEventCall ? NotifyEventCallResult :
-  T extends NotifyMonitoringReportCall ? NotifyMonitoringReportCallResult :
-  T extends NotifyReportCall ? NotifyReportCallResult :
-  T extends PublishFirmwareCall ? PublishFirmwareCallResult :
-  T extends PublishFirmwareStatusNotificationCall ? PublishFirmwareStatusNotificationCallResult :
-  T extends ReportChargingProfilesCall ? ReportChargingProfilesCallResult :
-  T extends RequestStartTransactionCall ? RequestStartTransactionCallResult :
-  T extends RequestStopTransactionCall ? RequestStopTransactionCallResult :
-  T extends ReservationStatusUpdateCall ? ReservationStatusUpdateCallResult :
-  T extends ReserveNowCall ? ReserveNowCallResult :
-  T extends ResetCall ? ResetCallResult :
-  T extends SecurityEventNotificationCall ? SecurityEventNotificationCallResult :
-  T extends SendLocalListCall ? SendLocalListCallResult :
-  T extends SetChargingProfileCall ? SetChargingProfileCallResult :
-  T extends SetDisplayMessageCall ? SetDisplayMessageCallResult :
-  T extends SetMonitoringBaseCall ? SetMonitoringBaseCallResult :
-  T extends SetMonitoringLevelCall ? SetMonitoringLevelCallResult :
-  T extends SetNetworkProfileCall ? SetNetworkProfileCallResult :
-  T extends SetVariableMonitoringCall ? SetVariableMonitoringCallResult :
-  T extends SetVariablesCall ? SetVariablesCallResult :
-  T extends SignCertificateCall ? SignCertificateCallResult :
-  T extends StatusNotificationCall ? StatusNotificationCallResult :
-  T extends TransactionEventCall ? TransactionEventCallResult :
-  T extends TriggerMessageCall ? TriggerMessageCallResult :
-  T extends UnlockConnectorCall ? UnlockConnectorCallResult :
-  T extends UnpublishFirmwareCall ? UnpublishFirmwareCallResult :
-  T extends UpdateFirmwareCall ? UpdateFirmwareCallResult :
-  never;
+export const CallResultTypesByAction = {
+  [Action.Authorize]: EMPTY as AuthorizeCallResult,
+  [Action.BootNotification]: EMPTY as BootNotificationCallResult,
+  [Action.CancelReservation]: EMPTY as CancelReservationCallResult,
+  [Action.CertificateSigned]: EMPTY as CertificateSignedCallResult,
+  [Action.ChangeAvailability]: EMPTY as ChangeAvailabilityCallResult,
+  [Action.ClearCache]: EMPTY as ClearCacheCallResult,
+  [Action.ClearChargingProfile]: EMPTY as ClearChargingProfileCallResult,
+  [Action.ClearDisplayMessage]: EMPTY as ClearDisplayMessageCallResult,
+  [Action.ClearedChargingLimit]: EMPTY as ClearedChargingLimitCallResult,
+  [Action.ClearVariableMonitoring]: EMPTY as ClearVariableMonitoringCallResult,
+  [Action.CostUpdated]: EMPTY as CostUpdatedCallResult,
+  [Action.CustomerInformation]: EMPTY as CustomerInformationCallResult,
+  [Action.DataTransfer]: EMPTY as DataTransferCallResult,
+  [Action.DeleteCertificate]: EMPTY as DeleteCertificateCallResult,
+  [Action.FirmwareStatusNotification]: EMPTY as FirmwareStatusNotificationCallResult,
+  [Action.Get15118EVCertificate]: EMPTY as Get15118EVCertificateCallResult,
+  [Action.GetBaseReport]: EMPTY as GetBaseReportCallResult,
+  [Action.GetCertificateStatus]: EMPTY as GetCertificateStatusCallResult,
+  [Action.GetChargingProfiles]: EMPTY as GetChargingProfilesCallResult,
+  [Action.GetCompositeSchedule]: EMPTY as GetCompositeScheduleCallResult,
+  [Action.GetDisplayMessages]: EMPTY as GetDisplayMessagesCallResult,
+  [Action.GetInstalledCertificateIds]: EMPTY as GetInstalledCertificateIdsCallResult,
+  [Action.GetLocalListVersion]: EMPTY as GetLocalListVersionCallResult,
+  [Action.GetLog]: EMPTY as GetLogCallResult,
+  [Action.GetMonitoringReport]: EMPTY as GetMonitoringReportCallResult,
+  [Action.GetReport]: EMPTY as GetReportCallResult,
+  [Action.GetTransactionStatus]: EMPTY as GetTransactionStatusCallResult,
+  [Action.GetVariables]: EMPTY as GetVariablesCallResult,
+  [Action.Heartbeat]: EMPTY as HeartbeatCallResult,
+  [Action.InstallCertificate]: EMPTY as InstallCertificateCallResult,
+  [Action.LogStatusNotification]: EMPTY as LogStatusNotificationCallResult,
+  [Action.MeterValues]: EMPTY as MeterValuesCallResult,
+  [Action.NotifyChargingLimit]: EMPTY as NotifyChargingLimitCallResult,
+  [Action.NotifyCustomerInformation]: EMPTY as NotifyCustomerInformationCallResult,
+  [Action.NotifyDisplayMessages]: EMPTY as NotifyDisplayMessagesCallResult,
+  [Action.NotifyEVChargingNeeds]: EMPTY as NotifyEVChargingNeedsCallResult,
+  [Action.NotifyEVChargingSchedule]: EMPTY as NotifyEVChargingScheduleCallResult,
+  [Action.NotifyEvent]: EMPTY as NotifyEventCallResult,
+  [Action.NotifyMonitoringReport]: EMPTY as NotifyMonitoringReportCallResult,
+  [Action.NotifyReport]: EMPTY as NotifyReportCallResult,
+  [Action.PublishFirmware]: EMPTY as PublishFirmwareCallResult,
+  [Action.PublishFirmwareStatusNotification]: EMPTY as PublishFirmwareStatusNotificationCallResult,
+  [Action.ReportChargingProfiles]: EMPTY as ReportChargingProfilesCallResult,
+  [Action.RequestStartTransaction]: EMPTY as RequestStartTransactionCallResult,
+  [Action.RequestStopTransaction]: EMPTY as RequestStopTransactionCallResult,
+  [Action.ReservationStatusUpdate]: EMPTY as ReservationStatusUpdateCallResult,
+  [Action.ReserveNow]: EMPTY as ReserveNowCallResult,
+  [Action.Reset]: EMPTY as ResetCallResult,
+  [Action.SecurityEventNotification]: EMPTY as SecurityEventNotificationCallResult,
+  [Action.SendLocalList]: EMPTY as SendLocalListCallResult,
+  [Action.SetChargingProfile]: EMPTY as SetChargingProfileCallResult,
+  [Action.SetDisplayMessage]: EMPTY as SetDisplayMessageCallResult,
+  [Action.SetMonitoringBase]: EMPTY as SetMonitoringBaseCallResult,
+  [Action.SetMonitoringLevel]: EMPTY as SetMonitoringLevelCallResult,
+  [Action.SetNetworkProfile]: EMPTY as SetNetworkProfileCallResult,
+  [Action.SetVariableMonitoring]: EMPTY as SetVariableMonitoringCallResult,
+  [Action.SetVariables]: EMPTY as SetVariablesCallResult,
+  [Action.SignCertificate]: EMPTY as SignCertificateCallResult,
+  [Action.StatusNotification]: EMPTY as StatusNotificationCallResult,
+  [Action.TransactionEvent]: EMPTY as TransactionEventCallResult,
+  [Action.TriggerMessage]: EMPTY as TriggerMessageCallResult,
+  [Action.UnlockConnector]: EMPTY as UnlockConnectorCallResult,
+  [Action.UnpublishFirmware]: EMPTY as UnpublishFirmwareCallResult,
+  [Action.UpdateFirmware]: EMPTY as UpdateFirmwareCallResult,
+} satisfies Record<Action, CallResult>;
+
+export type CheckedCallResult<C extends Call> = (typeof CallResultTypesByAction)[C[2]];
 
 export const checkCallResult = <T extends Call>(result: UncheckedCallResult<any>, call: T): CheckedCallResult<T> => {
   ensure.equal(result[1], call[1], `Invalid OCPP call result: id ${result[1]} does not equal call id ${call[1]}`);
