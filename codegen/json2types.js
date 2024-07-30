@@ -79,7 +79,7 @@ const output_file_header = `/*
   }
 
   // Remove comments
-  output_file_data = output_file_data.replaceAll(/^\s*?\/\*\*(?:.|\n)*?\*\//mg, '');
+  output_file_data = output_file_data.replaceAll(/^\s*?\/\*\*(?:.|\n)*?\*\/\n/mg, '');
   output_file_data = output_file_data.replaceAll('/* eslint-disable */', '');
  
   await writeFile(output_file_abspath, output_file_data, 'utf8');
