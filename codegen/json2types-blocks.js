@@ -121,3 +121,21 @@ deduplicate_blocks.OCPP20.push(`export type GetCertificateIdUseEnumType =
   | "CSMSRootCertificate"
   | "V2GCertificateChain"
   | "ManufacturerRootCertificate";`);
+
+deduplicate_blocks.OCPP20.push(`/**
+ * Element providing more information about the status.
+ *
+ */
+export interface StatusInfoType {
+  customData?: CustomDataType;
+  /**
+   * A predefined code for the reason why the status is returned in this response. The string is case-insensitive.
+   *
+   */
+  reasonCode: string;
+  /**
+   * Additional text to provide detailed information.
+   *
+   */
+  additionalInfo?: string;
+}`);
