@@ -150,6 +150,11 @@ import type {
   SignedMeterValueType,  
 } from './types.js';
 
+import type {
+  ConnectorStatus,
+  ChargingState,
+} from './utils.js';
+
 import * as schemas_ from './schemas.js';
 import * as ensure from '../common/ensure.js';
 import { parseCall as parseCall_ } from './call.js';
@@ -310,6 +315,11 @@ export declare namespace OCPP20 {
     MeterValueType,
     SampledValueType,
     SignedMeterValueType,
+  };
+
+  export type {
+    ChargingState,
+    ConnectorStatus,
   };
 
 };

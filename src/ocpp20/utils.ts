@@ -1,4 +1,6 @@
 
+import type { ConnectorStatusEnumType, ChargingStateEnumType } from './types.js';
+
 export enum Action {
   Authorize = 'Authorize',
   BootNotification = 'BootNotification',
@@ -88,3 +90,6 @@ export enum MessageType {
 }
 
 export type BaseMessage<T extends MessageType, R extends any[]> = [msg_type: T, call_id: string, ...rest: R];
+
+export type ConnectorStatus = ConnectorStatusEnumType;
+export type ChargingState = ChargingStateEnumType;
