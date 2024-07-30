@@ -37,7 +37,8 @@ import { OCPP16, OCPP20 } from 'typed-ocpp';
 ```
 
 Both namespaces export identical APIs while typings and schemas differ
-according to the differences in the respective OCPP versions.
+according to the differences in the respective OCPP versions. All of the
+examples below apply to both namespaces.
 
 ### `parse()`
 
@@ -81,7 +82,7 @@ As returned values are fully-typed, the TS compiler can use known types to
 infer others:
 
 ```typescript
-if (parsed[0] === OCPP16.MessageType.CALL) {
+if (OCPP16.isCall(parsed)) {
   parsed[2];                                        // TS gives type "OCPP.Action"          
   if (parsed[2] === OCPP16.Action.BootNotification) {
     // TS infers the shape of the call payload based on the action
@@ -91,18 +92,35 @@ if (parsed[0] === OCPP16.MessageType.CALL) {
 }
 ```
 
+### `isCall()`, `isCallResult()` and `isCallError()`
+
+The `isCall()`, `isCallResult()` and `isCallError()` functions are utility type
+guards that facilitates identifying the type of a parsed message: 
+
+```typescript
+const parsed = OCPP16.parse(message);
+
+if (OCPP16.isCall(parsed)) {
+  // TS infers that parsed is of type OCPP16.Call
+}
+
+if (OCPP16.isCallResult(message)) {
+  // TS infers that parsed is of type OCPP16.UncheckedCallResult
+}
+
+if (OCPP16.isCallError(message)) {
+// TS infers that parsed is of type OCPP16.CallError
+}
+```
+
 ### `checkCallResult()`
 
-Call Result messages are first returned as having type `UncheckedCallResult`
-and must be checked against the originating messages of type `Call` for further
+Call Result messages are returned by `parse()` as the `UncheckedCallResult`
+type and must be checked against the originating `Call` messages for further
 validation and type-awareness.
 
 If `checkCallResult()` does not throw the returned values are guaranteed to be
-valid `CallResult` objects _matching the provided `Call` objects_.
-
-While `CallResult` type is the union of all Call Result message types, the TS
-compiler will infer the specific type of Call Result based on the action of the
-provided `Call`:
+valid `CallResult` objects _matching the provided `Call` objects_:
 
 ```typescript
 const call = '[2,"test","BootNotification",{"chargePointModel":"model","chargePointVendor":"vendor"}]';
@@ -111,16 +129,22 @@ const result = '[3, "test", { status: "Accepted", currentTime: "1970-01-01T00:00
 const parsedCall = OCPP16.parse(call);
 const parsedResult = OCPP16.parse(result);
 
-if (parsedCall[0] === OCPP16.MessageType.CALL && parsedResult[0] === OCPP16.MessageType.CALLRESULT) {
-  if (parsedCall[2] === OCPP16.Action.BootNotification) {
-    const checkedResult = OCPP16.checkCallResult(parsedResult, parsedCall);
-    checkedResult[2].status;        // TS gives type "Accepted"|"Pending"|"Rejected"
+if (OCPP16.isCall(parsedCall)) {                              // Narrows parsedCall to OCPP16.Call
+  if (OCPP16.isCallResult(parsedResult)) {                    // Narrows parsedResult to OCPP16.UncheckedCallResult
+    if (parsedCall[2] === OCPP16.Action.BootNotification) {   // Narrows parsedCall to OCPP16.BootNotificationCall
+      const checkedResult = OCPP16.checkCallResult(           // checkedResult inferred as having type
+        parsedResult, parsedCall                              //       OCPP16.BootNotificationCallResult
+      );
+      checkedResult[2].status;                                // Inferred as "Accepted" | "Pending" | "Rejected"
+    }
   }
 }
 ```
 
-The `checkCallResult()` function returns values of the
-`CheckedCallResult<C extends Call>` type, which may also be used on its own to
+The `checkCallResult()` function returns values of the generic type
+`CheckedCallResult<C extends Call>` which resolves to the type of Call Result
+message that corresponds to the type of Call messages provided as the `C` type
+argument. `CheckedCallResult<C extends Call>` may also be used on its own to
 model Call Result messages matching a specific Call message. See below.
 
 ### `stringify()`
@@ -150,17 +174,19 @@ OCPP16.Call                 // union type of all Call message types
 OCPP16.CallResult           // union type of all Call Result message types
 OCPP16.CallError            // type of Call Error messages
 OCPP16.UncheckedCallResult  // type of unchecked Call Result messages
-OCPP16.CheckedCallResult    // generic type for Call Result messages matching
-                            //     a specific type of Call messages
+OCPP16.CheckedCallResult<     // generic type of that resolves to the specific
+  C extends OCPP16.Call>      //      type of Call Result message matching the
+                              //      provided type of Call message "C"
 ```                            
 
 ```typescript
-OCPP20.Call                 // union type of all Call message types
-OCPP20.CallResult           // union type of all Call Result message types
-OCPP20.CallError            // type of Call Error messages
-OCPP20.UncheckedCallResult  // type of unchecked Call Result messages
-OCPP20.CheckedCallResult    // generic type for Call Result messages matching
-                            //     a specific type of Call messages
+OCPP20.Call                   // union type of all Call message types
+OCPP20.CallResult             // union type of all Call Result message types
+OCPP20.CallError              // type of Call Error messages
+OCPP20.UncheckedCallResult    // type of unchecked Call Result messages
+OCPP20.CheckedCallResult<     // generic type of that resolves to the specific
+  C extends OCPP20.Call>      //      type of Call Result message matching the
+                              //      provided type of Call message "C"
 ```
 
 #### Message-specific types
@@ -183,10 +209,9 @@ OCPP20.MeterValuesCallResult
 
 #### The `CheckedCallResult<C extends Call>` type
 
-The `checkCallResult()` function returns values of the generic
-`CheckedCallResult<C extends Call>` type, which can also be used
-on its own to model a Call Result message after a known type of
-Call message:
+The generic `CheckedCallResult<C extends Call>` type can also be used on its
+own to model a Call Result message after a known or inferred type of Call
+message:
 
 ```typescript
 const result: OCPP16.CheckedCallResult<OCPP16.GetConfigurationCall> = [
@@ -221,7 +246,7 @@ OCPP20.ErrorCode            // enum of error code in Call Error messages ("NotIm
 
 #### Utility types for OCPP 1.6
 
-Additionally, the following types may be used to model value descriptors within
+The following types may be used to model value descriptors within
 `MeterValues` Call messages:
 
 ```typescript
@@ -233,6 +258,20 @@ OCPP16.Unit                 // value unit ("Wh", "kWh", ...)
 OCPP16.Format               // value format ("Raw" or "SignedData")
 OCPP16.SampledValue         // individual entry of the "sampledValue" array
 OCPP16.MeterValue           // individual entry of the "meterValue" array
+```
+
+The following types may be used to model value descriptors within
+`StatusNotification` Call messages:
+
+```typescript
+OCPP16.Status               // status ("Available", "Reserved", ...)
+```
+
+#### Utility types for OCPP 2.0.1
+
+```typescript
+OCPP20.ConnectorStatus      // connector status ("Available", "Occupied", ...)
+OCPP20.ChargingState        // charging status ("Charging", "EVConnected", ...)
 ```
 
 ### JSON Schema(s) 
