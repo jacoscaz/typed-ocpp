@@ -1,5 +1,5 @@
 
-import type { MeterValuesRequest } from './types.js';
+import type { MeterValuesRequest, StatusNotificationRequest } from './types.js';
 
 export enum Action {
   Authorize = 'Authorize',
@@ -50,6 +50,8 @@ export enum MessageType {
   CALLRESULT = 3,
   CALLERROR = 4,
 }
+
+export type Status = StatusNotificationRequest['status'];
 
 export type BaseMessage<T extends MessageType, R extends any[]> = [msg_type: T, call_id: string, ...rest: R];
 

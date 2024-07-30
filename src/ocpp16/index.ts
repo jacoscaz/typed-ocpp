@@ -70,6 +70,7 @@ import type {
   Format, 
   SampledValue, 
   MeterValue,
+  Status,
 } from './utils.js';
 
 import type { Call } from './call.js';
@@ -158,6 +159,7 @@ export declare namespace OCPP16 {
     Format, 
     SampledValue, 
     MeterValue,
+    Status,
   };
 
   export type {
