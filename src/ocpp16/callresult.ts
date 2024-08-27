@@ -1,5 +1,5 @@
 
-import { Call } from './call.js';
+import { AuthorizeCall, Call } from './call.js';
 
 import { ajvErrorsToString, getAjv } from '../common/ajv.js';
 import { EMPTY } from '../common/utils.js';
@@ -109,38 +109,38 @@ export const parseCallResult = (arr: [MessageType.CALLRESULT, string, ...any]): 
   return arr as UncheckedCallResult<any>;
 };
 
-const CallResultTypesByAction = {
-  [Action.Authorize]: EMPTY as AuthorizeCallResult,
-  [Action.BootNotification]: EMPTY as BootNotificationCallResult,
-  [Action.CancelReservation]: EMPTY as CancelReservationCallResult,
-  [Action.ChangeAvailability]: EMPTY as ChangeAvailabilityCallResult,
-  [Action.ChangeConfiguration]: EMPTY as ChangeConfigurationCallResult,
-  [Action.ClearCache]: EMPTY as ClearCacheCallResult,
-  [Action.ClearChargingProfile]: EMPTY as ClearChargingProfileCallResult,
-  [Action.DataTransfer]: EMPTY as DataTransferCallResult,
-  [Action.DiagnosticsStatusNotification]: EMPTY as DiagnosticsStatusNotificationCallResult,
-  [Action.FirmwareStatusNotification]: EMPTY as FirmwareStatusNotificationCallResult,
-  [Action.GetCompositeSchedule]: EMPTY as GetCompositeScheduleCallResult,
-  [Action.GetConfiguration]: EMPTY as GetConfigurationCallResult,
-  [Action.GetDiagnostics]: EMPTY as GetDiagnosticsCallResult,
-  [Action.GetLocalListVersion]: EMPTY as GetLocalListVersionCallResult,
-  [Action.Heartbeat]: EMPTY as HeartbeatCallResult,
-  [Action.MeterValues]: EMPTY as MeterValuesCallResult,
-  [Action.RemoteStartTransaction]: EMPTY as RemoteStartTransactionCallResult,
-  [Action.RemoteStopTransaction]: EMPTY as RemoteStopTransactionCallResult,
-  [Action.ReserveNow]: EMPTY as ReserveNowCallResult,
-  [Action.Reset]: EMPTY as ResetCallResult,
-  [Action.SendLocalList]: EMPTY as SendLocalListCallResult,
-  [Action.SetChargingProfile]: EMPTY as SetChargingProfileCallResult,
-  [Action.StartTransaction]: EMPTY as StartTransactionCallResult,
-  [Action.StatusNotification]: EMPTY as StatusNotificationCallResult,
-  [Action.StopTransaction]: EMPTY as StopTransactionCallResult,
-  [Action.TriggerMessage]: EMPTY as TriggerMessageCallResult,
-  [Action.UnlockConnector]: EMPTY as UnlockConnectorCallResult,
-  [Action.UpdateFirmware]: EMPTY as UpdateFirmwareCallResult,
-} satisfies Record<Action, CallResult>;
+export interface CallResultTypesByAction extends Record<Action, CallResult> {
+  [Action.Authorize]: AuthorizeCallResult,
+  [Action.BootNotification]: BootNotificationCallResult,
+  [Action.CancelReservation]: CancelReservationCallResult,
+  [Action.ChangeAvailability]: ChangeAvailabilityCallResult,
+  [Action.ChangeConfiguration]: ChangeConfigurationCallResult,
+  [Action.ClearCache]: ClearCacheCallResult,
+  [Action.ClearChargingProfile]: ClearChargingProfileCallResult,
+  [Action.DataTransfer]: DataTransferCallResult,
+  [Action.DiagnosticsStatusNotification]: DiagnosticsStatusNotificationCallResult,
+  [Action.FirmwareStatusNotification]: FirmwareStatusNotificationCallResult,
+  [Action.GetCompositeSchedule]: GetCompositeScheduleCallResult,
+  [Action.GetConfiguration]: GetConfigurationCallResult,
+  [Action.GetDiagnostics]: GetDiagnosticsCallResult,
+  [Action.GetLocalListVersion]: GetLocalListVersionCallResult,
+  [Action.Heartbeat]: HeartbeatCallResult,
+  [Action.MeterValues]: MeterValuesCallResult,
+  [Action.RemoteStartTransaction]: RemoteStartTransactionCallResult,
+  [Action.RemoteStopTransaction]: RemoteStopTransactionCallResult,
+  [Action.ReserveNow]: ReserveNowCallResult,
+  [Action.Reset]: ResetCallResult,
+  [Action.SendLocalList]: SendLocalListCallResult,
+  [Action.SetChargingProfile]: SetChargingProfileCallResult,
+  [Action.StartTransaction]: StartTransactionCallResult,
+  [Action.StatusNotification]: StatusNotificationCallResult,
+  [Action.StopTransaction]: StopTransactionCallResult,
+  [Action.TriggerMessage]: TriggerMessageCallResult,
+  [Action.UnlockConnector]: UnlockConnectorCallResult,
+  [Action.UpdateFirmware]: UpdateFirmwareCallResult,
+};
 
-export type CheckedCallResult<C extends Call> = (typeof CallResultTypesByAction)[C[2]];
+export type CheckedCallResult<C extends Call> = CallResultTypesByAction[C[2]];
 
 export const checkCallResult = <T extends Call>(result: UncheckedCallResult<any>, call: T): CheckedCallResult<T> => {
   ensure.equal(result[1], call[1], `Invalid OCPP call result: id ${result[1]} does not equal call id ${call[1]}`);
