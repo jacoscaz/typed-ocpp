@@ -1,4 +1,7 @@
 
+import type { WithErrorsArr } from './utils.js';
+import { EMPTY_ARR } from './utils.js';
+
 let __ajv: any = null;
 
 const isAjv = (ajv: any): boolean => {
@@ -29,6 +32,11 @@ export const getAjv = (): any => {
   return __ajv;
 };
 
-export const ajvErrorsToString = (ajv: any): string => {
-  return ajv.errors?.map((e: any) => `${e.instancePath} ${e.message}`).join(', ') || '';
+export const ajvErrorsToString = (parseFn: WithErrorsArr, prefix: string, ajv: any) => {
+  const errors: string[] = ajv.errors?.map((e: any) => `${prefix}: ${e.instancePath} ${e.message}`) ?? EMPTY_ARR;
+  if (!parseFn.errors) {
+    parseFn.errors = errors;
+  } else {
+    parseFn.errors.push(...errors);
+  }
 };

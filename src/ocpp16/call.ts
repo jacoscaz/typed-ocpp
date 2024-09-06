@@ -3,6 +3,7 @@
 import { Action, BaseMessage, MessageType } from './utils.js';
 import { ajvErrorsToString, getAjv } from '../common/ajv.js';
 import * as ensure from '../common/ensure.js';
+import { ValidateFn } from '../common/utils.js';
 import * as schemas from './schemas.js';
 import * as types from './types.js';
 
@@ -96,14 +97,23 @@ const schemasByCommand: Record<Action, object> = {
   [Action.UpdateFirmware]: schemas.UpdateFirmwareRequest,
 };
 
-export const parseCall = (arr: [MessageType.CALL, string, ...any]): Call => {
-  arr = ensure.length(arr, 4, 'Invalid OCPP call: bad length');
-  const action = ensure.keyOf(arr[2], Action, 'Invalid OCPP call: unknown action');
-  const payload = ensure.object(arr[3], 'Invalid OCPP call: bad payload');
+export const validateCall: ValidateFn<[MessageType.CALL, string, ...any], Call> = (arr): arr is Call => {
+  validateCall.errors = null;
+  if (!ensure.length(validateCall, arr, 4, 'Invalid OCPP call: bad length')) {
+    return false;
+  }
+  const [,, action, payload] = arr;
+  if (!ensure.keyOf(validateCall, action, Action, 'Invalid OCPP call: unknown action')) {
+    return false;
+  }
+  if (!ensure.object(validateCall, payload, 'Invalid OCPP call: bad payload')) {
+    return false;
+  }
   const schema = schemasByCommand[action];
   const ajv = getAjv();
   if (!ajv.validate(schema, payload)) {
-    throw new Error(`Invalid OCPP call: ${ajvErrorsToString(ajv)}`);
+    ajvErrorsToString(validateCall, 'Invalid OCPP call', ajv);
+    return false;
   }
-  return arr as Call;
+  return true;
 };

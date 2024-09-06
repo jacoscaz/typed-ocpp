@@ -1,7 +1,8 @@
 
+import type { WithErrorsArr, ValidateFn } from '../common/utils';
+
 import { ajvErrorsToString, getAjv } from '../common/ajv.js';
 import * as ensure from '../common/ensure.js';
-import { EMPTY } from '../common/utils.js';
 
 import { Call } from './call.js';
 import { Action, BaseMessage, MessageType } from './utils.js';
@@ -210,10 +211,16 @@ const schemasByCommand: Record<Action, object> = {
   [Action.UpdateFirmware]: schemas.UpdateFirmwareResponse,
 };
 
-export const parseCallResult = (arr: [MessageType.CALLRESULT, string, ...any]): UncheckedCallResult<any> => {
-  ensure.length(arr, 3, 'Invalid OCPP call result: bad length');
-  ensure.object(arr[2], 'Invalid OCPP call result: bad payload');
-  return arr as UncheckedCallResult<any>;
+export const validateCallResult: ValidateFn<[MessageType.CALLRESULT, string, ...any], UncheckedCallResult<any>> = (arr: [MessageType.CALLRESULT, string, ...any]): arr is UncheckedCallResult<any> => {
+  validateCallResult.errors = null;
+  if (!ensure.length(validateCallResult, arr, 3, 'Invalid OCPP call result: bad length')) {
+    return false;
+  }
+  const [,, payload] = arr;
+  if (!ensure.object(validateCallResult, payload, 'Invalid OCPP call result: bad payload')) {
+    return false;
+  }
+  return true;
 };
 
 export interface CallResultTypesByAction extends Record<Action, CallResult> {
@@ -285,13 +292,21 @@ export interface CallResultTypesByAction extends Record<Action, CallResult> {
 
 export type CheckedCallResult<C extends Call> = CallResultTypesByAction[C[2]];
 
-export const checkCallResult = <T extends Call>(result: UncheckedCallResult<any>, call: T): CheckedCallResult<T> => {
-  ensure.equal(result[1], call[1], `Invalid OCPP call result: id ${result[1]} does not equal call id ${call[1]}`);
+export interface CheckCallResultFn extends WithErrorsArr {
+  <C extends Call>(value: UncheckedCallResult<any>, call: C): value is CheckedCallResult<C>;
+}
+
+export const checkCallResult: CheckCallResultFn = <C extends Call>(result: UncheckedCallResult<any>, call: C): result is CheckedCallResult<C> => {
+  checkCallResult.errors = null;
+  const [, call_id, payload] = result;
+  if (!ensure.equal(checkCallResult, call_id, call[1], `Invalid OCPP call result: id ${call_id} does not equal call id ${call[1]}`)) {
+    return false;
+  }
   const schema = schemasByCommand[call[2]];
   const ajv = getAjv();
-  if (!ajv.validate(schema, result[2])) {
-    throw new Error(`Invalid OCPP call result: ${ajvErrorsToString(ajv)}`);
+  if (!ajv.validate(schema, payload)) {
+    ajvErrorsToString(checkCallResult, 'Invalid OCPP call result', ajv);
+    return false;
   }
-  // @ts-ignore
-  return result;
+  return true;
 };
