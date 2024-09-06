@@ -1,9 +1,9 @@
 
 # `typed-ocpp`
 
-A library for type-aware validation of OCPP 1.6-J and OCPP 2.0.1 messages,
-built against the official [JSON Schema][i2] documents published by the 
-[Open Charge Alliance][i1].
+A library for fast, type-aware validation of OCPP 1.6-J and OCPP 2.0.1
+messages, built against the official [JSON Schema][i2] documents published
+by the [Open Charge Alliance][i1].
 
 [i1]: https://openchargealliance.org
 [i2]: https://json-schema.org
