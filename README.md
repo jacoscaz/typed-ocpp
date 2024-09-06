@@ -10,23 +10,6 @@ built against the official [JSON Schema][i2] documents published by the
 
 ## Usage
 
-### `setAjv()`
-
-This library requires an instance of `Ajv` with support for string formats,
-as provided by the `ajv-formats` plugin. See [https://npm.im/ajv][a1] and 
-[https://npm.im/ajv-formats][a2].
-
-```typescript
-import Ajv from 'ajv';
-import formats from 'ajv-formats';
-import { setAjv } from 'typed-ocpp';
-
-setAjv(formats(new Ajv()));
-```
-
-[a1]: https://npm.im/ajv
-[a2]: https://npm.im/ajv-formats
-
 ### `OCPP16` and `OCPP20` namespaces
 
 This library exports all functions and typings related to OCPP 1.6 and
