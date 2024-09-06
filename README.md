@@ -1,9 +1,9 @@
 
 # `typed-ocpp`
 
-A library for type-aware parsing, serialization and validation of OCPP 1.6-J
-and OCPP 2.0.1 messages, built against the official [JSON Schema][i2] documents
-published by the [Open Charge Alliance][i1].
+A library for type-aware validation of OCPP 1.6-J and OCPP 2.0.1 messages,
+built against the official [JSON Schema][i2] documents published by the 
+[Open Charge Alliance][i1].
 
 [i1]: https://openchargealliance.org
 [i2]: https://json-schema.org
@@ -40,40 +40,39 @@ Both namespaces export identical APIs while typings and schemas differ
 according to the differences in the respective OCPP versions. All of the
 examples below apply to both namespaces.
 
-### `parse()`
+### `validate()`
 
-The `parse()` function return a fully-typed and validated "view" of the
-original array. No additional transformation is applied beside the eventual
-`JSON.parse()` if a string is provided.
+The `validate()` function is a [user-defined type guard][v1] which returns
+`true`if the provided value is a spec-compliant OCPP message and `false`
+otherwise.
 
 ```typescript
 import { OCPP16 } from 'typed-ocpp';
-
-const raw = '[2,"test","BootNotification",{"chargePointModel":"model","chargePointVendor":"vendor"}]';
-const parsed = OCPP.parse(raw);
-
-Array.isArray(parsed); // true
+const value = [2,"test","BootNotification",{"chargePointModel":"model","chargePointVendor":"vendor"}];
+if (OCPP16.validate(value)) {
+  // valid
+}
 ```
 
 ```typescript
 import { OCPP20 } from 'typed-ocpp';
-
-const raw = '[2,"test","BootNotification",{ "chargingStation": { "model": "test", "vendorName": "test" }, "reason": "PowerUp"}]';
-const parsed = OCPP.parse(raw);
-
-Array.isArray(parsed); // true
+const value = [2,"test","BootNotification",{ "chargingStation": { "model": "test", "vendorName": "test" }, "reason": "PowerUp"}];
+if (OCPP16.validate(value)) {
+  // valid
+}
 ```
 
-Values returned by `parse()` have one of the following types:
+If `validate()` returns `true`, the TS compiler will infer the provided value
+to be of one of the following types:
 
 ```typescript
-OCPP16.Call                 // union of all types for Call messages
-OCPP16.CallError            // type for Call Error messages
-OCPP16.UncheckedCallResult  // generic type for Call Result messages
+OCPP16.Call                 // Union of all types of Call messages
+OCPP16.CallError            // Type for Call Error messages
+OCPP16.UncheckedCallResult  // Generic type for Call Result messages
 ```
 
 ```typescript
-OCPP20.Call                 // union of all types for Call messages
+OCPP20.Call                 // Union of all types of Call messages of all types for Call messages
 OCPP20.CallError            // type for Call Error messages
 OCPP20.UncheckedCallResult  // generic type for Call Result messages
 ```
@@ -91,6 +90,10 @@ if (OCPP16.isCall(parsed)) {
   }
 }
 ```
+
+
+
+[v1]: https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates
 
 ### `isCall()`, `isCallResult()` and `isCallError()`
 
