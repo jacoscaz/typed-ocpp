@@ -82,9 +82,9 @@ import type { UncheckedCallResult, CheckedCallResult, CallResult } from './callr
 import type { ValidateFn } from '../common/utils.js';
 
 import * as schemas_ from './schemas.js';
-import { validateCall as parseCall_ } from './call.js';
-import { validateCallError as parseCallError_ } from './callerror.js';
-import { validateCallResult as parseCallResult_, checkCallResult as checkCallResult_ } from './callresult.js';
+import { validateCall as validateCall_ } from './call.js';
+import { validateCallError as validateCallError_ } from './callerror.js';
+import { validateCallResult as validateCallResult_, checkCallResult as checkCallResult_ } from './callresult.js';
 import { Action as Action_, MessageType as MessageType_, ErrorCode as ErrorCode_ } from './utils.js';
 
 export declare namespace OCPP16 {
@@ -186,20 +186,20 @@ export namespace OCPP16 {
     validate.errors = null;
     switch (Array.isArray(data) ? data[0] : null) {
       case MessageType_.CALL:
-        if (!parseCall_(data)) {
-          validate.errors = parseCall_.errors;
+        if (!validateCall_(data)) {
+          validate.errors = validateCall_.errors;
           return false;
         }
         return true;
       case MessageType_.CALLERROR:
-        if (!parseCallError_(data)) {
-          validate.errors = parseCallError_.errors;
+        if (!validateCallError_(data)) {
+          validate.errors = validateCallError_.errors;
           return false;
         }
         return true;
       case MessageType_.CALLRESULT:
-        if (!parseCallResult_(data)) {
-          validate.errors = parseCallResult_.errors;
+        if (!validateCallResult_(data)) {
+          validate.errors = validateCallResult_.errors;
           return false;
         }
         return true;
