@@ -1,6 +1,6 @@
 
 import type { JSONSchemaType } from 'ajv';
-import type { ValidateFn } from '../common/utils.js';
+import { EMPTY_ARR, assign, type ValidateFn } from '../common/utils.js';
 
 import { Action, BaseMessage, MessageType } from './utils.js';
 import { validate } from '../common/ajv.js';
@@ -222,17 +222,22 @@ const basecall_schema: JSONSchemaType<BaseCall> = {
   maxItems: 4
 };
 
-export const validateCall: ValidateFn<any, Call> = (arr): arr is Call => {
-  validateCall.errors = null;
-  if (!validate<BaseCall>(arr, basecall_schema, 'Invalid OCPP call')) {
-    validateCall.errors = validate.errors;
-    return false;
-  }
-  const [,, action, payload] = (arr as BaseCall);
-  const schema = schemasByCommand[action];
-  if (!validate<Call[3]>(payload, schema as JSONSchemaType<Call[3]>, 'Invalid OCPP call')) {
-    validateCall.errors = validate.errors;
-    return false;
-  }
-  return true;
-};
+export const validateCall: ValidateFn<any, Call> = assign(
+  (arr: any): arr is Call => {
+    if (!validate<BaseCall>(arr, basecall_schema, 'Invalid OCPP call')) {
+      validateCall.errors = validate.errors;
+      return false;
+    }
+    const [,, action, payload] = (arr as BaseCall);
+    const schema = schemasByCommand[action];
+    if (!validate<Call[3]>(payload, schema as JSONSchemaType<Call[3]>, 'Invalid OCPP call')) {
+      validateCall.errors = validate.errors;
+      return false;
+    }
+    validateCall.errors = EMPTY_ARR;
+    return true;
+  },
+  { errors: EMPTY_ARR }
+);
+
+validateCall.errors = EMPTY_ARR;

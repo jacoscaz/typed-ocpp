@@ -1,12 +1,15 @@
 
-export const EMPTY = Object.freeze(Object.create(null));
-
-export const EMPTY_ARR = Object.freeze([]);
+export const EMPTY_ARR: [] = Object.freeze([]) as [];
 
 export interface WithErrorsArr {
-  errors?: string[] | null;
+  errors: string[];
 }
 
 export interface ValidateFn<I, O extends I> extends WithErrorsArr {
   (value: I): value is O;
+  errors: string[];
 }
+
+export const assign = <TGT extends {}, SRC extends {}>(target: TGT, source: SRC): TGT & SRC => {
+  return Object.assign(target, source); 
+};

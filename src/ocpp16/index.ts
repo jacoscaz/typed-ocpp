@@ -79,7 +79,7 @@ import type { CallError } from './callerror.js';
 
 import type { UncheckedCallResult, CheckedCallResult, CallResult } from './callresult.js';
 
-import type { ValidateFn } from '../common/utils.js';
+import { EMPTY_ARR, type ValidateFn } from '../common/utils.js';
 
 import * as schemas_ from './schemas.js';
 import { validateCall as validateCall_ } from './call.js';
@@ -182,32 +182,34 @@ export namespace OCPP16 {
   export const checkCallResult = checkCallResult_;
   export const schemas = schemas_;
 
-  export const validate: ValidateFn<any, OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>> = (data: any): data is OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any> => {
-    validate.errors = null;
+  export const validate = ((data: any): data is OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any> => {
     switch (Array.isArray(data) ? data[0] : null) {
       case MessageType_.CALL:
         if (!validateCall_(data)) {
           validate.errors = validateCall_.errors;
           return false;
         }
+        validate.errors = EMPTY_ARR;
         return true;
       case MessageType_.CALLERROR:
         if (!validateCallError_(data)) {
           validate.errors = validateCallError_.errors;
           return false;
         }
+        validate.errors = EMPTY_ARR;
         return true;
       case MessageType_.CALLRESULT:
         if (!validateCallResult_(data)) {
           validate.errors = validateCallResult_.errors;
           return false;
         }
+        validate.errors = EMPTY_ARR;
         return true;
       default:
         validate.errors = ['Invalid OCPP message: invalid message type or not an array'];
         return false;
     }
-  };
+  }) as ValidateFn<any, OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>>;
 
   export const isCall = (msg: OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>): msg is OCPP16.Call => {
     return msg[0] === MessageType_.CALL;

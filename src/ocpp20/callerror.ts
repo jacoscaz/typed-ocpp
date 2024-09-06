@@ -1,6 +1,6 @@
 
 import type { JSONSchemaType } from 'ajv';
-import type { ValidateFn } from '../common/utils.js';
+import { assign, EMPTY_ARR, type ValidateFn } from '../common/utils.js';
 
 import { validate } from '../common/ajv.js';
 import { MessageType, ErrorCode, BaseMessage } from './utils.js';
@@ -20,11 +20,14 @@ const callerror_schema: JSONSchemaType<CallError> = {
   maxItems: 5,
 };
 
-export const validateCallError: ValidateFn<any, CallError> = (arr): arr is CallError => {
-  validateCallError.errors = null;
-  if (!validate<CallError>(arr, callerror_schema, 'Invalid OCPP call error')) {
-    validateCallError.errors = validate.errors;
-    return false;
-  }
-  return true;
-};
+export const validateCallError: ValidateFn<any, CallError> = assign(
+  (arr: any): arr is CallError => {
+    if (!validate<CallError>(arr, callerror_schema, 'Invalid OCPP call error')) {
+      validateCallError.errors = validate.errors;
+      return false;
+    }
+    validateCallError.errors = EMPTY_ARR;
+    return true;
+  },
+  { errors: EMPTY_ARR },
+);

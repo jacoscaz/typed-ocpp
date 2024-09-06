@@ -1,10 +1,11 @@
 
 import type { JSONSchemaType } from 'ajv';
-import type { WithErrorsArr, ValidateFn } from '../common/utils';
+import type { WithErrorsArr, ValidateFn } from '../common/utils.js';
 
 import { Call } from './call.js';
 
 import { validate } from '../common/ajv.js';
+import { EMPTY_ARR, assign } from '../common/utils.js';
 
 import { Action, BaseMessage, MessageType } from './utils.js';
 
@@ -115,14 +116,17 @@ const schemasByCommand: Record<Action, object> = {
   [Action.UpdateFirmware]: schemas.UpdateFirmwareResponse,
 };
 
-export const validateCallResult: ValidateFn<any, UncheckedCallResult<any>> = (arr): arr is UncheckedCallResult<any> => {
-  validateCallResult.errors = null;
-  if (!validate<UncheckedCallResult<{}>>(arr, unchecked_call_result_schema, 'Invalid OCPP call result')) {
-    validateCallResult.errors = validate.errors;
-    return false;
-  }
-  return true;
-};
+export const validateCallResult: ValidateFn<any, UncheckedCallResult<any>> = assign(
+  (arr: any): arr is UncheckedCallResult<any> => {
+    if (!validate<UncheckedCallResult<{}>>(arr, unchecked_call_result_schema, 'Invalid OCPP call result')) {
+      validateCallResult.errors = validate.errors;
+      return false;
+    }
+    validateCallResult.errors = EMPTY_ARR;
+    return true;
+  },
+  { errors: EMPTY_ARR },
+);
 
 export interface CallResultTypesByAction extends Record<Action, CallResult> {
   [Action.Authorize]: AuthorizeCallResult,
@@ -159,19 +163,23 @@ export type CheckedCallResult<C extends Call> = CallResultTypesByAction[C[2]];
 
 export interface CheckCallResultFn extends WithErrorsArr {
   <C extends Call>(value: UncheckedCallResult<any>, call: C): value is CheckedCallResult<C>;
+  errors: string[];
 }
 
-export const checkCallResult: CheckCallResultFn = <C extends Call>(result: UncheckedCallResult<any>, call: C): result is CheckedCallResult<C> => {
-  checkCallResult.errors = null;
-  const [, call_id, payload] = result;
-  if (call_id !== call[1]) {
-    checkCallResult.errors = [`Invalid OCPP call result: id ${call_id} does not equal call id ${call[1]}`];
-    return false;
-  }
-  const schema = schemasByCommand[call[2]];
-  if (!validate<CallResult[2]>(payload, schema as JSONSchemaType<CallResult[2]>, 'Invalid OCPP call result')) {
-    checkCallResult.errors = validate.errors;
-    return false;
-  }
-  return true;
-};
+export const checkCallResult: CheckCallResultFn = assign(
+  <C extends Call>(result: UncheckedCallResult<any>, call: C): result is CheckedCallResult<C> => {
+    const [, call_id, payload] = result;
+    if (call_id !== call[1]) {
+      checkCallResult.errors = [`Invalid OCPP call result: id ${call_id} does not equal call id ${call[1]}`];
+      return false;
+    }
+    const schema = schemasByCommand[call[2]];
+    if (!validate<CallResult[2]>(payload, schema as JSONSchemaType<CallResult[2]>, 'Invalid OCPP call result')) {
+      checkCallResult.errors = validate.errors;
+      return false;
+    }
+    checkCallResult.errors = EMPTY_ARR;
+    return true;
+  },
+  { errors: EMPTY_ARR },
+);
