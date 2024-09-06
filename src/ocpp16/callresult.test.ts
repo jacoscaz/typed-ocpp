@@ -2,8 +2,6 @@
 import { OCPP16 } from './index.js';
 import { describe, it } from 'node:test';
 
-import '../common/ajv.test.js';
-
 describe('OCPP16 - CheckedCallResult', () => {
 
   it('CheckedCallResult<AuthorizeCall> extends AuthorizeCallResult', () => {

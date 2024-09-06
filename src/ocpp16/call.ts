@@ -1,9 +1,10 @@
 
+import type { JSONSchemaType } from 'ajv';
+import type { ValidateFn } from '../common/utils.js';
 
 import { Action, BaseMessage, MessageType } from './utils.js';
-import { ajvErrorsToString, getAjv } from '../common/ajv.js';
-import * as ensure from '../common/ensure.js';
-import { ValidateFn } from '../common/utils.js';
+import { validate } from '../common/ajv.js';
+
 import * as schemas from './schemas.js';
 import * as types from './types.js';
 
@@ -97,22 +98,30 @@ const schemasByCommand: Record<Action, object> = {
   [Action.UpdateFirmware]: schemas.UpdateFirmwareRequest,
 };
 
-export const validateCall: ValidateFn<[MessageType.CALL, string, ...any], Call> = (arr): arr is Call => {
+type BaseCall = BaseMessage<MessageType.CALL, [action: Action, payload: {}]>;
+
+const basecall_schema: JSONSchemaType<BaseCall> = {
+  type: 'array',
+  items: [
+    { type: 'number', enum: [MessageType.CALL] },
+    { type: 'string'  },
+    { type: 'string', enum: Object.values(Action) },
+    { type: 'object', additionalProperties: true },
+  ],
+  minItems: 4,
+  maxItems: 4
+};
+
+export const validateCall: ValidateFn<any, Call> = (arr): arr is Call => {
   validateCall.errors = null;
-  if (!ensure.length(validateCall, arr, 4, 'Invalid OCPP call: bad length')) {
+  if (!validate<BaseCall>(arr, basecall_schema, 'Invalid OCPP call')) {
+    validateCall.errors = validate.errors;
     return false;
   }
-  const [,, action, payload] = arr;
-  if (!ensure.keyOf(validateCall, action, Action, 'Invalid OCPP call: unknown action')) {
-    return false;
-  }
-  if (!ensure.object(validateCall, payload, 'Invalid OCPP call: bad payload')) {
-    return false;
-  }
+  const [,, action, payload] = (arr as BaseCall);
   const schema = schemasByCommand[action];
-  const ajv = getAjv();
-  if (!ajv.validate(schema, payload)) {
-    ajvErrorsToString(validateCall, 'Invalid OCPP call', ajv);
+  if (!validate<Call[3]>(payload, schema as JSONSchemaType<Call[3]>, 'Invalid OCPP call')) {
+    validateCall.errors = validate.errors;
     return false;
   }
   return true;

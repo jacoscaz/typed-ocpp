@@ -5,8 +5,6 @@ import { OCPP20 } from './index.js';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 
-import './common/ajv.test.js';
-
 describe('schemas', () => {
 
   it('The OCPP16 namespace exports schemas', () => {

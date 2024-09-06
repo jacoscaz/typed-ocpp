@@ -2,8 +2,6 @@
 import { OCPP20 } from './index.js';
 import { describe, it } from 'node:test';
 
-import '../common/ajv.test.js';
-
 describe('OCPP20 - CheckedCallResult', () => {
 
   describe('types', () => {

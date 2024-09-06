@@ -158,7 +158,7 @@ import type {
 import type { ValidateFn } from '../common/utils.js';
 
 import * as schemas_ from './schemas.js';
-import * as ensure from '../common/ensure.js';
+
 import { validateCall as parseCall_ } from './call.js';
 import { validateCallError as parseCallError_ } from './callerror.js';
 import { validateCallResult as parseCallResult_, checkCallResult as checkCallResult_ } from './callresult.js';
@@ -337,34 +337,24 @@ export namespace OCPP20 {
 
   export const validate: ValidateFn<any, OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult<any>> = (data: any): data is OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult<any> => {
     validate.errors = null;
-    if (!ensure.array(validate, data, 'Invalid OCPP message: not an array')) {
-      return false;
-    }
-    const [msg_type, call_id] = data;
-    if (!ensure.string(validate, call_id, 'Invalid OCPP message: bad call id')) {
-      return false;
-    }
-    switch (msg_type) {
+    switch (Array.isArray(data) ? data[0] : null) {
       case MessageType_.CALL:
-        if (!parseCall_(data as [MessageType_.CALL, string, ...any])) {
+        if (!parseCall_(data)) {
           validate.errors = parseCall_.errors;
           return false;
         }
-        validate.errors = null;
         return true;
       case MessageType_.CALLERROR:
-        if (!parseCallError_(data as [MessageType_.CALLERROR, string, ...any])) {
+        if (!parseCallError_(data)) {
           validate.errors = parseCallError_.errors;
           return false;
         }
-        validate.errors = null;
         return true;
       case MessageType_.CALLRESULT:
-        if (!parseCallResult_(data as [MessageType_.CALLRESULT, string, ...any])) {
+        if (!parseCallResult_(data)) {
           validate.errors = parseCallResult_.errors;
           return false;
         }
-        validate.errors = null;
         return true;
       default:
         validate.errors = ['Invalid OCPP message: invalid message type'];

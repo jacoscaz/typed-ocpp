@@ -1,8 +1,8 @@
 
+import type { JSONSchemaType } from 'ajv';
 import type { WithErrorsArr, ValidateFn } from '../common/utils';
 
-import { ajvErrorsToString, getAjv } from '../common/ajv.js';
-import * as ensure from '../common/ensure.js';
+import { validate } from '../common/ajv.js';
 
 import { Call } from './call.js';
 import { Action, BaseMessage, MessageType } from './utils.js';
@@ -10,6 +10,17 @@ import * as schemas from './schemas.js';
 import * as types from './types.js';
 
 export type UncheckedCallResult<P extends Record<string, any> | null> = BaseMessage<MessageType.CALLRESULT, [payload: P]>;
+
+const unchecked_call_result_schema: JSONSchemaType<UncheckedCallResult<{}>> = {
+  type: 'array',
+  items: [
+    { type: 'number', enum: [MessageType.CALLRESULT] },
+    { type: 'string' },
+    { type: 'object', additionalProperties: true },
+  ],
+  minItems: 3,
+  maxItems: 3,
+};
 
 export type AuthorizeCallResult = UncheckedCallResult<types.AuthorizeResponse>;
 export type BootNotificationCallResult = UncheckedCallResult<types.BootNotificationResponse>;
@@ -211,13 +222,10 @@ const schemasByCommand: Record<Action, object> = {
   [Action.UpdateFirmware]: schemas.UpdateFirmwareResponse,
 };
 
-export const validateCallResult: ValidateFn<[MessageType.CALLRESULT, string, ...any], UncheckedCallResult<any>> = (arr: [MessageType.CALLRESULT, string, ...any]): arr is UncheckedCallResult<any> => {
+export const validateCallResult: ValidateFn<any, UncheckedCallResult<any>> = (arr): arr is UncheckedCallResult<any> => {
   validateCallResult.errors = null;
-  if (!ensure.length(validateCallResult, arr, 3, 'Invalid OCPP call result: bad length')) {
-    return false;
-  }
-  const [,, payload] = arr;
-  if (!ensure.object(validateCallResult, payload, 'Invalid OCPP call result: bad payload')) {
+  if (!validate<UncheckedCallResult<{}>>(arr, unchecked_call_result_schema, 'Invalid OCPP call result')) {
+    validateCallResult.errors = validate.errors;
     return false;
   }
   return true;
@@ -299,13 +307,13 @@ export interface CheckCallResultFn extends WithErrorsArr {
 export const checkCallResult: CheckCallResultFn = <C extends Call>(result: UncheckedCallResult<any>, call: C): result is CheckedCallResult<C> => {
   checkCallResult.errors = null;
   const [, call_id, payload] = result;
-  if (!ensure.equal(checkCallResult, call_id, call[1], `Invalid OCPP call result: id ${call_id} does not equal call id ${call[1]}`)) {
+  if (call_id !== call[1]) {
+    checkCallResult.errors = [`Invalid OCPP call result: id ${call_id} does not equal call id ${call[1]}`];
     return false;
   }
   const schema = schemasByCommand[call[2]];
-  const ajv = getAjv();
-  if (!ajv.validate(schema, payload)) {
-    ajvErrorsToString(checkCallResult, 'Invalid OCPP call result', ajv);
+  if (!validate<CallResult[2]>(payload, schema as JSONSchemaType<CallResult[2]>, 'Invalid OCPP call result')) {
+    checkCallResult.errors = validate.errors;
     return false;
   }
   return true;

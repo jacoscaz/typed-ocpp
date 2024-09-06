@@ -3,7 +3,6 @@ import { OCPP20 } from './index.js';
 import { describe, it } from 'node:test';
 import { deepStrictEqual } from 'node:assert';
 
-import '../common/ajv.test.js';
 import { assertNil } from '../common/utils.test.js';
 
 const { MessageType, Action, validate } = OCPP20;
