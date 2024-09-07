@@ -78,17 +78,18 @@ if (!OCPP16.validate(value)) {
 ### `validateCall()`, `validateCallError()` and `validateCallResult()`
 
 The `validateCall()`, `validateCallError()` and `validateCallResult()`
-functions are user-defined type guards specific to each type of message
-defined by the OCPP specs: **_call_**, **_call error_** and **_call result_**.
+functions are user-defined, validating type guards specific to each type of
+message defined by the OCPP specs: **_call_**, **_call error_** and 
+**_call result_**.
 
-These behave in the way as the `validate()` function but only return `true`
-when provided with the corresponding message type. Validation errors can be
-retrieved via the `.errors` property.
+These functions behave in the way as the `validate()` function but only return
+`true` when provided with values of the corresponding message type. Validation
+errors can be retrieved via the `.errors` property.
 
 ### `isCall()`, `isCallResult()` and `isCallError()`
 
 The `isCall()`, `isCallResult()` and `isCallError()` functions are
-non-validating, user-defined type guards that facilitate identifying the type
+user-defined, non-validating type guards that facilitate identifying the type
 of a valid message: 
 
 ```typescript
@@ -109,16 +110,20 @@ if (OCPP16.validate(message)) {
 
 Post-validation, **_call result_** messages are inferred by the TS compiler to
 be of the `UncheckedCallResult` type, which is a generic type that does not
-constrain the call result's payload to any specific shape.
+constrain the **_call result_**'s payload to any specific shape as doing so
+requires the former against the originating **_call_** message.
 
-Complete validation of a **_call result_** message requires checking it against
-its respective and originating **_call_** message using the `checkCallResult()`
-user-defined, validating type guard.
+Complete validation of a **_call result_** message against its originating
+**_call_** message can be done through the `checkCallResult()` user-defined,
+validating type guard.
 
-If `checkCallResult()` returns `true` the provided **_call result_** message is
-guaranteed to match the provided **_call_** message in terms of being of the
-corresponding type, sharing the same _call identifier_ and having a valid
-payload.
+If `checkCallResult()` returns `true`, the provided **_call result_** message 
+is guaranteed to match the provided **_call_** message in terms of:
+
+- Matching the expected type, incl. the payload (for example: being of type
+  `OCPP16.BootNotificationCallResult` given an originating 
+  `OCPP16.BootNotificationCall` essage).
+- Sharing the same _call identifier_ with the originating **_call_** message.
 
 ```typescript
 const call = [
@@ -140,17 +145,13 @@ if (call[2] === OCPP16.Action.BootNotification) {
   //     `result` to `OCPP16.BootNotificationCallResult`             
   if (OCPP16.checkCallResult(result, call)) {
     // Inferred as "Accepted" | "Pending" | "Rejected"
-   result[2].status; 
+    result[2].status; 
   } else {
-
+    // The `result` message does not match the originating `call` message
+    console.log(OCPP16.checkCallResult.errors);
   }
 }
 ```
-
-When returning `true`, the `checkCallResult()` leads the TS compiler to infer
-the generic type `CheckedCallResult<C extends Call>`, which resolves to the
-specific type of **_call result_** message that corresponds to the type of
-**_call_** message provided as the `C` type argument. See below.
 
 Just like `validate()`, when `checkCallResult()` returns `false` it stores
 validation errors in the `checkCallResult.errors` array.
@@ -178,6 +179,13 @@ OCPP16.UncheckedCallResult
 // Generic type of Call Result message that resolves to the specific type of
 // Call Result message matching the provided type of Call message "C"
 OCPP16.CheckedCallResult<C extends OCPP16.Call>
+
+// Message-specific types
+OCPP16.AuthorizationCall
+OCPP16.AuthorizationCallResult
+OCPP16.BootNotificationCall
+OCPP16.BootNotificationCallResult
+/* ... */
 ```                   
 
 #### Types for specific messages
@@ -193,6 +201,11 @@ OCPP16.MeterValuesCallResult
 ```
 
 #### The `CheckedCallResult<C extends Call>` type
+
+When returning `true`, the `checkCallResult()` function leads the TS compiler
+to infer the generic type `CheckedCallResult<C extends Call>`, which resolves
+to the specific type of **_call result_** message that corresponds to the type
+of **_call_** message provided as the `C` type argument.
 
 The generic `CheckedCallResult<C extends Call>` type can also be used on its
 own to model a **_call result_** message after a known or inferred type of
@@ -214,8 +227,6 @@ const result: OCPP16.CheckedCallResult<OCPP16.GetConfigurationCall> = [
 ```
 
 #### Utility enums
-
-The following enumerations are used within these primary types:
 
 ```typescript
 OCPP16.MessageType          // enum of message types (CALL = 2, CALLRESULT = 3, CALLERROR = 4)
