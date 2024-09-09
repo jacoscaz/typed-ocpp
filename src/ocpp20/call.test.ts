@@ -3,8 +3,6 @@ import { OCPP20 } from './index.js';
 import { describe, it } from 'node:test';
 import { deepStrictEqual } from 'node:assert';
 
-import { assertNil } from '../common/utils.test.js';
-
 const { MessageType, Action, validate } = OCPP20;
 
 describe('OCPP20 - Call', () => {
@@ -33,7 +31,7 @@ describe('OCPP20 - Call', () => {
         },
         reason: 'PowerUp',
       }]), true);
-      assertNil(validate.errors);
+      deepStrictEqual(validate.errors, []);
     });
 
     it('invalid notification (missing model)', () => {
