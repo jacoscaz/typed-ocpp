@@ -82,14 +82,15 @@ functions are user-defined, validating type guards specific to each type of
 message defined by the OCPP specs: **_call_**, **_call error_** and 
 **_call result_**.
 
-These functions behave in the way as the `validate()` function but only return
-`true` when provided with values of the corresponding message type. Validation
-errors can be retrieved via the `.errors` property.
+These functions behave in the same way as the `validate()` function but only
+return `true` when provided with values of the corresponding message type.
+Validation errors can be retrieved via the `.errors` property, just as with
+`validate()`. 
 
 ### `isCall()`, `isCallResult()` and `isCallError()`
 
 The `isCall()`, `isCallResult()` and `isCallError()` functions are
-user-defined, non-validating type guards that facilitate identifying the type
+user-defined, _non-validating_ type guards that facilitate identifying the type
 of a valid message: 
 
 ```typescript
@@ -111,7 +112,7 @@ if (OCPP16.validate(message)) {
 Post-validation, **_call result_** messages are inferred by the TS compiler to
 be of the `UncheckedCallResult` type, which is a generic type that does not
 constrain the **_call result_**'s payload to any specific shape as doing so
-requires the former against the originating **_call_** message.
+requires matching against the originating **_call_** message.
 
 Complete validation of a **_call result_** message against its originating
 **_call_** message can be done through the `checkCallResult()` user-defined,
