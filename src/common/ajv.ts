@@ -1,34 +1,25 @@
 
-let __ajv: any = null;
+import type { JSONSchemaType } from 'ajv'; 
 
-const isAjv = (ajv: any): boolean => {
-  return !!ajv 
-    && typeof ajv === 'object' 
-    && typeof ajv.validate === 'function'
-  ;
-};
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
+import { EMPTY_ARR } from './utils.js';
 
-export const setAjv = (ajv: any) => {
-  if (!isAjv(ajv)) {
-    throw new Error(`
-      The argument provided to \`setAjv()\` does not look like an instance of
-      Ajv. See https://npm.im/typed-ocpp.
-    `);
-  }
-  __ajv = ajv;
-};
+const ajv = addFormats(new Ajv());
 
-export const getAjv = (): any => {
-  if (!isAjv(__ajv)) {
-    throw new Error(`
-      The typed-ocpp library requires an instance of Ajv (https://npm.im/ajv)
-      extended with the ajv-formats plugin (https://npm.im/ajv-formats) to be
-      provided using \`setAjv()\`. See https://npm.im/typed-ocpp.
-    `);
-  }
-  return __ajv;
-};
+export interface AjvValidateFn {
+  <T>(value: any, schema: JSONSchemaType<T>, prefix: string): value is T;
+  errors: string[];
+}
 
-export const ajvErrorsToString = (ajv: any): string => {
-  return ajv.errors?.map((e: any) => `${e.instancePath} ${e.message}`).join(', ') || '';
-};
+export const validate: AjvValidateFn = Object.assign(
+  <T>(value: any, schema: JSONSchemaType<T>, prefix: string): value is T => {
+    if (ajv.validate<T>(schema, value)) {
+      validate.errors = EMPTY_ARR;
+      return true;
+    }
+    validate.errors = ajv.errors!.map((e: any) => `${prefix}: ${e.instancePath} ${e.message}`);
+    return false;
+  }, 
+  { errors: EMPTY_ARR },
+) ;

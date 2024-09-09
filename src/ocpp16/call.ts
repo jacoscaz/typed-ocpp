@@ -1,8 +1,10 @@
 
+import type { JSONSchemaType } from 'ajv';
+import { EMPTY_ARR, assign, type ValidateFn } from '../common/utils.js';
 
 import { Action, BaseMessage, MessageType } from './utils.js';
-import { ajvErrorsToString, getAjv } from '../common/ajv.js';
-import * as ensure from '../common/ensure.js';
+import { validate } from '../common/ajv.js';
+
 import * as schemas from './schemas.js';
 import * as types from './types.js';
 
@@ -96,14 +98,36 @@ const schemasByCommand: Record<Action, object> = {
   [Action.UpdateFirmware]: schemas.UpdateFirmwareRequest,
 };
 
-export const parseCall = (arr: [MessageType.CALL, string, ...any]): Call => {
-  arr = ensure.length(arr, 4, 'Invalid OCPP call: bad length');
-  const action = ensure.keyOf(arr[2], Action, 'Invalid OCPP call: unknown action');
-  const payload = ensure.object(arr[3], 'Invalid OCPP call: bad payload');
-  const schema = schemasByCommand[action];
-  const ajv = getAjv();
-  if (!ajv.validate(schema, payload)) {
-    throw new Error(`Invalid OCPP call: ${ajvErrorsToString(ajv)}`);
-  }
-  return arr as Call;
+type BaseCall = BaseMessage<MessageType.CALL, [action: Action, payload: {}]>;
+
+const basecall_schema: JSONSchemaType<BaseCall> = {
+  type: 'array',
+  items: [
+    { type: 'number', enum: [MessageType.CALL] },
+    { type: 'string'  },
+    { type: 'string', enum: Object.values(Action) },
+    { type: 'object', additionalProperties: true },
+  ],
+  minItems: 4,
+  maxItems: 4
 };
+
+export const validateCall: ValidateFn<any, Call> = assign(
+  (arr: any): arr is Call => {
+    if (!validate<BaseCall>(arr, basecall_schema, 'Invalid OCPP call')) {
+      validateCall.errors = validate.errors;
+      return false;
+    }
+    const [,, action, payload] = (arr as BaseCall);
+    const schema = schemasByCommand[action];
+    if (!validate<Call[3]>(payload, schema as JSONSchemaType<Call[3]>, 'Invalid OCPP call')) {
+      validateCall.errors = validate.errors;
+      return false;
+    }
+    validateCall.errors = EMPTY_ARR;
+    return true;
+  },
+  { errors: EMPTY_ARR },
+);
+
+validateCall.errors = EMPTY_ARR;

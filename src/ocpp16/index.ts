@@ -79,11 +79,12 @@ import type { CallError } from './callerror.js';
 
 import type { UncheckedCallResult, CheckedCallResult, CallResult } from './callresult.js';
 
-import * as ensure from '../common/ensure.js';
+import { assign, EMPTY_ARR, type ValidateFn } from '../common/utils.js';
+
 import * as schemas_ from './schemas.js';
-import { parseCall as parseCall_ } from './call.js';
-import { parseCallError as parseCallError_ } from './callerror.js';
-import { parseCallResult as parseCallResult_, checkCallResult as checkCallResult_ } from './callresult.js';
+import { validateCall as validateCall_ } from './call.js';
+import { validateCallError as validateCallError_ } from './callerror.js';
+import { validateCallResult as validateCallResult_, checkCallResult as checkCallResult_ } from './callresult.js';
 import { Action as Action_, MessageType as MessageType_, ErrorCode as ErrorCode_ } from './utils.js';
 
 export declare namespace OCPP16 {
@@ -181,39 +182,51 @@ export namespace OCPP16 {
   export const checkCallResult = checkCallResult_;
   export const schemas = schemas_;
 
-  export const maybeParse = (data: string | any[]): any[] => {
-    const parsed = typeof data === 'string' ? JSON.parse(data) : data;
-    return ensure.array(parsed, 'Invalid OCPP message: not an array');
-  };
+  export const validateCall = validateCall_;
+  export const validateCallError = validateCallError_;
+  export const validateCallResult = validateCallResult_;
 
-  export const parse = (data: string | any[]): Call | CallError | UncheckedCallResult<any> => {
-    const arr = maybeParse(data);
-    ensure.string(arr[1], 'Invalid OCPP message: invalid message id');
-    switch (arr[0]) {
-      case MessageType_.CALL:
-        return parseCall_(arr as [MessageType_.CALL, string, ...any]);
-      case MessageType_.CALLERROR:
-        return parseCallError_(arr as [MessageType_.CALLERROR, string, ...any]);
-      case MessageType_.CALLRESULT:
-        return parseCallResult_(arr as [MessageType_.CALLRESULT, string, ...any]);
-      default:
-        throw new Error('Invalid OCPP message: invalid message type');
-    }
-  };
+  export const validate: ValidateFn<any, OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>> = assign(
+    (data: any): data is OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any> => {
+      switch (Array.isArray(data) ? data[0] : null) {
+        case MessageType_.CALL:
+          if (!validateCall_(data)) {
+            validate.errors = validateCall_.errors;
+            return false;
+          }
+          validate.errors = EMPTY_ARR;
+          return true;
+        case MessageType_.CALLERROR:
+          if (!validateCallError_(data)) {
+            validate.errors = validateCallError_.errors;
+            return false;
+          }
+          validate.errors = EMPTY_ARR;
+          return true;
+        case MessageType_.CALLRESULT:
+          if (!validateCallResult_(data)) {
+            validate.errors = validateCallResult_.errors;
+            return false;
+          }
+          validate.errors = EMPTY_ARR;
+          return true;
+        default:
+          validate.errors = ['Invalid OCPP message: invalid message type or not an array'];
+          return false;
+      }
+    },
+    { errors: EMPTY_ARR },
+  );
 
-  export const stringify = (arr: Call | CallError | CallResult | UncheckedCallResult<any>): string => {
-    return JSON.stringify(arr);
-  };
-
-  export const isCall = (msg: Call | CallError | UncheckedCallResult<any>): msg is Call => {
+  export const isCall = (msg: OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>): msg is OCPP16.Call => {
     return msg[0] === MessageType_.CALL;
   };
 
-  export const isCallError = (msg: Call | CallError | UncheckedCallResult<any>): msg is CallError => {
+  export const isCallError = (msg: OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>): msg is OCPP16.CallError => {
     return msg[0] === MessageType_.CALLERROR;
   };
 
-  export const isCallResult = (msg: Call | CallError | UncheckedCallResult<any>): msg is CallResult => {
+  export const isCallResult = (msg: OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>): msg is OCPP16.CallResult => {
     return msg[0] === MessageType_.CALLRESULT;
   };
 
