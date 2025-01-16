@@ -137,7 +137,11 @@ import type { Call } from './call.js';
 
 import type { CallError } from './callerror.js';
 
-import type { UncheckedCallResult, CheckedCallResult, CallResult } from './callresult.js';
+import type { 
+  CallResult,
+  CheckedCallResult,
+  UncheckedCallResult,
+} from './callresult.js';
 
 import type {
   UnitOfMeasureType,
@@ -339,8 +343,8 @@ export namespace OCPP20 {
   export const validateCallError = validateCallError_;
   export const validateCallResult = validateCallResult_;
 
-  export const validate: ValidateFn<any, OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult<any>> = assign(
-    (data: any): data is OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult<any> => {
+  export const validate: ValidateFn<any, OCPP20.Call | OCPP20.CallError | OCPP20.CallResult> = assign(
+    (data: any): data is OCPP20.Call | OCPP20.CallError | OCPP20.CallResult => {
       switch (Array.isArray(data) ? data[0] : null) {
         case MessageType_.CALL:
           if (!validateCall_(data)) {
@@ -371,15 +375,15 @@ export namespace OCPP20 {
     { errors: EMPTY_ARR },
   );
 
-  export const isCall = (msg: OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult<any>): msg is OCPP20.Call => {
+  export const isCall = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.Call> => {
     return msg[0] === MessageType_.CALL;
   };
 
-  export const isCallError = (msg: OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult<any>): msg is OCPP20.CallError => {
+  export const isCallError = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.CallError> => {
     return msg[0] === MessageType_.CALLERROR;
   };
 
-  export const isCallResult = (msg: OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult<any>): msg is OCPP20.CallResult => {
+  export const isCallResult = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.CallResult> => {
     return msg[0] === MessageType_.CALLRESULT;
   };
 

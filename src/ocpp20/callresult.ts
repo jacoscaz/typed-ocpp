@@ -1,15 +1,16 @@
 
 import type { JSONSchemaType } from 'ajv';
-import { type WithErrorsArr, type ValidateFn, EMPTY_ARR, assign } from '../common/utils.js';
+import type { Call } from './call.js';
+import type { BaseMessage } from './utils.js';
+import type { WithErrorsArr, ValidateFn } from '../common/utils.js';
 
+import { EMPTY_ARR, assign } from '../common/utils.js';
 import { validate } from '../common/ajv.js';
-
-import { Call } from './call.js';
-import { Action, BaseMessage, MessageType } from './utils.js';
+import { Action, MessageType } from './utils.js';
 import * as schemas from './schemas.js';
 import * as types from './types.js';
 
-export type UncheckedCallResult<P extends Record<string, any> | null> = BaseMessage<MessageType.CALLRESULT, [payload: P]>;
+export type UncheckedCallResult<P extends {} = {}> = BaseMessage<MessageType.CALLRESULT, [payload: P]>;
 
 const unchecked_call_result_schema: JSONSchemaType<UncheckedCallResult<{}>> = {
   type: 'array',
@@ -222,9 +223,9 @@ const schemasByCommand: Record<Action, object> = {
   [Action.UpdateFirmware]: schemas.UpdateFirmwareResponse,
 };
 
-export const validateCallResult: ValidateFn<any, UncheckedCallResult<any>> = assign(
-  (arr: any): arr is UncheckedCallResult<any> => {
-    if (!validate<UncheckedCallResult<{}>>(arr, unchecked_call_result_schema, 'Invalid OCPP call result')) {
+export const validateCallResult: ValidateFn<any, UncheckedCallResult> = assign(
+  (arr: any): arr is UncheckedCallResult => {
+    if (!validate<UncheckedCallResult>(arr, unchecked_call_result_schema, 'Invalid OCPP call result')) {
       validateCallResult.errors = validate.errors;
       return false;
     }
@@ -304,12 +305,12 @@ export interface CallResultTypesByAction extends Record<Action, CallResult> {
 export type CheckedCallResult<C extends Call> = CallResultTypesByAction[C[2]];
 
 export interface CheckCallResultFn extends WithErrorsArr {
-  <C extends Call>(value: UncheckedCallResult<any>, call: C): value is CheckedCallResult<C>;
+  <C extends Call>(value: CheckedCallResult<Call>, call: C): value is CheckedCallResult<C>;
   errors: string[];
 }
 
 export const checkCallResult: CheckCallResultFn = assign(
-  <C extends Call>(result: UncheckedCallResult<any>, call: C): result is CheckedCallResult<C> => {
+  <C extends Call>(result: CheckedCallResult<Call>, call: C): result is CheckedCallResult<C> => {
     const [, call_id, payload] = result;
     if (call_id !== call[1]) {
       checkCallResult.errors = [`Invalid OCPP call result: id ${call_id} does not equal call id ${call[1]}`];

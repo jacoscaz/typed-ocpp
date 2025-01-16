@@ -77,7 +77,11 @@ import type { Call } from './call.js';
 
 import type { CallError } from './callerror.js';
 
-import type { UncheckedCallResult, CheckedCallResult, CallResult } from './callresult.js';
+import type { 
+  CallResult,
+  CheckedCallResult,
+  UncheckedCallResult,
+} from './callresult.js';
 
 import { assign, EMPTY_ARR, type ValidateFn } from '../common/utils.js';
 
@@ -186,8 +190,8 @@ export namespace OCPP16 {
   export const validateCallError = validateCallError_;
   export const validateCallResult = validateCallResult_;
 
-  export const validate: ValidateFn<any, OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>> = assign(
-    (data: any): data is OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any> => {
+  export const validate: ValidateFn<any, OCPP16.Call | OCPP16.CallError | OCPP16.CallResult> = assign(
+    (data: any): data is OCPP16.Call | OCPP16.CallError | OCPP16.CallResult => {
       switch (Array.isArray(data) ? data[0] : null) {
         case MessageType_.CALL:
           if (!validateCall_(data)) {
@@ -218,15 +222,15 @@ export namespace OCPP16 {
     { errors: EMPTY_ARR },
   );
 
-  export const isCall = (msg: OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>): msg is OCPP16.Call => {
+  export const isCall = <C extends OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult | OCPP16.CallResult>(msg: C): msg is Extract<C, OCPP16.Call> => {
     return msg[0] === MessageType_.CALL;
   };
 
-  export const isCallError = (msg: OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>): msg is OCPP16.CallError => {
+  export const isCallError = <C extends OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult | OCPP16.CallResult>(msg: C): msg is Extract<C, OCPP16.CallError> => {
     return msg[0] === MessageType_.CALLERROR;
   };
 
-  export const isCallResult = (msg: OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult<any>): msg is OCPP16.CallResult => {
+  export const isCallResult = <C extends OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult | OCPP16.CallResult>(msg: C): msg is Extract<C, OCPP16.CallResult> => {
     return msg[0] === MessageType_.CALLRESULT;
   };
 

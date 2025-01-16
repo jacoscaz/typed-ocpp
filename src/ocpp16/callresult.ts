@@ -1,18 +1,16 @@
 
 import type { JSONSchemaType } from 'ajv';
+import type { Call } from './call.js';
+import type { BaseMessage } from './utils.js';
 import type { WithErrorsArr, ValidateFn } from '../common/utils.js';
 
-import { Call } from './call.js';
-
-import { validate } from '../common/ajv.js';
 import { EMPTY_ARR, assign } from '../common/utils.js';
-
-import { Action, BaseMessage, MessageType } from './utils.js';
-
+import { validate } from '../common/ajv.js';
+import { Action, MessageType } from './utils.js';
 import * as schemas from './schemas.js';
 import * as types from './types.js';
 
-export type UncheckedCallResult<P extends {}> = BaseMessage<MessageType.CALLRESULT, [payload: P]>;
+export type UncheckedCallResult<P extends {} = {}> = BaseMessage<MessageType.CALLRESULT, [payload: P]>;
 
 const unchecked_call_result_schema: JSONSchemaType<UncheckedCallResult<{}>> = {
   type: 'array',
@@ -25,34 +23,34 @@ const unchecked_call_result_schema: JSONSchemaType<UncheckedCallResult<{}>> = {
   maxItems: 3,
 };
 
-export  type AuthorizeCallResult = UncheckedCallResult<types.AuthorizeResponse>;
-export  type BootNotificationCallResult = UncheckedCallResult<types.BootNotificationResponse>;
-export  type CancelReservationCallResult = UncheckedCallResult<types.CancelReservationResponse>;
-export  type ChangeAvailabilityCallResult = UncheckedCallResult<types.ChangeAvailabilityResponse>;
-export  type ChangeConfigurationCallResult = UncheckedCallResult<types.ChangeConfigurationResponse>;
-export  type ClearCacheCallResult = UncheckedCallResult<types.ClearCacheResponse>;
-export  type ClearChargingProfileCallResult = UncheckedCallResult<types.ClearChargingProfileResponse>;
-export  type DataTransferCallResult = UncheckedCallResult<types.DataTransferResponse>;
-export  type DiagnosticsStatusNotificationCallResult = UncheckedCallResult<types.DiagnosticsStatusNotificationResponse>;
-export  type FirmwareStatusNotificationCallResult = UncheckedCallResult<types.FirmwareStatusNotificationResponse>;
-export  type GetCompositeScheduleCallResult = UncheckedCallResult<types.GetCompositeScheduleResponse>;
-export  type GetConfigurationCallResult = UncheckedCallResult<types.GetConfigurationResponse>;
-export  type GetDiagnosticsCallResult = UncheckedCallResult<types.GetDiagnosticsResponse>;
-export  type GetLocalListVersionCallResult = UncheckedCallResult<types.GetLocalListVersionResponse>;
-export  type HeartbeatCallResult = UncheckedCallResult<types.HeartbeatResponse>;
-export  type MeterValuesCallResult = UncheckedCallResult<types.MeterValuesResponse>;
-export  type RemoteStartTransactionCallResult = UncheckedCallResult<types.RemoteStartTransactionResponse>;
-export  type RemoteStopTransactionCallResult = UncheckedCallResult<types.RemoteStopTransactionResponse>;
-export  type ReserveNowCallResult = UncheckedCallResult<types.ReserveNowResponse>;
-export  type ResetCallResult = UncheckedCallResult<types.ResetResponse>;
-export  type SendLocalListCallResult = UncheckedCallResult<types.SendLocalListResponse>;
-export  type SetChargingProfileCallResult = UncheckedCallResult<types.SetChargingProfileResponse>;
-export  type StartTransactionCallResult = UncheckedCallResult<types.StartTransactionResponse>;
-export  type StatusNotificationCallResult = UncheckedCallResult<types.StatusNotificationResponse>;
-export  type StopTransactionCallResult = UncheckedCallResult<types.StopTransactionResponse>;
-export  type TriggerMessageCallResult = UncheckedCallResult<types.TriggerMessageResponse>;
-export  type UnlockConnectorCallResult = UncheckedCallResult<types.UnlockConnectorResponse>;
-export  type UpdateFirmwareCallResult = UncheckedCallResult<types.UpdateFirmwareResponse>;
+export type AuthorizeCallResult = UncheckedCallResult<types.AuthorizeResponse>;
+export type BootNotificationCallResult = UncheckedCallResult<types.BootNotificationResponse>;
+export type CancelReservationCallResult = UncheckedCallResult<types.CancelReservationResponse>;
+export type ChangeAvailabilityCallResult = UncheckedCallResult<types.ChangeAvailabilityResponse>;
+export type ChangeConfigurationCallResult = UncheckedCallResult<types.ChangeConfigurationResponse>;
+export type ClearCacheCallResult = UncheckedCallResult<types.ClearCacheResponse>;
+export type ClearChargingProfileCallResult = UncheckedCallResult<types.ClearChargingProfileResponse>;
+export type DataTransferCallResult = UncheckedCallResult<types.DataTransferResponse>;
+export type DiagnosticsStatusNotificationCallResult = UncheckedCallResult<types.DiagnosticsStatusNotificationResponse>;
+export type FirmwareStatusNotificationCallResult = UncheckedCallResult<types.FirmwareStatusNotificationResponse>;
+export type GetCompositeScheduleCallResult = UncheckedCallResult<types.GetCompositeScheduleResponse>;
+export type GetConfigurationCallResult = UncheckedCallResult<types.GetConfigurationResponse>;
+export type GetDiagnosticsCallResult = UncheckedCallResult<types.GetDiagnosticsResponse>;
+export type GetLocalListVersionCallResult = UncheckedCallResult<types.GetLocalListVersionResponse>;
+export type HeartbeatCallResult = UncheckedCallResult<types.HeartbeatResponse>;
+export type MeterValuesCallResult = UncheckedCallResult<types.MeterValuesResponse>;
+export type RemoteStartTransactionCallResult = UncheckedCallResult<types.RemoteStartTransactionResponse>;
+export type RemoteStopTransactionCallResult = UncheckedCallResult<types.RemoteStopTransactionResponse>;
+export type ReserveNowCallResult = UncheckedCallResult<types.ReserveNowResponse>;
+export type ResetCallResult = UncheckedCallResult<types.ResetResponse>;
+export type SendLocalListCallResult = UncheckedCallResult<types.SendLocalListResponse>;
+export type SetChargingProfileCallResult = UncheckedCallResult<types.SetChargingProfileResponse>;
+export type StartTransactionCallResult = UncheckedCallResult<types.StartTransactionResponse>;
+export type StatusNotificationCallResult = UncheckedCallResult<types.StatusNotificationResponse>;
+export type StopTransactionCallResult = UncheckedCallResult<types.StopTransactionResponse>;
+export type TriggerMessageCallResult = UncheckedCallResult<types.TriggerMessageResponse>;
+export type UnlockConnectorCallResult = UncheckedCallResult<types.UnlockConnectorResponse>;
+export type UpdateFirmwareCallResult = UncheckedCallResult<types.UpdateFirmwareResponse>;
 
 export type CallResult = 
   | AuthorizeCallResult
@@ -116,9 +114,9 @@ const schemasByCommand: Record<Action, object> = {
   [Action.UpdateFirmware]: schemas.UpdateFirmwareResponse,
 };
 
-export const validateCallResult: ValidateFn<any, UncheckedCallResult<any>> = assign(
-  (arr: any): arr is UncheckedCallResult<any> => {
-    if (!validate<UncheckedCallResult<{}>>(arr, unchecked_call_result_schema, 'Invalid OCPP call result')) {
+export const validateCallResult: ValidateFn<any, UncheckedCallResult> = assign(
+  (arr: any): arr is UncheckedCallResult => {
+    if (!validate<UncheckedCallResult>(arr, unchecked_call_result_schema, 'Invalid OCPP call result')) {
       validateCallResult.errors = validate.errors;
       return false;
     }
@@ -162,12 +160,12 @@ export interface CallResultTypesByAction extends Record<Action, CallResult> {
 export type CheckedCallResult<C extends Call> = CallResultTypesByAction[C[2]];
 
 export interface CheckCallResultFn extends WithErrorsArr {
-  <C extends Call>(value: UncheckedCallResult<any>, call: C): value is CheckedCallResult<C>;
+  <C extends Call>(value: CheckedCallResult<Call>, call: C): value is CheckedCallResult<C>;
   errors: string[];
 }
 
 export const checkCallResult: CheckCallResultFn = assign(
-  <C extends Call>(result: UncheckedCallResult<any>, call: C): result is CheckedCallResult<C> => {
+  <C extends Call>(result: CheckedCallResult<Call>, call: C): result is CheckedCallResult<C> => {
     const [, call_id, payload] = result;
     if (call_id !== call[1]) {
       checkCallResult.errors = [`Invalid OCPP call result: id ${call_id} does not equal call id ${call[1]}`];

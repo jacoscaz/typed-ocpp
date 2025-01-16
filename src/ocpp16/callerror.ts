@@ -1,9 +1,11 @@
 
 import type { JSONSchemaType } from 'ajv';
-import { EMPTY_ARR, assign, type ValidateFn } from '../common/utils.js';
+import type { BaseMessage } from './utils.js';
+import type { ValidateFn } from '../common/utils.js';
 
+import { assign, EMPTY_ARR } from '../common/utils.js';
 import { validate } from '../common/ajv.js';
-import { MessageType, ErrorCode, BaseMessage } from './utils.js';
+import { MessageType, ErrorCode } from './utils.js';
 
 export type CallError = BaseMessage<MessageType.CALLERROR, [code: ErrorCode, description: string, details: Record<string, any>]>
 

@@ -1,10 +1,10 @@
 
 import type { JSONSchemaType } from 'ajv';
+import type { BaseMessage } from './utils.js';
+
 import { EMPTY_ARR, assign, type ValidateFn } from '../common/utils.js';
-
-import { Action, BaseMessage, MessageType } from './utils.js';
+import { Action, MessageType } from './utils.js';
 import { validate } from '../common/ajv.js';
-
 import * as schemas from './schemas.js';
 import * as types from './types.js';
 
