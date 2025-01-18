@@ -230,7 +230,7 @@ export namespace OCPP16 {
     return msg[0] === MessageType_.CALLERROR;
   };
 
-  export const isCallResult = <C extends OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult | OCPP16.CallResult>(msg: C): msg is Extract<C, OCPP16.CallResult> => {
+  export const isCallResult = <C extends OCPP16.Call | OCPP16.CallError | OCPP16.UncheckedCallResult | OCPP16.CallResult>(msg: C): msg is Extract<C, OCPP16.UncheckedCallResult | OCPP16.CallResult> => {
     return msg[0] === MessageType_.CALLRESULT;
   };
 

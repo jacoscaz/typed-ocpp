@@ -383,7 +383,7 @@ export namespace OCPP20 {
     return msg[0] === MessageType_.CALLERROR;
   };
 
-  export const isCallResult = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.CallResult> => {
+  export const isCallResult = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.UncheckedCallResult | OCPP20.CallResult> => {
     return msg[0] === MessageType_.CALLRESULT;
   };
 
