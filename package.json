@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1"
+    "ajv-formats": "^3.0.1",
+    "date-fns": "^4.1.0"
   },
   "scripts": {
     "test": "node --test --test-reporter=spec ./dist",
