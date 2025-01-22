@@ -191,7 +191,7 @@ export namespace OCPP16 {
   export const validateCallError = validateCallError_;
   export const validateCallResult = validateCallResult_;
 
-  export const ChargingProfileStore = ChargingProfileStore_;
+  export class ChargingProfileStore extends ChargingProfileStore_ {};
 
   export const validate: ValidateFn<any, OCPP16.Call | OCPP16.CallError | OCPP16.CallResult> = assign(
     (data: any): data is OCPP16.Call | OCPP16.CallError | OCPP16.CallResult => {
