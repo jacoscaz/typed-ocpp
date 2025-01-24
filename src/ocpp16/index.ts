@@ -91,6 +91,7 @@ import { validateCallError as validateCallError_ } from './callerror.js';
 import { validateCallResult as validateCallResult_, checkCallResult as checkCallResult_ } from './callresult.js';
 import { Action as Action_, MessageType as MessageType_, ErrorCode as ErrorCode_ } from './utils.js';
 import { compile } from '../common/ajv.js';
+import { ChargingProfileStore as ChargingProfileStore_ } from './chargingprofiles/store.js';
 
 Object.values(schemas_).forEach((schema) => {
   compile(schema);
