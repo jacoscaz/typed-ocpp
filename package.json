@@ -24,7 +24,11 @@
     "codegen:ocpp20:schemas": "node codegen/json2esm.js schemas/ocpp20 src/ocpp20/schemas.ts",
     "codegen:ocpp20:clean": "rm -f ./src/ocpp20/types.ts && rm -f ./src/ocpp20/schemas.ts",
     "codegen:ocpp20": "npm run codegen:ocpp20:clean && npm run codegen:ocpp20:types && npm run codegen:ocpp20:schemas",
-    "codegen": "npm run codegen:ocpp16 && npm run codegen:ocpp20",
+    "codegen:ocpp21:types": "node codegen/json2types.js schemas/ocpp21 src/ocpp21/types.ts OCPP21",
+    "codegen:ocpp21:schemas": "node codegen/json2esm.js schemas/ocpp21 src/ocpp21/schemas.ts",
+    "codegen:ocpp21:clean": "rm -f ./src/ocpp21/types.ts && rm -f ./src/ocpp21/schemas.ts",
+    "codegen:ocpp21": "npm run codegen:ocpp21:clean && npm run codegen:ocpp21:types && npm run codegen:ocpp21:schemas",
+    "codegen": "npm run codegen:ocpp16 && npm run codegen:ocpp20 && npm run codegen:ocpp21",
     "ts:build": "tsc",
     "ts:clean": "rm -rf ./dist",
     "build": "npm run ts:clean && npm run ts:build"

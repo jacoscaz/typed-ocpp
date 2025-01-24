@@ -18,8 +18,8 @@ const output_file_path = process.argv[3];
 const output_file_abspath = resolve(process.cwd(), output_file_path);
 
 const mode = process.argv[4];
-if (mode !== 'OCPP16' && mode !== 'OCPP20') {
-  throw new Error('Mode param must either be "OCPP16" or "OCPP20"');
+if (mode !== 'OCPP16' && mode !== 'OCPP20' && mode !== 'OCPP21') {
+  throw new Error('Mode param must be one of "OCPP16", "OCPP20" and "OCPP21"');
 }
 
 const output_file_header = `/*
@@ -55,7 +55,7 @@ const output_file_header = `/*
 
     const input_schema = JSON.parse(input_file_data);
     
-    if (mode === 'OCPP20' && input_schema.$id.indexOf(':') > -1) {
+    if ((mode === 'OCPP20' || mode === 'OCPP') && input_schema.$id.indexOf(':') > -1) {
       // The schema files within the OCPP 2.0.1 spec have namespaced $id
       // attributes such as `urn:OCPP:Cp:2:2020:3:CancelReservationRequest`.
       // Here we get rid of the "urn" part of the $id so that json2ts will
