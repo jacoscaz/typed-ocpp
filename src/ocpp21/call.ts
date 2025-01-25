@@ -251,7 +251,7 @@ const schemasByCommand: Record<Action, object> = {
   [Action.NotifyEVChargingSchedule]: schemas.NotifyEVChargingScheduleRequest,
   [Action.NotifyEvent]: schemas.NotifyEventRequest,
   [Action.NotifyMonitoringReport]: schemas.NotifyMonitoringReportRequest,
-  [Action.NotifyPeriodicEventStream]: schemas.NotifyPeriodicEventStreamRequest,
+  [Action.NotifyPeriodicEventStream]: schemas.NotifyPeriodicEventStream,
   [Action.NotifyPriorityCharging]: schemas.NotifyPriorityChargingRequest,
   [Action.NotifyReport]: schemas.NotifyReportRequest,
   [Action.NotifySettlement]: schemas.NotifySettlementRequest,
