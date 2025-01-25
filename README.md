@@ -1,7 +1,7 @@
 
 # `typed-ocpp`
 
-A library for fast, type-aware validation of OCPP 1.6-J and OCPP 2.0.1
+A library for fast, type-aware validation of OCPP 1.6, OCPP 2.0 and OCPP 2.1
 messages, built against the official [JSON Schema][i2] documents published
 by the [Open Charge Alliance][i1].
 
@@ -10,18 +10,19 @@ by the [Open Charge Alliance][i1].
 
 ## Usage
 
-### `OCPP16` and `OCPP20` namespaces
+### `OCPP16`, `OCPP20`, `OCPP21` namespaces
 
-This library exports all functions and typings related to OCPP 1.6 and
-OCPP 2.0.1 under, respectively, the `OCPP16` and `OCPP20` namespaces:
+This library exports all functions and typings related to OCPP 1.6,
+OCPP 2.0 and OCPP 2.1 under, respectively, the `OCPP16`,  `OCPP20`, `OCPP21`
+namespaces:
 
 ```typescript
-import { OCPP16, OCPP20 } from 'typed-ocpp';
+import { OCPP16, OCPP20, OCPP21 } from 'typed-ocpp';
 ```
 
-Both namespaces export identical APIs while typings and schemas differ
+All three namespaces export identical APIs while typings and schemas differ
 according to the differences in the respective OCPP versions. All of the
-examples below apply to both namespaces.
+examples below apply to all namespaces.
 
 ### `validate()`
 
@@ -161,8 +162,9 @@ validation errors in the `checkCallResult.errors` array.
 
 #### Primary types
 
-Within both the `OCPP16` and `OCPP20` namespaces, `typed-ocpp` provides a set
-of typings and schemas that covers most aspects of OCPP messages.
+Within both the `OCPP16`, `OCPP20` and `OCPP21` namespaces, `typed-ocpp`
+provides a set of typings and schemas that covers most aspects of OCPP
+messages.
 
 ```typescript
 // Union of all types of Call messages
@@ -241,6 +243,12 @@ OCPP20.Action               // enum of actions in Call messages ("Authorize", "B
 OCPP20.ErrorCode            // enum of error code in Call Error messages ("NotImplemented", "NotSupported", ...)
 ```
 
+```typescript
+OCPP21.MessageType          // enum of message types (CALL = 2, CALLRESULT = 3, CALLERROR = 4, CALLRESULTERROR = 5, SEND = 6)
+OCPP21.Action               // enum of actions in Call messages ("Authorize", "BootNotification", ...)
+OCPP21.ErrorCode            // enum of error code in Call Error messages ("NotImplemented", "NotSupported", ...)
+```
+
 #### Utility types for OCPP 1.6
 
 The following types may be used to model value descriptors within
@@ -264,7 +272,14 @@ The following types may be used to model value descriptors within
 OCPP16.Status               // status ("Available", "Reserved", ...)
 ```
 
-#### Utility types for OCPP 2.0.1
+#### Utility types for OCPP 2.1
+
+```typescript
+OCPP20.ConnectorStatus      // connector status ("Available", "Occupied", ...)
+OCPP20.ChargingState        // charging status ("Charging", "EVConnected", ...)
+```
+
+#### Utility types for OCPP 2.1
 
 ```typescript
 OCPP20.ConnectorStatus      // connector status ("Available", "Occupied", ...)
@@ -273,12 +288,12 @@ OCPP20.ChargingState        // charging status ("Charging", "EVConnected", ...)
 
 ### JSON Schema(s) 
 
-Both the `OCPP16` and the `OCPP20` namespaces export the official JSON Schema
+The `OCPP16`, `OCPP20` and `OCPP21` namespaces export the official JSON Schema
 documents provided by the OCPP Alliance as ready-to-use objects, slightly
 tweaked to maximize compat with different versions and configurations of Ajv:
 
 ```typescript
-import { OCPP16, OCPP20 } from 'typed-ocpp';
+import { OCPP16, OCPP20, OCPP21 } from 'typed-ocpp';
 
 OCPP16.schemas.AuthorizeRequest;
 OCPP16.schemas.AuthorizeResponse;
@@ -286,6 +301,10 @@ OCPP16.schemas.AuthorizeResponse;
 
 OCPP20.schemas.AuthorizeRequest;
 OCPP20.schemas.AuthorizeResponse;
+/* ... */
+
+OCPP21.schemas.AuthorizeRequest;
+OCPP21.schemas.AuthorizeResponse;
 /* ... */
 ```
 

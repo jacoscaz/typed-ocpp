@@ -55,7 +55,7 @@ const output_file_header = `/*
 
     const input_schema = JSON.parse(input_file_data);
     
-    if ((mode === 'OCPP20' || mode === 'OCPP') && input_schema.$id.indexOf(':') > -1) {
+    if ((mode === 'OCPP20' || mode === 'OCPP21') && input_schema.$id.indexOf(':') > -1) {
       // The schema files within the OCPP 2.0.1 spec have namespaced $id
       // attributes such as `urn:OCPP:Cp:2:2020:3:CancelReservationRequest`.
       // Here we get rid of the "urn" part of the $id so that json2ts will
@@ -63,7 +63,9 @@ const output_file_header = `/*
       input_schema.$id = input_schema.$id.split(':').slice(-1)[0];
     }
     
-    const compiled_type = await compile(input_schema);
+    const compiled_type = await compile(input_schema, undefined, {
+      ignoreMinAndMaxItems: true,
+    });
 
     output_file_data += compiled_type;
       

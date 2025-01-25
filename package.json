@@ -1,7 +1,7 @@
 {
   "name": "typed-ocpp",
   "version": "1.2.0-alpha.1",
-  "description": "A library for type-aware parsing, serialization and validation of OCPP 1.6 and OCPP 2.0.1 messages",
+  "description": "A library for type-aware parsing, serialization and validation of OCPP 1.6, OCPP 2.0 and OCPP 2.1 messages",
   "main": "dist/index.js",
   "type": "module",
   "devDependencies": {
@@ -43,14 +43,14 @@
   },
   "keywords": [
     "OCPP",
-    "OCPP 2.0.1",
     "OCPP 1.6",
+    "OCPP 2.0",
+    "OCPP 2.0.1",
+    "OCPP 2.1",
     "1.6",
-    "1.6-J",
     "2.0",
-    "2.0-J",
     "2.0.1",
-    "2.0.1-J",
+    "2.1",
     "EV",
     "EVSE",
     "Central Station",
