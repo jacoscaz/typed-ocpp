@@ -326,3 +326,5 @@ src/ocpp16/types.ts
 src/ocpp16/schemas.ts
 src/ocpp20/types.ts
 src/ocpp20/schemas.ts
+src/ocpp21/types.ts
+src/ocpp21/schemas.ts
