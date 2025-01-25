@@ -5,7 +5,9 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { EMPTY_ARR } from './utils.js';
 
-const ajv = addFormats(new Ajv());
+const ajv = addFormats(new Ajv({
+  strict: false,
+}));
 
 export interface AjvValidateFn {
   <T>(value: any, schema: JSONSchemaType<T>, prefix: string): value is T;
@@ -22,4 +24,8 @@ export const validate: AjvValidateFn = Object.assign(
     return false;
   }, 
   { errors: EMPTY_ARR },
-) ;
+);
+
+export const compile = (schema: JSONSchemaType<any>) => {
+  ajv.compile(schema);
+};
