@@ -189,7 +189,7 @@ OCPP16.AuthorizationCallResult
 OCPP16.BootNotificationCall
 OCPP16.BootNotificationCallResult
 /* ... */
-```                   
+```                  
 
 #### Types for specific messages
 
@@ -249,6 +249,17 @@ OCPP21.Action               // enum of actions in Call messages ("Authorize", "B
 OCPP21.ErrorCode            // enum of error code in Call Error messages ("NotImplemented", "NotSupported", ...)
 ```
 
+#### Message types `SEND` and `CALLRESULTERROR` in OCPP 2.1
+
+OCPP 2.1 introduced two new types of messages: `CALLRESULTERROR` and `SEND`,
+using the values `5` and `6` respectively.
+
+This library allows OCPP 2.1 **_Call_** messages to have either the `CALL` or 
+the `SEND` type, regardless of the specific action.
+
+This library also allows OCPP 2.1 **_Call Error_** messages to have either the
+`CALLERROR` or the `CALLRESULTERROR` type.
+
 #### Utility types for OCPP 1.6
 
 The following types may be used to model value descriptors within
@@ -272,7 +283,7 @@ The following types may be used to model value descriptors within
 OCPP16.Status               // status ("Available", "Reserved", ...)
 ```
 
-#### Utility types for OCPP 2.1
+#### Utility types for OCPP 2.0
 
 ```typescript
 OCPP20.ConnectorStatus      // connector status ("Available", "Occupied", ...)
@@ -282,8 +293,8 @@ OCPP20.ChargingState        // charging status ("Charging", "EVConnected", ...)
 #### Utility types for OCPP 2.1
 
 ```typescript
-OCPP20.ConnectorStatus      // connector status ("Available", "Occupied", ...)
-OCPP20.ChargingState        // charging status ("Charging", "EVConnected", ...)
+OCPP21.ConnectorStatus      // connector status ("Available", "Occupied", ...)
+OCPP21.ChargingState        // charging status ("Charging", "EVConnected", ...)
 ```
 
 ### JSON Schema(s) 
