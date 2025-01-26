@@ -1,131 +1,77 @@
 
-import type { ChargingRateUnit, ChargingProfilePurpose, ChargingProfile, NumberPhases, LineVoltage } from './utils.js';
+import type { ChargingSchedule } from '../../common/schedule.js';
+import type { ChargingProfile } from './utils.js';
+import type { LineVoltage, ChargingRateUnit, NumberPhases } from '../../common/schedule.js';
 
-import { startOfDay, addMilliseconds, startOfWeek, differenceInMilliseconds } from 'date-fns';
-import { convertValueToUnit } from './utils.js';
+import { startOfDay, addMilliseconds, startOfWeek, differenceInMilliseconds, addWeeks, addDays, addSeconds } from 'date-fns';
+import { convertChargingRate } from '../../common/schedule.js';
 
-export interface GetInstantChargingLimitsFromProfileOpts {
-  unit: ChargingRateUnit;
-  connectorId: number;
-  lineVoltage: 110 | 230;
-  purpose: ChargingProfilePurpose;
-  canDischarge: boolean;
-  transaction?: { id: number; startDate: Date; };
-}
+export const getChargingScheduleFromProfile = (profile: ChargingProfile, transactionStartDate: Date, transactionDuration: number, unit: ChargingRateUnit, line_voltage: LineVoltage): ChargingSchedule => {
 
-export interface InstantChargingLimits { 
-  min: number; 
-  max: number; 
-  numberPhases: NumberPhases;
-  discharge: boolean; 
-  unit: ChargingRateUnit;
-}
+  const transactionEndDate = addSeconds(transactionStartDate, transactionDuration);
 
-export const getInstantChargingLimitsFromProfile = (profile: ChargingProfile, referenceDate: Date, opts: GetInstantChargingLimitsFromProfileOpts): InstantChargingLimits | null => {
-  const { 
-    connectorId, 
-    csChargingProfiles: { chargingSchedule, validFrom, validTo, recurrencyKind, chargingProfileKind, chargingProfilePurpose, transactionId },
-  } = profile;
-  if (validFrom && referenceDate < new Date(validFrom)) {
-    return null;
+  const { csChargingProfiles: { chargingSchedule, validFrom, validTo, recurrencyKind, chargingProfileKind } } = profile;
+  const schedule: ChargingSchedule = [];
+  if (validFrom && transactionStartDate < new Date(validFrom)) {
+    return schedule;
   }
-  if (validTo && referenceDate < new Date(validTo)) {
-    return null;
+  if (validTo && transactionStartDate >= new Date(validTo)) {
+    return schedule;
   }
-  if (chargingProfilePurpose !== opts.purpose) {
-    return null;
-  }
-  if (transactionId && opts.transaction && opts.transaction.id !== transactionId) {
-    return null;
-  }
-  switch (opts.purpose) {
-    case 'TxProfile': 
-      if (opts.connectorId && opts.connectorId !== connectorId) {
-        return null;
-      }
-      break;
-    case 'TxDefaultProfile': 
-      if (connectorId !== 0 && connectorId !== opts.connectorId) {
-        return null;
-      }
-      break;
-  }
-  const { duration, chargingRateUnit, chargingSchedulePeriod, minChargingRate, startSchedule } = chargingSchedule;
-  let start_sch_date: Date | undefined;
-  switch (chargingProfileKind) {
-    case 'Absolute':
-      start_sch_date = startSchedule ? new Date(startSchedule) : opts.transaction?.startDate;
-      break;
-    case 'Relative':
-      start_sch_date = opts.transaction?.startDate;
-      break;
-    case 'Recurring':
-      if (startSchedule) {
-        start_sch_date = new Date(startSchedule);
-        switch (recurrencyKind) {
-          case 'Daily':
-            start_sch_date = addMilliseconds(startOfDay(referenceDate), differenceInMilliseconds(start_sch_date, startOfDay(start_sch_date)));
-            break;
-          case 'Weekly':
-            start_sch_date = addMilliseconds(startOfWeek(referenceDate), differenceInMilliseconds(start_sch_date, startOfWeek(start_sch_date)));
-            break;
-        }
-      }
-      break;
-  }
-  if (!start_sch_date) {
-    return null;
-  }
-  if (start_sch_date >= referenceDate) {
-    return null;
-  }
-  let period = chargingSchedulePeriod.findLast(({ startPeriod }) => {
-    return referenceDate.valueOf() >= start_sch_date.valueOf() + startPeriod * 1000;
-  });
-  if (duration) {
-    if (referenceDate.valueOf() >= start_sch_date.valueOf() + duration * 1000) {
-      return null;
-    }
-  } else if (!period) {
-    period = chargingSchedulePeriod.at(-1);
-  }
-  if (!period) {
-    return null;
-  }
-  const { limit, numberPhases = 3 } = period;
-  if (limit < 0 && (!opts.canDischarge || opts.purpose !== 'TxProfile')) {
-    return null;
-  }
-  const max = convertValueToUnit(limit, chargingRateUnit, opts.unit, opts.lineVoltage, numberPhases as NumberPhases);
-  const min = typeof minChargingRate === 'number'
-    ? convertValueToUnit(minChargingRate, chargingRateUnit, opts.unit, opts.lineVoltage, numberPhases as NumberPhases)
-    : 0;
-  return { 
-    min: Math.abs(min), 
-    max: Math.abs(max), 
-    discharge: max < 0, 
-    numberPhases: numberPhases as NumberPhases,
-    unit: opts.unit,
-  };
-};
-
-export const getInstantChargingLimitsFromProfiles = (profiles: ChargingProfile[], referenceDate: Date, opts: GetInstantChargingLimitsFromProfileOpts): InstantChargingLimits | null => {
-  return profiles.reduce((range: InstantChargingLimits | null, profile: ChargingProfile) => {
-    return getInstantChargingLimitsFromProfile(profile, referenceDate, opts) ?? range;
-  }, null);
-};
-
-export const applyLimitsToInstantChargingLimits = (lineVoltage: LineVoltage, original: InstantChargingLimits, limiter: InstantChargingLimits): InstantChargingLimits => {
-  if (original.discharge !== limiter.discharge) {
-    return original;
-  }
-  return { 
-    discharge: original.discharge,
-    numberPhases: Math.min(original.numberPhases, limiter.numberPhases) as NumberPhases,
-    min: Math.max(convertValueToUnit(limiter.min, limiter.unit, original.unit, lineVoltage, limiter.numberPhases), original.min),
-    max: Math.min(convertValueToUnit(limiter.max, limiter.unit, original.unit, lineVoltage, limiter.numberPhases), original.max),
-    unit: original.unit,
-  };
   
-};
 
+  const { duration, chargingRateUnit, chargingSchedulePeriod, minChargingRate, startSchedule } = chargingSchedule;
+  const scheduleStartEndDatePairs: Date[][] = [];
+  switch (chargingProfileKind) {
+    case 'Absolute': {
+      const absoluteProfileStartDate = startSchedule ? new Date(startSchedule) : transactionStartDate;
+      const absoluteProfileEndDate = duration ? addSeconds(absoluteProfileStartDate, duration) : transactionEndDate;
+      scheduleStartEndDatePairs.push([absoluteProfileStartDate, absoluteProfileEndDate]);
+    } break;
+    case 'Relative': {
+      const relativeProfileStartDate = transactionStartDate;
+      const relativeProfileEndDate = duration ? addSeconds(relativeProfileStartDate, duration) : transactionEndDate;
+      scheduleStartEndDatePairs.push([relativeProfileStartDate, relativeProfileEndDate]);
+    } break;
+    case 'Recurring': {
+      let recurringProfileStartDate = startSchedule ? new Date(startSchedule) : transactionStartDate;
+      const startOfFn = recurrencyKind === 'Daily' ? startOfDay : startOfWeek;
+      const addFn = recurrencyKind === 'Daily' ? addDays : addWeeks;
+      recurringProfileStartDate = addMilliseconds(startOfFn(transactionStartDate), differenceInMilliseconds(recurringProfileStartDate, startOfFn(recurringProfileStartDate)));
+      while (recurringProfileStartDate < transactionEndDate) {
+        scheduleStartEndDatePairs.push([recurringProfileStartDate, (recurringProfileStartDate = addFn(recurringProfileStartDate, 1))]);
+      }
+    } break;
+  }
+
+  scheduleStartEndDatePairs.forEach(([scheduleStartDate, scheduleEndDate]) => {
+    chargingSchedulePeriod.forEach((period, periodIndex) => {
+      const { startPeriod, limit, numberPhases } = period;
+      const nextPeriod = chargingSchedulePeriod[periodIndex + 1];
+      const periodStartDate = addSeconds(scheduleStartDate, startPeriod);
+      const periodEndDate = nextPeriod ? addSeconds(scheduleStartDate, nextPeriod.startPeriod) : scheduleEndDate;
+      
+      schedule.push({
+        start: periodStartDate,
+        end: periodEndDate,
+        data: {
+          charging: { 
+            min: 0, 
+            max: convertChargingRate(limit >= 0 ? limit : 0, chargingRateUnit, unit, line_voltage, numberPhases as NumberPhases), 
+            numberPhases: numberPhases as NumberPhases,
+          },
+          discharging: { 
+            min: 0, 
+            max: convertChargingRate(limit < 0 ? Math.abs(limit) : 0, chargingRateUnit, unit, line_voltage, numberPhases as NumberPhases), 
+            numberPhases: numberPhases as NumberPhases,
+          },
+          canDischarge: limit < 0,
+          shouldDischarge: limit < 0,
+          unit,
+        },
+      });
+    });
+  });
+
+  return schedule;
+};

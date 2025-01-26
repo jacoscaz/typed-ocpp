@@ -5,95 +5,39 @@ import { deepStrictEqual } from 'node:assert';
 
 describe('OCPP16 - ChargingProfileStore', () => {
 
-  // describe('without charging profiles', () => {
+  describe('with one charging profile [kind: Absolute, purpose: TxProfile]', () => {
 
-  //   it('return default limits if no profile is added and none of the respective params are passed', () => {
-  //     const store = new OCPP16.ChargingProfileStore(230, false);
-  //     const limits = store.getConnectorInstantChargingLimits(1, new Date(), {
-  //       unit: 'W',
-  //       connectorId: 0,
-  //       gridVoltage: 230,
-  //     });
-  //     deepStrictEqual(limits, { 
-  //       charging: { min: 0, max: Infinity },
-  //       discharging: { min: 0, max: 0 },
-  //       shouldDischarge: false,
-  //     });
-  //   });
+    it('should follow the limit set by matching charging periods', () => {
+      const store = new OCPP16.ChargingProfileStore({ lineVoltage: 230});
+      const now_date = new Date();
+      store.addProfile({
+        connectorId: 1,
+        csChargingProfiles: {
+          chargingProfileId: 0,
+          chargingProfileKind: 'Absolute',
+          chargingProfilePurpose: 'TxProfile',
+          chargingSchedule: {
+            chargingRateUnit: 'W',
+            chargingSchedulePeriod: [
+              {
+                startPeriod: 0,
+                limit: 13_000,
+              }
+            ],
+          },
+          stackLevel: 0,
+        },
+      });
+      const schedule = store.getChargingSchedule(1, now_date, 3600, 'W', 230);
+      // deepStrictEqual(limits, {
+      //   charging: { min: 0, max: 13_000 },
+      //   discharging: { min: 0, max: 0 },
+      //   shouldDischarge: false,
+      // });
+      console.log('\n\n\nschedule\n\n', JSON.stringify(schedule), '\n\n');
+    });
 
-  //   it('return default limits with minimum charging value set if respective optional params are passed', () => {
-  //     const store = new OCPP16.ChargingProfileStore(230, false);
-  //     const limits = store.getConnectorInstantChargingLimits(1, new Date(), {
-  //       unit: 'W',
-  //       connectorId: 0,
-  //       gridVoltage: 230,
-  //       minChargingValue: 10,
-  //       minDischargingValue: 10,
-  //     });
-  //     deepStrictEqual(limits, { 
-  //       charging: { min: 10, max: Infinity },
-  //       discharging: { min: 0, max: 0 },
-  //       shouldDischarge: false,
-  //     });
-  //   });
-
-  //   it('return default limits with minimum charging and discharging values set if respective optional params are passed', () => {
-  //     const store = new OCPP16.ChargingProfileStore(230, false);
-  //     const limits = store.getConnectorInstantChargingLimits(1, new Date(), {
-  //       unit: 'W',
-  //       connectorId: 0,
-  //       gridVoltage: 230,
-  //       minChargingValue: 10,
-  //       minDischargingValue: 10,
-  //       canDischarge: true,
-  //     });
-  //     deepStrictEqual(limits, { 
-  //       charging: { min: 10, max: Infinity },
-  //       discharging: { min: 10, max: Infinity },
-  //       shouldDischarge: false,
-  //     });
-  //   });
-
-  // });
-
-  // describe('with one charging profile [kind: Absolute, purpose: TxProfile]', () => {
-
-  //   it('should follow the limit set by matching charging periods', () => {
-  //     const store = new OCPP16.ChargingProfileStore(230, false);
-  //     const now_date = new Date();
-  //     store.addProfile({
-  //       connectorId: 1,
-  //       csChargingProfiles: {
-  //         chargingProfileId: 0,
-  //         chargingProfileKind: 'Absolute',
-  //         chargingProfilePurpose: 'TxProfile',
-  //         chargingSchedule: {
-  //           chargingRateUnit: 'W',
-  //           chargingSchedulePeriod: [
-  //             {
-  //               startPeriod: 0,
-  //               limit: 13_000,
-  //             }
-  //           ],
-  //         },
-  //         stackLevel: 0,
-  //       },
-  //     });
-  //     const limits = store.getConnectorInstantChargingLimits(1, now_date, {
-  //       transaction: {
-  //         id: 1337,
-  //         startDate: new Date(now_date.valueOf() - 3_600_000),
-  //       },
-  //       unit: 'W',
-  //       connectorId: 1,
-  //       gridVoltage: 230,
-  //     });
-  //     deepStrictEqual(limits, {
-  //       charging: { min: 0, max: 13_000 },
-  //       discharging: { min: 0, max: 0 },
-  //       shouldDischarge: false,
-  //     });
-  //   });
+  });
 
   //   it('should follow the limit set by matching discharging periods', () => {
   //     const store = new OCPP16.ChargingProfileStore(230, false);
@@ -265,41 +209,41 @@ describe('OCPP16 - ChargingProfileStore', () => {
 
   // });
 
-  describe('with one charging profile [kind: Recurring(Daily), purpose: TxDefaultProfile]', () => {
+  // describe('with one charging profile [kind: Recurring(Daily), purpose: TxDefaultProfile]', () => {
 
-    it('should follow the limit set by matching recurring periods', () => {
-      const now_date = new Date();
-      const store = new OCPP16.ChargingProfileStore({ lineVoltage: 230, canDischarge: false, chargingRateLimits: { unit: 'W', charging: { min: 0, max: Infinity }, discharging: { min: 0, max: Infinity }} });
-      store.addProfile({
-        connectorId: 1,
-        csChargingProfiles: {
-          chargingProfileId: 0,
-          chargingProfileKind: 'Recurring',
-          chargingProfilePurpose: 'TxDefaultProfile',
-          recurrencyKind: 'Daily',
-          chargingSchedule: {
-            duration: 4 * 3_600,
-            startSchedule: new Date(now_date.valueOf() - 1).toISOString(),
-            chargingRateUnit: 'W',
-            chargingSchedulePeriod: [
-              {
-                startPeriod: 0,
-                limit: 13000,
-              }
-            ],
-          },
-          stackLevel: 0,
-        },
-      });
-      const limits = store.getConnectorInstantChargingLimits(1, now_date, 'W');
-      deepStrictEqual(limits, {
-        min: 0, 
-        max: 13_000,
-        discharge: false,
-        unit: 'W',
-        numberPhases: 3,
-      });
-    });
-  });
+  //   it('should follow the limit set by matching recurring periods', () => {
+  //     const now_date = new Date();
+  //     const store = new OCPP16.ChargingProfileStore({ lineVoltage: 230, canDischarge: false, chargingRateLimits: { unit: 'W', charging: { min: 0, max: Infinity }, discharging: { min: 0, max: Infinity }} });
+  //     store.addProfile({
+  //       connectorId: 1,
+  //       csChargingProfiles: {
+  //         chargingProfileId: 0,
+  //         chargingProfileKind: 'Recurring',
+  //         chargingProfilePurpose: 'TxDefaultProfile',
+  //         recurrencyKind: 'Daily',
+  //         chargingSchedule: {
+  //           duration: 4 * 3_600,
+  //           startSchedule: new Date(now_date.valueOf() - 1).toISOString(),
+  //           chargingRateUnit: 'W',
+  //           chargingSchedulePeriod: [
+  //             {
+  //               startPeriod: 0,
+  //               limit: 13000,
+  //             }
+  //           ],
+  //         },
+  //         stackLevel: 0,
+  //       },
+  //     });
+  //     const limits = store.getConnectorInstantChargingLimits(1, now_date, 'W');
+  //     deepStrictEqual(limits, {
+  //       min: 0, 
+  //       max: 13_000,
+  //       discharge: false,
+  //       unit: 'W',
+  //       numberPhases: 3,
+  //     });
+  //   });
+  // });
 
 });

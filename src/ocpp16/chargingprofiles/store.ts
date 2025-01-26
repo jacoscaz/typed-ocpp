@@ -1,23 +1,20 @@
 
+import type { ChargingSchedule, ChargingRateUnit, LineVoltage } from '../../common/schedule.js';
 import type { ClearChargingProfileRequest, SetChargingProfileRequest  } from '../types.js';
-import type { ClearChargingProfileCall, SetChargingProfileCall } from '../call.js';
-import type { ChargingProfilePurpose, ChargingProfile, ChargingRateUnit, ConnectorStatus, ChargePointInfo, LineVoltage } from './utils.js';
-import type { InstantChargingLimits, GetInstantChargingLimitsFromProfileOpts } from './limits.js';
+import type { ChargingProfilePurpose, ChargingProfile, ChargePointInfo } from './utils.js';
 
-import { getInstantChargingLimitsFromProfile, getInstantChargingLimitsFromProfiles, applyLimitsToInstantChargingLimits } from './limits.js';
-import { EMPTY_OBJ } from '../../common/utils.js';
+import { cloneChargingLimits, mergeChargingLimitsCombine, mergeChargingLimitsOverrideRtoL } from '../../common/schedule.js';
+import { merge } from '../../common/periods.js';
+import { getChargingScheduleFromProfile } from './limits.js';
 
-export interface GetConnectorInstantChargingLimitsOpts {}
 
 export class ChargingProfileStore {
 
   #info: ChargePointInfo;
-  #profiles: Record<ChargingProfilePurpose, ChargingProfile[]>;
-  #connectors: ConnectorStatus[];
+  #profiles: Record<ChargingProfilePurpose, SetChargingProfileRequest[]>;
 
   constructor(info: ChargePointInfo) {
     this.#info = info;
-    this.#connectors = [];
     this.#profiles = {
       'ChargePointMaxProfile': [],
       'TxDefaultProfile': [],
@@ -25,36 +22,13 @@ export class ChargingProfileStore {
     };
   }
 
-  #setConnector(connectorId: number) {
-    if (!this.#connectors[connectorId]) {
-      this.#connectors[connectorId] = { 
-        transaction: undefined, 
-        chargingRate: undefined,
-      };
-    }
-  }
-
-  setConnectorChargingRate(connectorId: number, rate: ConnectorStatus['chargingRate']) {
-    this.#setConnector(connectorId);
-    this.#connectors[connectorId].chargingRate = rate;
-  }
-
-  setConnectorTransaction(connectorId: Exclude<number, 0>, trx: ConnectorStatus['transaction']) {
-    this.#setConnector(connectorId);
-    this.#connectors[connectorId].transaction = trx;
-  }
-
-  addProfile(profile: ChargingProfile) {
+  addProfile(profile: SetChargingProfileRequest) {
     const { connectorId, csChargingProfiles: { chargingProfilePurpose, stackLevel } } = profile;
     this.clearProfiles({ chargingProfilePurpose, stackLevel, connectorId });
     this.#profiles[chargingProfilePurpose].push(profile);
     this.#profiles[chargingProfilePurpose].sort((profile1, profile2) => {
       return profile1.csChargingProfiles.stackLevel < profile2.csChargingProfiles.stackLevel ? -1 : 1;
     });
-  }
-
-  handleSetChargingProfileCall(call: SetChargingProfileCall) {
-    this.addProfile(call[3]);
   }
 
   #clearProfiles(purpose: ChargingProfilePurpose, opts: ClearChargingProfileRequest) {
@@ -81,61 +55,42 @@ export class ChargingProfileStore {
     }
   }
 
-  handleClearChargingProfileCall(call: ClearChargingProfileCall) {
-    this.clearProfiles(call[3]);
-  }
+  #getProfiles(purpose: ChargingProfilePurpose, connectorId?: number, transactionId?: number): ChargingProfile[] {
+    return this.#profiles[purpose].filter((profile) => {
+      const { connectorId: profileConnectorId, csChargingProfiles: { transactionId: profileTransactionId } } = profile;
+      switch (purpose) {
+        case 'TxDefaultProfile':
+          if (profileConnectorId && connectorId && connectorId !== profileConnectorId) {
+            return false;
+          }
+          break;
+        case 'TxProfile':
+          if (typeof profileConnectorId === 'number' && connectorId && connectorId !== profileConnectorId) {
+            return false;
+          }
+          if (profileTransactionId && transactionId && profileTransactionId !== transactionId) {
+            return false;
+          }
+          break;
+      }
+      return true;
+    });
+  };
 
-  getConnectorInstantChargingLimits(connectorId: Exclude<number, 0>, referenceDate: Date, unit: ChargingRateUnit, opts: GetConnectorInstantChargingLimitsOpts = EMPTY_OBJ): InstantChargingLimits | null {
-
-    const global = getInstantChargingLimitsFromProfiles(
-      this.#profiles.ChargePointMaxProfile, 
-      referenceDate, 
-      { 
-        ...opts,
-        ...this.#info,
-        unit,
-        connectorId,
-        purpose: 'ChargePointMaxProfile',
-      },
-    );
-
-    const transaction = getInstantChargingLimitsFromProfiles(
-      this.#profiles.TxDefaultProfile, 
-      referenceDate, 
-      { 
-        ...opts,
-        ...this.#info,
-        unit,
-        connectorId,
-        purpose: 'TxProfile',
-        transaction: this.#connectors[connectorId]?.transaction,
-      },
-    );
-
-    // TODO: revise transaction-specific charging limits to make sure they fall
-    // within global limits for this CS, also considering the state of other
-    // connectors.
-    if (transaction) return global ? applyLimitsToInstantChargingLimits(this.#info.lineVoltage, transaction, global) : transaction;
-
-    const defaults = getInstantChargingLimitsFromProfiles(
-      this.#profiles.TxDefaultProfile, 
-      referenceDate, 
-      { 
-        ...opts,
-        ...this.#info,
-        unit,
-        connectorId,
-        purpose: 'TxDefaultProfile',
-      },
-    );
-
-    // TODO: revise default charging limits to make sure they fall within
-    // global limits for this CS, also considering the state of other
-    // connectors.
-    if (defaults) return global ? applyLimitsToInstantChargingLimits(this.#info.lineVoltage, defaults, global) : defaults;
-
-    return global;
+  getChargingSchedule(connectorId: Exclude<number, 0>, transactionStartDate: Date, transactionDuration: number, unit: ChargingRateUnit, line_voltage: LineVoltage): ChargingSchedule {
+    const normal = [
+      this.#getProfiles('TxDefaultProfile', connectorId)
+        .map(profile => getChargingScheduleFromProfile(profile, transactionStartDate, transactionDuration, unit, line_voltage))
+        .reduce((prev, next) => merge(prev, next, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []),
+      this.#getProfiles('TxProfile', connectorId)
+        .map(profile => getChargingScheduleFromProfile(profile, transactionStartDate, transactionDuration, unit, line_voltage))
+        .reduce((prev, next) => merge(prev, next, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []),
+    ].reduce((prev, next) => merge(prev, next, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);
+    const limit = this.#getProfiles('ChargePointMaxProfile', connectorId)
+      .map(profile => getChargingScheduleFromProfile(profile, transactionStartDate, transactionDuration, unit, line_voltage))
+      .reduce((prev, next) => merge(prev, next, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);
+    return merge(normal, limit, cloneChargingLimits, mergeChargingLimitsCombine);
+  };
   
-  }
 
 }
