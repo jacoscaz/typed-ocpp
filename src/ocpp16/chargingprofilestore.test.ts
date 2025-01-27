@@ -1,16 +1,18 @@
 
-import { OCPP16 } from '../../index.js';
+import { OCPP16 } from '../index.js';
 import { describe, it } from 'node:test';
 import { deepStrictEqual } from 'node:assert';
+import { addSeconds } from 'date-fns';
 
 describe('OCPP16 - ChargingProfileStore', () => {
 
   describe('with one charging profile [kind: Absolute, purpose: TxProfile]', () => {
 
     it('should follow the limit set by matching charging periods', () => {
-      const store = new OCPP16.ChargingProfileStore({ lineVoltage: 230});
+      const store = new OCPP16.ChargingProfileStore({ lineVoltage: 230 });
       const now_date = new Date();
-      store.addProfile({
+      const end_date = addSeconds(now_date, 3600);
+      store.addChargingProfile({
         connectorId: 1,
         csChargingProfiles: {
           chargingProfileId: 0,
@@ -28,13 +30,26 @@ describe('OCPP16 - ChargingProfileStore', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getChargingSchedule(1, now_date, 3600, 'W', 230);
-      // deepStrictEqual(limits, {
-      //   charging: { min: 0, max: 13_000 },
-      //   discharging: { min: 0, max: 0 },
-      //   shouldDischarge: false,
-      // });
-      console.log('\n\n\nschedule\n\n', JSON.stringify(schedule), '\n\n');
+      const schedule = store.getConnectorOrEvseChargingSchedule(1, now_date, end_date, 'W');
+      deepStrictEqual(schedule, [{
+        start: now_date,
+        end: end_date,
+        data: {
+          charging: { 
+            min: 0, 
+            max: 13_000, 
+            numberPhases: 3,
+          },
+          discharging: { 
+            min: 0, 
+            max: 0, 
+            numberPhases: 3,
+          },
+          canDischarge: false,
+          shouldDischarge:false,
+          unit: 'W',
+        },
+      }]);
     });
 
   });

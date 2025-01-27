@@ -1,68 +1,100 @@
 
-import type { Period, Series } from './periods.js';
-
-import type { merge } from './periods.js';
-
-export type ChargingRateUnit = 'W' | 'A';
-
-export type LineVoltage = 110 | 230;
-
-export type NumberPhases = 1 | 2 | 3;
-
-export const convertChargingRate = (value: number, source_unit: ChargingRateUnit, target_unit: ChargingRateUnit, line_voltage: LineVoltage, number_phases: NumberPhases): number => {
-  if (source_unit === target_unit) {
-    return value;
-  }
-  switch (source_unit) {
-    case 'A': 
-      return value * line_voltage * number_phases;
-    case 'W': 
-      return value / (line_voltage * number_phases);
-  }
-};
-
-export const convertChargingLimits = (limits: ChargingLimits, target_unit: ChargingRateUnit, line_voltage: LineVoltage): ChargingLimits => {
-  const converted = { ...limits };
-  converted.charging.min = convertChargingRate(limits.charging.min, limits.unit, target_unit, line_voltage, converted.charging.numberPhases);
-  converted.discharging.max = convertChargingRate(limits.discharging.max, limits.unit, target_unit, line_voltage, converted.discharging.numberPhases);
-  converted.charging.min = convertChargingRate(limits.charging.min, limits.unit, target_unit, line_voltage, converted.charging.numberPhases);
-  converted.discharging.max = convertChargingRate(limits.discharging.max, limits.unit, target_unit, line_voltage, converted.discharging.numberPhases);
-  converted.unit = target_unit;
-  return converted;
-};
-
-export interface ChargingLimits {
-  canDischarge: boolean;
-  shouldDischarge: boolean;
-  charging: { min: number; max: number; numberPhases: NumberPhases; };
-  discharging: { min: number; max: number; numberPhases: NumberPhases; }; 
-  unit: ChargingRateUnit;
+export interface Period<T> {
+  // Beginning of period, inclusive
+  start: Date;
+  // End of period, exclusive
+  end: Date;
+  // Data related to this period
+  data: T;
 }
 
-export const cloneChargingLimits = (l: ChargingLimits): ChargingLimits => ({ ...l });
+export type Schedule<T> = Period<T>[];
 
-export const mergeChargingLimitsOverrideRtoL = (l: ChargingLimits, r: ChargingLimits): ChargingLimits => { 
-  if (l.unit !== r.unit) throw new Error('cannot merge limits with different units');
-  return r;
+export const getDatePeriod = <T>(series: Schedule<T>, value: Date): Period<T> | undefined => {
+  return series.find(p => p.start <= value);
 };
 
-export const mergeChargingLimitsCombine = (l: ChargingLimits, r: ChargingLimits): ChargingLimits => {
-  if (l.unit !== r.unit) throw new Error('cannot merge limits with different units');
-  return {
-    canDischarge: l.canDischarge && r.canDischarge,
-    shouldDischarge: l.shouldDischarge && r.shouldDischarge,
-    charging: {
-      max: Math.min(l.charging.max, r.charging.max),
-      min: Math.max(l.charging.min, r.charging.min),
-      numberPhases: Math.min(l.charging.numberPhases, r.charging.numberPhases) as NumberPhases,
-    },
-    discharging: {
-      max: Math.min(l.discharging.max, r.discharging.max),
-      min: Math.max(l.discharging.min, r.discharging.min),
-      numberPhases: Math.min(l.discharging.numberPhases, r.discharging.numberPhases) as NumberPhases,
-    },
-    unit: l.unit,
-  };
-};
+export type CloneDataFn<T> = (t: T) => T;
+export type MergeDataFn<T> = (l: T, r: T) => T;
 
-export type ChargingSchedule = Series<ChargingLimits>;
+export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDataFn<T>, merger: MergeDataFn<T>): Schedule<T> => {
+
+  if (!left.length) return [...right];
+  if (!right.length) return [...left];
+
+  const merged: Schedule<T> = [];
+
+  let lp = 0;
+  let rp = 0;
+
+  let l = left[0];
+  let r = right[0];
+
+  while(lp < left.length || rp < right.length) {
+
+    let next_left = false;
+    let next_right = false;
+
+    if (lp >= left.length) {
+      // No items left in left, we continue until we run out of right.
+      merged.push({ ...r, data: cloner(r.data) });
+      next_right = true;
+    }
+
+    else if (rp >= right.length) {
+      // No items left in right, we continue until we run out of left.
+      merged.push({ ...l, data: cloner(l.data) });
+      next_left = true;
+    }
+
+    else if (l.end < r.start) {
+      // Left item comes entirely before right item
+      merged.push({ ...l, data: cloner(l.data) });
+      next_left = true;
+    }
+
+    else if (r.end < l.start) {
+      // Right item comes entirely before left item
+      merged.push({ ...r, data: cloner(r.data) });
+      next_right = true;
+    }
+
+    else {
+
+      if (l.start === r.start) {
+        if (l.end > r.end) {
+          merged.push({ ...r, data: merger(l.data, r.data) });
+          l = { ...l, start: r.end };
+          next_right = true;
+        } else if (l.end < r.end) {
+          merged.push({ ...r, end: l.end, data: merger(l.data, r.data) });
+          r = { ...r, start: l.end };
+          next_left = true;
+        } else {
+          merged.push({ ...r, data: merger(l.data, r.data) });
+          next_left = true;
+          next_right = true;
+        }
+      } else if (l.start < r.start) {
+        merged.push({ ...l, end: r.start, data: cloner(l.data) });
+        l = { ...l, start: r.start };
+      } else {
+        merged.push({ ...r, end: l.start, data: cloner(r.data) });
+        r = { ...r, start: l.start };
+      }
+
+    }
+
+    if (next_left = next_left || (l && l.start >= l.end)) {
+      l = left[++lp];
+    }
+
+    if (next_right = next_right || (r && r.start >= r.end)) {
+      r = right[++rp];
+    }
+
+  }
+
+  return merged;
+
+};

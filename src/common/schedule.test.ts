@@ -1,7 +1,7 @@
 
 import { describe, it } from 'node:test';
 import { deepStrictEqual } from 'node:assert';
-import { merge } from './periods.js';
+import { merge } from './schedule.js';
 
 describe('Periods - merge()', () => {
 
@@ -27,7 +27,7 @@ describe('Periods - merge()', () => {
       { start: new Date(0) , end: new Date(2) , data: { tag: 'left' } }, 
       { start: new Date(6) , end: new Date(8) , data: { tag: 'left' } },
     ];
-    const right = [{ start: new Date(3) , end: new Date(4) , data: { tag: 'right' } }];
+    const right = [{ start: new Date(3) , end: new Date(4) , data: { tag: 'right' } }];
     const result = merge(left, right, cloneFn, mergeFn);
     deepStrictEqual(result, [ 
       { start: new Date(0) , end: new Date(2) , data: { tag: 'left' } }, 
