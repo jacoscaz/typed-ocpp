@@ -55,6 +55,7 @@ export abstract class ChargingProfileStore<ProfileType> {
     if (_purpose === 'TxProfile' && connectorIdOrEvseId === 0) {
       throw new Error('"TxProfile" profiles cannot be added for connectorId or evseId "0"');
     }
+    this._removeChargingProfiles(purpose, connectorIdOrEvseId, stackLevel);
     this.#profiles[_purpose].push({
       connectorIdOrEvseId,
       stackLevel,

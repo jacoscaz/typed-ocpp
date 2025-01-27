@@ -18,7 +18,7 @@ export class OCPP16ChargingProfileStore extends ChargingProfileStore<SetCharging
     this._removeChargingProfiles(request.chargingProfilePurpose, request.connectorId, request.stackLevel);
   }
 
-  _getScheduleFromProfile(profile: SetChargingProfileRequest, fromDate: Date, toDate: Date, unit: ChargingRateUnit): ChargingSchedule {
+  protected _getScheduleFromProfile(profile: SetChargingProfileRequest, fromDate: Date, toDate: Date, unit: ChargingRateUnit): ChargingSchedule {
     const { csChargingProfiles: { chargingSchedule, validFrom, validTo, recurrencyKind, chargingProfileKind } } = profile;
     const schedule: ChargingSchedule = [];
     if (validFrom && fromDate < new Date(validFrom)) {
