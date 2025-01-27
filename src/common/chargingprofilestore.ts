@@ -2,7 +2,7 @@
 import type { ChargingSchedule, ChargingLimits } from './chargingschedule.js';
 import type { ChargingRateUnit, LineVoltage } from './utils';
 
-import { merge } from './schedule.js';
+import { merge, getDatePeriod } from './schedule.js';
 import { mergeChargingLimitsCombineMin, mergeChargingLimitsOverrideRtoL, mergeChargingLimitsCombineAdd, cloneChargingLimits } from './chargingschedule.js';
 
 const CHARGING_PROFILE_PURPOSES = [
@@ -130,6 +130,13 @@ export abstract class ChargingProfileStore<ProfileType> {
     const stationSchedule = this.getStationChargingSchedule(fromDate, toDate, unit);
     schedule = merge(stationSchedule, schedule, cloneChargingLimits, mergeChargingLimitsCombineMin); 
     return schedule;
+  }
+
+  getConnectorOrEvseChargingLimitsAtDate(connectorIdOrEvseId: Exclude<number, 0>, atDate: Date, unit: ChargingRateUnit, priority?: boolean): ChargingLimits | undefined {
+    const schedule = this.getConnectorOrEvseChargingSchedule(connectorIdOrEvseId, atDate, atDate, unit, priority);
+    if (schedule) {
+      return getDatePeriod(schedule, atDate)?.data;
+    }
   }
 
 }
