@@ -2,7 +2,7 @@
 import type { ChargingSchedule, ChargingLimits } from './chargingschedule.js';
 import type { ChargingRateUnit, LineVoltage } from './utils';
 
-import { merge, getDatePeriod } from './schedule.js';
+import { merge, getPeriodForDate } from './schedule.js';
 import { mergeChargingLimitsCombineMin, mergeChargingLimitsOverrideRtoL, mergeChargingLimitsCombineAdd, cloneChargingLimits } from './chargingschedule.js';
 
 const CHARGING_PROFILE_PURPOSES = [
@@ -17,6 +17,7 @@ const CHARGING_PROFILE_PURPOSES = [
 export type ChargingProfilePurpose = typeof CHARGING_PROFILE_PURPOSES[number];
 
 export interface PhysicalInfo {
+  canDischarge: boolean;
   lineVoltage: LineVoltage;
 }
 
@@ -135,7 +136,7 @@ export abstract class ChargingProfileStore<ProfileType> {
   getConnectorOrEvseChargingLimitsAtDate(connectorIdOrEvseId: Exclude<number, 0>, atDate: Date, unit: ChargingRateUnit, priority?: boolean): ChargingLimits | undefined {
     const schedule = this.getConnectorOrEvseChargingSchedule(connectorIdOrEvseId, atDate, atDate, unit, priority);
     if (schedule) {
-      return getDatePeriod(schedule, atDate)?.data;
+      return getPeriodForDate(schedule, atDate)?.data;
     }
   }
 

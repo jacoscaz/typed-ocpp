@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 import { deepStrictEqual } from 'node:assert';
 import { merge } from './schedule.js';
 
-describe('Periods - merge()', () => {
+describe('Schedules - merge()', () => {
 
   const mergeFn = <T extends {}>(l: T, r: T): T => ({ ...r });
   const cloneFn = <T extends {}>(t: T): T => ({ ...t });

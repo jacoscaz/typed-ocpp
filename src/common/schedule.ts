@@ -1,26 +1,56 @@
+/*
+ * This module implements primitive types and functions to deal with temporal
+ * schedules as arrays of non-overlapping period objects.
+ */
 
+/**
+ * A period is defined by its start date (inclusive),
+ * its end date (exclusive) and related data.
+ */
 export interface Period<T> {
-  // Beginning of period, inclusive
+  /** Beginning of this period, inclusive */
   start: Date;
-  // End of period, exclusive
+  /** End of this period, exclusive */
   end: Date;
-  // Data related to this period
+  /** Data related to this period */
   data: T;
 }
 
+/** 
+ * A schedule is a temporally-ordered collection of discrete, 
+ * non-overlapping periods.
+ */
 export type Schedule<T> = Period<T>[];
 
-export const getDatePeriod = <T>(series: Schedule<T>, value: Date): Period<T> | undefined => {
-  return series.find(p => p.start <= value);
-};
-
+/**
+ * Data cloning functions are used by other functions in this module to create
+ * identical copies of period's data. A data cloning function **must** return a
+ * deep copy of the provided value.
+ */
 export type CloneDataFn<T> = (t: T) => T;
+
+/**
+ * Data merging functions are used by other functions in this module to merge
+ * the data of two different periods into a new data value for a new period.
+ */
 export type MergeDataFn<T> = (l: T, r: T) => T;
 
-export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDataFn<T>, merger: MergeDataFn<T>): Schedule<T> => {
+/**
+ * Returns the first (and only) period in the schedule which covers the time
+ * instant represented by the provided date. Returns undefined if the schedule
+ * does not contain one such period.
+ */
+export const getPeriodForDate = <T>(schedule: Schedule<T>, value: Date): Period<T> | undefined => {
+  return schedule.find(p => p.start <= value);
+};
 
-  if (!left.length) return [...right];
-  if (!right.length) return [...left];
+/**
+ * Merges two schedules together. Overlapping periods will be broken down into
+ * shorter periods. The cloning and merging functions will be called to create
+ * the resulting periods and may be used to customize the merging logic in the
+ * case of partially or completely overlapping periods.
+ */
+export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDataFn<T>, merger: MergeDataFn<T>): Schedule<T> => {
 
   const merged: Schedule<T> = [];
 
@@ -30,19 +60,19 @@ export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDat
   let l = left[0];
   let r = right[0];
 
+  let next_left = false;
+  let next_right = false;
+
   while(lp < left.length || rp < right.length) {
 
-    let next_left = false;
-    let next_right = false;
-
     if (lp >= left.length) {
-      // No items left in left, we continue until we run out of right.
+      // No items left in left, we continue with left until we run out of items.
       merged.push({ ...r, data: cloner(r.data) });
       next_right = true;
     }
 
     else if (rp >= right.length) {
-      // No items left in right, we continue until we run out of left.
+      // No items left in right, we continue with left util we run out of items.
       merged.push({ ...l, data: cloner(l.data) });
       next_left = true;
     }
@@ -62,23 +92,30 @@ export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDat
     else {
 
       if (l.start === r.start) {
+        // Left starts on the same date as right
+
         if (l.end > r.end) {
+          // Left starts on the same date as right but ends after it
           merged.push({ ...r, data: merger(l.data, r.data) });
           l = { ...l, start: r.end };
           next_right = true;
         } else if (l.end < r.end) {
+          // Left starts on the same date as right but ends before it
           merged.push({ ...r, end: l.end, data: merger(l.data, r.data) });
           r = { ...r, start: l.end };
           next_left = true;
         } else {
+          // Left and right start and end on the same dates
           merged.push({ ...r, data: merger(l.data, r.data) });
           next_left = true;
           next_right = true;
         }
       } else if (l.start < r.start) {
+        // Left starts before right
         merged.push({ ...l, end: r.start, data: cloner(l.data) });
         l = { ...l, start: r.start };
       } else {
+        // Right starts before left
         merged.push({ ...r, end: l.start, data: cloner(r.data) });
         r = { ...r, start: l.start };
       }
@@ -86,11 +123,15 @@ export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDat
     }
 
     if (next_left = next_left || (l && l.start >= l.end)) {
+      // If left has collapsed into a zero-length period we advance to the next one
       l = left[++lp];
+      next_left = false;
     }
 
     if (next_right = next_right || (r && r.start >= r.end)) {
+      // If right has collapsed into a zero-length period we advance to the next one
       r = right[++rp];
+      next_right = false;
     }
 
   }

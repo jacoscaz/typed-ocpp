@@ -46,7 +46,9 @@ export class OCPP16ChargingProfileStore extends ChargingProfileStore<SetCharging
         const addFn = recurrencyKind === 'Daily' ? addDays : addWeeks;
         recurringProfileStartDate = addMilliseconds(startOfFn(fromDate), differenceInMilliseconds(recurringProfileStartDate, startOfFn(recurringProfileStartDate)));
         while (recurringProfileStartDate < toDate) {
-          scheduleStartEndDatePairs.push([recurringProfileStartDate, (recurringProfileStartDate = addFn(recurringProfileStartDate, 1))]);
+          const recurringProfileEndDate = addFn(recurringProfileStartDate, 1);
+          scheduleStartEndDatePairs.push([recurringProfileStartDate, recurringProfileEndDate]);
+          recurringProfileStartDate = recurringProfileEndDate;
         }
       } break;
     }
@@ -61,7 +63,7 @@ export class OCPP16ChargingProfileStore extends ChargingProfileStore<SetCharging
           end: periodEndDate,
           data: {
             charging: { 
-              min: 0, 
+              min: convertChargingRate(minChargingRate ?? 0, chargingRateUnit, unit, this._info.lineVoltage, numberPhases as NumberPhases), 
               max: convertChargingRate(limit >= 0 ? limit : 0, chargingRateUnit, unit, this._info.lineVoltage, numberPhases as NumberPhases), 
               numberPhases: numberPhases as NumberPhases,
             },
@@ -70,7 +72,7 @@ export class OCPP16ChargingProfileStore extends ChargingProfileStore<SetCharging
               max: convertChargingRate(limit < 0 ? Math.abs(limit) : 0, chargingRateUnit, unit, this._info.lineVoltage, numberPhases as NumberPhases), 
               numberPhases: numberPhases as NumberPhases,
             },
-            canDischarge: limit < 0,
+            canDischarge: this._info.canDischarge,
             shouldDischarge: limit < 0,
             unit,
           },
