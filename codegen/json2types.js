@@ -71,21 +71,20 @@ const output_file_header = `/*
       
   }
 
-  // Deduplicate code blocks
-  for (const block of deduplicate_blocks[mode]) {
-    const length_before_replace = output_file_data.length;
-    output_file_data = output_file_data.replaceAll(block, '');
-    if (length_before_replace !== output_file_data.length) {
-      output_file_data += '\n\n' + block;
-    }
-  }
-
   // Remove comments
   output_file_data = output_file_data.replaceAll(/^\s*?\/\*\*(?:.|\n)*?\*\/\n/mg, '');
   output_file_data = output_file_data.replaceAll('/* eslint-disable */', '');
- 
+
+  // Deduplicate code blocks
+  deduplicate_blocks[mode].forEach((block) => {
+    if (output_file_data === (output_file_data = output_file_data.replaceAll(block, ''))) {
+      throw new Error(`\n\nFailed to deduplicate block:\n\n${block}\n\n`);
+    }
+    output_file_data += '\n\n' + block;
+  });
+
   await writeFile(output_file_abspath, output_file_data, 'utf8');
- 
+  
 })().catch((err) => {
   console.error(err.stack);
   process.exit(1);
