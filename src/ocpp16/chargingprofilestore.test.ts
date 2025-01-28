@@ -2,7 +2,7 @@
 import { OCPP16 } from '../index.js';
 import { describe, it } from 'node:test';
 import { deepStrictEqual } from 'node:assert';
-import { addDays, addSeconds } from 'date-fns';
+import { addDays, addHours, addSeconds } from 'date-fns';
 
 describe('OCPP16 - ChargingProfileStore', () => {
 
@@ -30,7 +30,7 @@ describe('OCPP16 - ChargingProfileStore', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getConnectorOrEvseChargingSchedule(1, now_date, end_date, 'W');
+      const schedule = store.getEvseChargingSchedule(1, now_date, end_date, 'W');
       deepStrictEqual(schedule, [{
         start: now_date,
         end: end_date,
@@ -74,7 +74,7 @@ describe('OCPP16 - ChargingProfileStore', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getConnectorOrEvseChargingSchedule(1, now_date, end_date, 'W');
+      const schedule = store.getEvseChargingSchedule(1, now_date, end_date, 'W');
       deepStrictEqual(schedule, [{
         start: now_date,
         end: end_date,
@@ -103,7 +103,7 @@ describe('OCPP16 - ChargingProfileStore', () => {
     it('should follow the limit set by matching recurring periods', () => {
       const now_date = new Date();
       const start_date = new Date(now_date.valueOf() - 1);
-      const end_date = addDays(start_date, 1);
+      const end_date = addHours(start_date, 4);
       const store = new OCPP16.ChargingProfileStore({ lineVoltage: 230, canDischarge: true });
       store.addChargingProfile({
         connectorId: 1,
@@ -126,7 +126,7 @@ describe('OCPP16 - ChargingProfileStore', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getConnectorOrEvseChargingSchedule(1, now_date, end_date, 'W');
+      const schedule = store.getEvseChargingSchedule(1, now_date, end_date, 'W');
       deepStrictEqual(schedule, [{
         start: start_date,
         end: end_date,

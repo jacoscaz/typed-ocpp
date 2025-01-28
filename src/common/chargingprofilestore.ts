@@ -24,7 +24,7 @@ export interface PhysicalInfo {
 export interface WrappedProfile<ProfileType> {
   profile: ProfileType;
   stackLevel: number;
-  connectorIdOrEvseId: number;
+  evseId: number;
 }
 
 export abstract class ChargingProfileStore<ProfileType> {
@@ -48,28 +48,28 @@ export abstract class ChargingProfileStore<ProfileType> {
   
   abstract addChargingProfile(profile: ProfileType): void;
 
-  protected _addChargingProfile(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile', connectorIdOrEvseId: number, stackLevel: number, profile: ProfileType) {
+  protected _addChargingProfile(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile', evseId: number, stackLevel: number, profile: ProfileType) {
     const _purpose = purpose === 'ChargePointMaxProfile' ? 'ChargingStationMaxProfile' : purpose;
-    if (_purpose === 'ChargingStationMaxProfile' || _purpose === 'LocalGeneration' && connectorIdOrEvseId !== 0) {
+    if (_purpose === 'ChargingStationMaxProfile' || _purpose === 'LocalGeneration' && evseId !== 0) {
       throw new Error(`"${purpose}" profiles cannot be added for connectorId or evseId other than "0"`);
     }
-    if (_purpose === 'TxProfile' && connectorIdOrEvseId === 0) {
+    if (_purpose === 'TxProfile' && evseId === 0) {
       throw new Error('"TxProfile" profiles cannot be added for connectorId or evseId "0"');
     }
-    this._removeChargingProfiles(purpose, connectorIdOrEvseId, stackLevel);
+    this._removeChargingProfiles(purpose, evseId, stackLevel);
     this.#profiles[_purpose].push({
-      connectorIdOrEvseId,
+      evseId: evseId,
       stackLevel,
       profile,
     });
     this.#profiles[_purpose].sort((l, r) => l.stackLevel < r.stackLevel ? -1 : 1);
   }
 
-  protected _removeChargingProfiles(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile' | undefined, connectorIdOrEvseId: number | undefined, stackLevel: number | undefined) {
+  protected _removeChargingProfiles(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile' | undefined, evseId: number | undefined, stackLevel: number | undefined) {
     purpose = purpose === 'ChargePointMaxProfile' ? 'ChargingStationMaxProfile' : purpose;
     (purpose ? [purpose] : CHARGING_PROFILE_PURPOSES).forEach((purpose) => {
       this.#profiles[purpose] = this.#profiles[purpose].filter((profile) => {
-        if (typeof connectorIdOrEvseId === 'number' && connectorIdOrEvseId !== profile.connectorIdOrEvseId) {
+        if (typeof evseId === 'number' && evseId !== profile.evseId) {
           return false;
         }
         if (typeof stackLevel === 'number' && stackLevel !== profile.stackLevel) {
@@ -93,36 +93,36 @@ export abstract class ChargingProfileStore<ProfileType> {
       .reduce((left, right) => merge(left, right, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);
     schedule = merge(schedule, localGenerationSchedule, cloneChargingLimits, mergeChargingLimitsCombineAdd);
     const externalMaxSchedule = this.#profiles['ChargingStationExternalConstraints']
-      .filter((profile) => profile.connectorIdOrEvseId === 0)
+      .filter((profile) => profile.evseId === 0)
       .map(profile => this._getScheduleFromProfile(profile.profile, fromDate, toDate, unit))
       .reduce((left, right) => merge(left, right, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);
     schedule = merge(schedule, externalMaxSchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
     return schedule;
   }
 
-  getConnectorOrEvseChargingSchedule(connectorIdOrEvseId: number, fromDate: Date, toDate: Date, unit: ChargingRateUnit, priority?: boolean): ChargingSchedule {
+  getEvseChargingSchedule(evseId: number, fromDate: Date, toDate: Date, unit: ChargingRateUnit, priority?: boolean): ChargingSchedule {
     let schedule: ChargingSchedule = [];
     const defaultSchedule = this.#profiles['TxDefaultProfile']
-      .filter((profile) => profile.connectorIdOrEvseId === 0 || profile.connectorIdOrEvseId === connectorIdOrEvseId)
+      .filter((profile) => profile.evseId === 0 || profile.evseId === evseId)
       .map(profile => this._getScheduleFromProfile(profile.profile, fromDate, toDate, unit))
       .reduce((left, right) => merge(left, right, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);
     schedule = merge(schedule, defaultSchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
     if (priority) {
       const defaultPrioritySchedule = this.#profiles['PriorityCharging']
-        .filter((profile) => profile.connectorIdOrEvseId === 0)
+        .filter((profile) => profile.evseId === 0)
         .map(profile => this._getScheduleFromProfile(profile.profile, fromDate, toDate, unit))
         .reduce((left, right) => merge(left, right, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);      
       schedule = merge(defaultPrioritySchedule, defaultSchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
     }
-    if (connectorIdOrEvseId !== 0) {
+    if (evseId !== 0) {
       const transactionSchedule = this.#profiles['TxProfile']
-        .filter((profile) => profile.connectorIdOrEvseId === connectorIdOrEvseId)
+        .filter((profile) => profile.evseId === evseId)
         .map(profile => this._getScheduleFromProfile(profile.profile, fromDate, toDate, unit))
         .reduce((left, right) => merge(left, right, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);      
       schedule = merge(transactionSchedule, defaultSchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
       if (priority) {
         const transactionPrioritySchedule = this.#profiles['PriorityCharging']
-          .filter((profile) => profile.connectorIdOrEvseId === connectorIdOrEvseId)
+          .filter((profile) => profile.evseId === evseId)
           .map(profile => this._getScheduleFromProfile(profile.profile, fromDate, toDate, unit))
           .reduce((left, right) => merge(left, right, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);      
         schedule = merge(transactionPrioritySchedule, defaultSchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
@@ -133,8 +133,8 @@ export abstract class ChargingProfileStore<ProfileType> {
     return schedule;
   }
 
-  getConnectorOrEvseChargingLimitsAtDate(connectorIdOrEvseId: Exclude<number, 0>, atDate: Date, unit: ChargingRateUnit, priority?: boolean): ChargingLimits | undefined {
-    const schedule = this.getConnectorOrEvseChargingSchedule(connectorIdOrEvseId, atDate, atDate, unit, priority);
+  getEvseChargingLimitsAtDate(evseId: Exclude<number, 0>, atDate: Date, unit: ChargingRateUnit, priority?: boolean): ChargingLimits | undefined {
+    const schedule = this.getEvseChargingSchedule(evseId, atDate, atDate, unit, priority);
     if (schedule) {
       return getPeriodForDate(schedule, atDate)?.data;
     }

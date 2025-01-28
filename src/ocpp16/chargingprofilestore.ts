@@ -3,7 +3,7 @@ import type { ClearChargingProfileRequest, SetChargingProfileRequest } from './t
 import type { ChargingSchedule } from '../common/chargingschedule.js';
 import type { ChargingRateUnit, NumberPhases } from '../common/utils.js';
 
-import { startOfDay, addMilliseconds, startOfWeek, differenceInMilliseconds, addWeeks, addDays, addSeconds } from 'date-fns';
+import { startOfDay, addMilliseconds, startOfWeek, differenceInMilliseconds, addWeeks, addDays, addSeconds, min } from 'date-fns';
 import { convertChargingRate } from '../common/utils.js';
 import { ChargingProfileStore } from '../common/chargingprofilestore.js'; 
 
@@ -46,8 +46,11 @@ export class OCPP16ChargingProfileStore extends ChargingProfileStore<SetCharging
         const addFn = recurrencyKind === 'Daily' ? addDays : addWeeks;
         recurringProfileStartDate = addMilliseconds(startOfFn(fromDate), differenceInMilliseconds(recurringProfileStartDate, startOfFn(recurringProfileStartDate)));
         while (recurringProfileStartDate < toDate) {
-          const recurringProfileEndDate = addFn(recurringProfileStartDate, 1);
-          scheduleStartEndDatePairs.push([recurringProfileStartDate, recurringProfileEndDate]);
+          let recurringProfileEndDate = addFn(recurringProfileStartDate, 1);
+          let recurringProfileEndDateInclDuration = duration 
+            ? min([recurringProfileEndDate, addSeconds(recurringProfileStartDate, duration)])
+            : recurringProfileEndDate;
+          scheduleStartEndDatePairs.push([recurringProfileStartDate, recurringProfileEndDateInclDuration]);
           recurringProfileStartDate = recurringProfileEndDate;
         }
       } break;
