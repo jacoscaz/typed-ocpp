@@ -52,7 +52,7 @@ export const getPeriodForDate = <T>(schedule: Schedule<T>, value: Date): Period<
  */
 export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDataFn<T>, merger: MergeDataFn<T>): Schedule<T> => {
 
-  const merged: Schedule<T> = [];
+  const merged_schedule: Schedule<T> = [];
 
   let lp = 0;
   let rp = 0;
@@ -63,29 +63,31 @@ export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDat
   let next_left = false;
   let next_right = false;
 
+  let merged_period: Period<T> | undefined;
+
   while(lp < left.length || rp < right.length) {
 
     if (lp >= left.length) {
       // No items left in left, we continue with left until we run out of items.
-      merged.push({ ...r, data: cloner(r.data) });
+      merged_period = { ...r, data: cloner(r.data) };
       next_right = true;
     }
 
     else if (rp >= right.length) {
       // No items left in right, we continue with left util we run out of items.
-      merged.push({ ...l, data: cloner(l.data) });
+      merged_period = { ...l, data: cloner(l.data) };
       next_left = true;
     }
 
     else if (l.end < r.start) {
       // Left item comes entirely before right item
-      merged.push({ ...l, data: cloner(l.data) });
+      merged_period = { ...l, data: cloner(l.data) };
       next_left = true;
     }
 
     else if (r.end < l.start) {
       // Right item comes entirely before left item
-      merged.push({ ...r, data: cloner(r.data) });
+      merged_period = { ...r, data: cloner(r.data) };
       next_right = true;
     }
 
@@ -96,30 +98,37 @@ export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDat
 
         if (l.end > r.end) {
           // Left starts on the same date as right but ends after it
-          merged.push({ ...r, data: merger(l.data, r.data) });
+          merged_period = { ...r, data: merger(l.data, r.data) };
           l = { ...l, start: r.end };
           next_right = true;
         } else if (l.end < r.end) {
           // Left starts on the same date as right but ends before it
-          merged.push({ ...r, end: l.end, data: merger(l.data, r.data) });
+          merged_period = { ...l, data: merger(l.data, r.data) };
           r = { ...r, start: l.end };
           next_left = true;
         } else {
           // Left and right start and end on the same dates
-          merged.push({ ...r, data: merger(l.data, r.data) });
+          merged_period = { ...r, data: merger(l.data, r.data) };
           next_left = true;
           next_right = true;
         }
       } else if (l.start < r.start) {
         // Left starts before right
-        merged.push({ ...l, end: r.start, data: cloner(l.data) });
+        merged_period = { ...l, end: r.start, data: cloner(l.data) };
         l = { ...l, start: r.start };
       } else {
         // Right starts before left
-        merged.push({ ...r, end: l.start, data: cloner(r.data) });
+        merged_period = { ...r, end: l.start, data: cloner(r.data) };
         r = { ...r, start: l.start };
       }
 
+    }
+
+    if (merged_period) {
+      if (merged_period.end > merged_period.start) {
+        merged_schedule.push(merged_period);
+      }
+      merged_period = undefined;
     }
 
     if (next_left = next_left || (l && l.start >= l.end)) {
@@ -136,6 +145,6 @@ export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDat
 
   }
 
-  return merged;
+  return merged_schedule;
 
 };

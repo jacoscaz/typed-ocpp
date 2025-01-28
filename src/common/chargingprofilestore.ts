@@ -112,20 +112,20 @@ export abstract class ChargingProfileStore<ProfileType> {
         .filter((profile) => profile.evseId === 0)
         .map(profile => this._getScheduleFromProfile(profile.profile, fromDate, toDate, unit))
         .reduce((left, right) => merge(left, right, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);      
-      schedule = merge(defaultPrioritySchedule, defaultSchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
+      schedule = merge(schedule, defaultPrioritySchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
     }
     if (evseId !== 0) {
       const transactionSchedule = this.#profiles['TxProfile']
         .filter((profile) => profile.evseId === evseId)
         .map(profile => this._getScheduleFromProfile(profile.profile, fromDate, toDate, unit))
         .reduce((left, right) => merge(left, right, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);      
-      schedule = merge(transactionSchedule, defaultSchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
+      schedule = merge(schedule, transactionSchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
       if (priority) {
         const transactionPrioritySchedule = this.#profiles['PriorityCharging']
           .filter((profile) => profile.evseId === evseId)
           .map(profile => this._getScheduleFromProfile(profile.profile, fromDate, toDate, unit))
           .reduce((left, right) => merge(left, right, cloneChargingLimits, mergeChargingLimitsOverrideRtoL), []);      
-        schedule = merge(transactionPrioritySchedule, defaultSchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
+        schedule = merge(schedule, transactionPrioritySchedule, cloneChargingLimits, mergeChargingLimitsOverrideRtoL);
       }
     }
     const stationSchedule = this.getStationChargingSchedule(fromDate, toDate, unit);
