@@ -2,6 +2,7 @@
 import type { ChargingSchedule, ChargingLimits } from './chargingschedule.js';
 import type { ChargingRateUnit, LineVoltage } from './utils';
 
+import { addHours } from 'date-fns';
 import { merge, getPeriodForDate } from './schedule.js';
 import { mergeChargingLimitsCombineMin, mergeChargingLimitsOverrideRtoL, mergeChargingLimitsCombineAdd, cloneChargingLimits } from './chargingschedule.js';
 
@@ -134,7 +135,7 @@ export abstract class ChargingProfileStore<ProfileType> {
   }
 
   getEvseChargingLimitsAtDate(evseId: Exclude<number, 0>, atDate: Date, unit: ChargingRateUnit, priority?: boolean): ChargingLimits | undefined {
-    const schedule = this.getEvseChargingSchedule(evseId, atDate, atDate, unit, priority);
+    const schedule = this.getEvseChargingSchedule(evseId, atDate, addHours(atDate, 1), unit, priority);
     if (schedule) {
       return getPeriodForDate(schedule, atDate)?.data;
     }
