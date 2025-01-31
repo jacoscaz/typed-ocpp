@@ -5,53 +5,19 @@
  */
 
 import type { Schedule, CloneDataFn, MergeDataFn } from './schedule.js';
-import type { ChargingRateUnit, NumberPhases, LineVoltage } from './utils.js';
+import type { ChargingLimits, NumberOfPhases } from './utils.js';
 
-import { convertChargingRate } from './utils.js';
 
-/**
- * Describes the limits that a charging station should follow whilst charging
- * an EV.
- */
-export interface ChargingLimits {
-  canDischarge: boolean;
-  shouldDischarge: boolean;
-  charging: { 
-    min: number; 
-    max: number; 
-    numberPhases: NumberPhases; 
-  };
-  discharging: { 
-    min: number; 
-    max: number; 
-    numberPhases: NumberPhases; 
-  }; 
-  unit: ChargingRateUnit;
-}
 
 /**
- * Commodity type that specializes the generic `Schedule` type into a schedule
- * of periods with `ChargingLimits` data values.
+ * Specializes the generic `Schedule` type into a schedule of periods described
+ * by `ExchangeLimits` objects.
  */
 export type ChargingSchedule = Schedule<ChargingLimits>;
 
 /**
- * Returns a new `ChargingLimit` object with the `min`/`max` values converted
- * into the desired unit.
- */
-export const convertChargingLimits = (limits: ChargingLimits, targetUnit: ChargingRateUnit, lineVoltage: LineVoltage): ChargingLimits => {
-  const converted = { ...limits };
-  converted.charging.min = convertChargingRate(limits.charging.min, limits.unit, targetUnit, lineVoltage, converted.charging.numberPhases);
-  converted.discharging.max = convertChargingRate(limits.discharging.max, limits.unit, targetUnit, lineVoltage, converted.discharging.numberPhases);
-  converted.charging.min = convertChargingRate(limits.charging.min, limits.unit, targetUnit, lineVoltage, converted.charging.numberPhases);
-  converted.discharging.max = convertChargingRate(limits.discharging.max, limits.unit, targetUnit, lineVoltage, converted.discharging.numberPhases);
-  converted.unit = targetUnit;
-  return converted;
-};
-
-/**
  * Cloning function for use with scheduling methods in `./schedule.ts` that
- * returns a deep copy of the provided `ChargingLimit` object.
+ * returns a deep copy of the provided `ExchangeLimits` object.
  */
 export const cloneChargingLimits: CloneDataFn<ChargingLimits> = (l: ChargingLimits): ChargingLimits => ({ 
   ...l,
@@ -61,12 +27,12 @@ export const cloneChargingLimits: CloneDataFn<ChargingLimits> = (l: ChargingLimi
 
 /**
  * Merging function for use with scheduling methods in `./schedule.ts` that
- * returns a deep copy of the provided `right` instance of `ChargingLimit`.
- * Semantically, this can be used to merge two charging schedules in a
- * manner that overrides the limit of overlapping periods with the values
- * coming from that of the `right` schedule.
+ * returns a deep copy of the provided `right` instance of `ExchangeLimits`.
+ * Semantically, this can be used to merge two exchange schedules in a manner 
+ * that sets the limits of overlapping periods to those from the `right`
+ * schedule.
  */
-export const mergeChargingLimitsOverrideRtoL: MergeDataFn<ChargingLimits> = (l: ChargingLimits, r: ChargingLimits): ChargingLimits => { 
+export const mergeChargingLimitsRight: MergeDataFn<ChargingLimits> = (l: ChargingLimits, r: ChargingLimits): ChargingLimits => { 
   if (l.unit !== r.unit) {
     throw new Error('cannot merge limits with different units');
   }
@@ -75,27 +41,26 @@ export const mergeChargingLimitsOverrideRtoL: MergeDataFn<ChargingLimits> = (l: 
 
 /**
  * Merging function for use with scheduling methods in `./schedule.ts` that
- * returns a deep copy of the provided `right` instance of `ChargingLimit`.
- * Semantically, this can be used to merge two charging schedules in a
- * manner that composes limits of overlapping periods (lower maximum, greater
- * minimum).
+ * returns a new `ExchangeLimits` object computed as the convervative minimum
+ * between `left` and `right`. Semantically, this can be used to merge two
+ * schedules in a manner that sets the limits of overlapping periods to the 
+ * minimum values between both.
  */
-export const mergeChargingLimitsCombineMin: MergeDataFn<ChargingLimits> = (l: ChargingLimits, r: ChargingLimits): ChargingLimits => {
+export const mergeChargingLimitsMin: MergeDataFn<ChargingLimits> = (l: ChargingLimits, r: ChargingLimits): ChargingLimits => {
   if (l.unit !== r.unit) {
     throw new Error('cannot merge limits with different units');
   }
   return {
-    canDischarge: l.canDischarge && r.canDischarge,
-    shouldDischarge: l.shouldDischarge && r.shouldDischarge,
+    shouldDischarge: l.shouldDischarge === r.shouldDischarge ? l.shouldDischarge : false,
     charging: {
       max: Math.min(l.charging.max, r.charging.max),
       min: Math.max(l.charging.min, r.charging.min),
-      numberPhases: Math.min(l.charging.numberPhases, r.charging.numberPhases) as NumberPhases,
+      phases: { qty: Math.min(l.charging.phases.qty, r.charging.phases.qty) as NumberOfPhases },
     },
     discharging: {
       max: Math.min(l.discharging.max, r.discharging.max),
       min: Math.max(l.discharging.min, r.discharging.min),
-      numberPhases: Math.min(l.discharging.numberPhases, r.discharging.numberPhases) as NumberPhases,
+      phases: { qty: Math.min(l.discharging.phases.qty, r.discharging.phases.qty) as NumberOfPhases },
     },
     unit: l.unit,
   };
@@ -103,28 +68,26 @@ export const mergeChargingLimitsCombineMin: MergeDataFn<ChargingLimits> = (l: Ch
 
 /**
  * Merging function for use with scheduling methods in `./schedule.ts` that
- * returns a deep copy of the provided `right` instance of `ChargingLimit`.
- * Semantically, this can be used to merge two charging schedules in a
- * manner that composes limits of overlapping periods via addition, resulting
- * in a `ChargingLimit` object with the `max` values set to the sum of those
- * in each period.
+ * returns a new `ExchangeLimits` object computed as the logical sum of the
+ * limits in `left` and `right`. Semantically, this can be used to merge two
+ * exchange schedules in a manner that composes limits of overlapping periods
+ * via addition.
  */
-export const mergeChargingLimitsCombineAdd: MergeDataFn<ChargingLimits> = (l: ChargingLimits, r: ChargingLimits): ChargingLimits => {
+export const mergeChargingLimitsAdd: MergeDataFn<ChargingLimits> = (l: ChargingLimits, r: ChargingLimits): ChargingLimits => {
   if (l.unit !== r.unit) {
     throw new Error('cannot merge limits with different units');
   }
   return {
-    canDischarge: l.canDischarge || r.canDischarge,
-    shouldDischarge: l.shouldDischarge && r.shouldDischarge,
+    shouldDischarge: l.shouldDischarge === r.shouldDischarge ? l.shouldDischarge : false,
     charging: {
       max: l.charging.max + r.charging.max,
       min: Math.max(l.charging.min, r.charging.min),
-      numberPhases: Math.min(l.charging.numberPhases, r.charging.numberPhases) as NumberPhases,
+      phases: { qty: Math.max(l.charging.phases.qty, r.charging.phases.qty) as NumberOfPhases },
     },
     discharging: {
       max: l.discharging.max + r.discharging.max,
       min: Math.max(l.discharging.min, r.discharging.min),
-      numberPhases: Math.min(l.discharging.numberPhases, r.discharging.numberPhases) as NumberPhases,
+      phases: { qty: Math.max(l.discharging.phases.qty, r.discharging.phases.qty) as NumberOfPhases },
     },
     unit: l.unit,
   };

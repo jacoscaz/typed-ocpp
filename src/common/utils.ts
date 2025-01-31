@@ -18,18 +18,36 @@ export const assign = <TGT extends {}, SRC extends {}>(target: TGT, source: SRC)
 
 export type ChargingRateUnit = 'W' | 'A';
 
-export type LineVoltage = 110 | 230;
+// export type IndividualPhases = [boolean, boolean, boolean];
 
-export type NumberPhases = 1 | 2 | 3;
+export type NumberOfPhases = 1 | 2 | 3;
 
-export const convertChargingRate = (value: number, source_unit: ChargingRateUnit, target_unit: ChargingRateUnit, line_voltage: LineVoltage, number_phases: NumberPhases): number => {
-  if (source_unit === target_unit) {
-    return value;
-  }
-  switch (source_unit) {
-    case 'A': 
-      return value * line_voltage * number_phases;
-    case 'W': 
-      return value / (line_voltage * number_phases);
-  }
+export type Phases = { 
+  qty: NumberOfPhases;
 };
+
+export interface ChargingLimits {
+  charging: { 
+    min: number; 
+    max: number;
+    phases: Phases;
+  };
+  discharging: { 
+    min: number; 
+    max: number;
+    phases: Phases;
+  };
+  shouldDischarge: boolean;
+  unit: ChargingRateUnit;
+}
+
+export const CHARGING_PROFILE_PURPOSES = [
+  'ChargingStationExternalConstraints',
+  'ChargingStationMaxProfile',
+  'TxDefaultProfile',
+  'TxProfile',
+  'PriorityCharging',
+  'LocalGeneration',
+] as const;
+
+export type ChargingProfilePurpose = (typeof CHARGING_PROFILE_PURPOSES)[number];

@@ -91,7 +91,7 @@ import { validateCallError as validateCallError_ } from './callerror.js';
 import { validateCallResult as validateCallResult_, checkCallResult as checkCallResult_ } from './callresult.js';
 import { Action as Action_, MessageType as MessageType_, ErrorCode as ErrorCode_ } from './utils.js';
 import { compile } from '../common/ajv.js';
-import { OCPP16ChargingProfileStore } from './chargingprofilestore.js';
+import { ChargingScheduleManager as ChargingScheduleManager_ } from './chargingschedulemanager.js';
 
 Object.values(schemas_).forEach((schema) => {
   compile(schema);
@@ -196,7 +196,7 @@ export namespace OCPP16 {
   export const validateCallError = validateCallError_;
   export const validateCallResult = validateCallResult_;
 
-  export class ChargingProfileStore extends OCPP16ChargingProfileStore {};
+  export class ChargingScheduleManager extends ChargingScheduleManager_ {};
 
   export const validate: ValidateFn<any, OCPP16.Call | OCPP16.CallError | OCPP16.CallResult> = assign(
     (data: any): data is OCPP16.Call | OCPP16.CallError | OCPP16.CallResult => {

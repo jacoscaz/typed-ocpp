@@ -1,24 +1,23 @@
 
 import type { ClearChargingProfileRequest, SetChargingProfileRequest } from './types.js';
 import type { ChargingSchedule } from '../common/chargingschedule.js';
-import type { ChargingRateUnit, NumberPhases } from '../common/utils.js';
+import type { NumberOfPhases } from '../common/utils.js';
 
 import { startOfDay, addMilliseconds, startOfWeek, differenceInMilliseconds, addWeeks, addDays, addSeconds, min } from 'date-fns';
-import { convertChargingRate } from '../common/utils.js';
-import { ChargingProfileStore } from '../common/chargingprofilestore.js'; 
+import { AbstractChargingScheduleManager } from '../common/chargingschedulemanager.js'; 
 
-export class OCPP16ChargingProfileStore extends ChargingProfileStore<SetChargingProfileRequest> {
+export class ChargingScheduleManager extends AbstractChargingScheduleManager<SetChargingProfileRequest, ClearChargingProfileRequest> {
 
-  addChargingProfile(request: SetChargingProfileRequest) {
+  setChargingProfile(request: SetChargingProfileRequest) {
     const { csChargingProfiles: { chargingProfilePurpose, stackLevel }, connectorId } = request;
     this._addChargingProfile(chargingProfilePurpose, connectorId, stackLevel, request);
   }
 
-  removeChargingProfile(request: ClearChargingProfileRequest) {
-    this._removeChargingProfiles(request.chargingProfilePurpose, request.connectorId, request.stackLevel);
+  clearChargingProfile(request: ClearChargingProfileRequest) {
+    this._clearChargingProfiles(request.chargingProfilePurpose, request.connectorId, request.stackLevel);
   }
 
-  protected _getScheduleFromProfile(profile: SetChargingProfileRequest, fromDate: Date, toDate: Date, unit: ChargingRateUnit): ChargingSchedule {
+  protected _getScheduleFromProfile(profile: SetChargingProfileRequest, fromDate: Date, toDate: Date): ChargingSchedule {
     const { csChargingProfiles: { chargingSchedule, validFrom, validTo, recurrencyKind, chargingProfileKind } } = profile;
     const schedule: ChargingSchedule = [];
     if (validFrom && fromDate < new Date(validFrom)) {
@@ -66,18 +65,17 @@ export class OCPP16ChargingProfileStore extends ChargingProfileStore<SetCharging
           end: periodEndDate,
           data: {
             charging: { 
-              min: convertChargingRate(minChargingRate ?? 0, chargingRateUnit, unit, this._info.lineVoltage, numberPhases as NumberPhases), 
-              max: convertChargingRate(limit >= 0 ? limit : 0, chargingRateUnit, unit, this._info.lineVoltage, numberPhases as NumberPhases), 
-              numberPhases: numberPhases as NumberPhases,
+              min: minChargingRate ?? 0,
+              max: limit >= 0 ? limit : 0, 
+              phases: { qty: numberPhases as NumberOfPhases },
             },
             discharging: { 
               min: 0, 
-              max: convertChargingRate(limit < 0 ? Math.abs(limit) : 0, chargingRateUnit, unit, this._info.lineVoltage, numberPhases as NumberPhases), 
-              numberPhases: numberPhases as NumberPhases,
+              max: limit < 0 ? Math.abs(limit) : 0, 
+              phases: { qty: numberPhases as NumberOfPhases },
             },
-            canDischarge: this._info.canDischarge,
             shouldDischarge: limit < 0,
-            unit,
+            unit: chargingRateUnit,
           },
         });
       });
