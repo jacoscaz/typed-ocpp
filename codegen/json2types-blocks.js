@@ -7,11 +7,6 @@ export const deduplicate_blocks = {
   OCPP21: [],
  };
 
-deduplicate_blocks.OCPP16.push(`export interface CustomDataType {
-  vendorId: string;
-  [k: string]: unknown;
-}`);
-
 deduplicate_blocks.OCPP20.push(`export interface CustomDataType {
   vendorId: string;
   [k: string]: unknown;
@@ -123,21 +118,9 @@ deduplicate_blocks.OCPP20.push(`export type GetCertificateIdUseEnumType =
   | "V2GCertificateChain"
   | "ManufacturerRootCertificate";`);
 
-deduplicate_blocks.OCPP20.push(`/**
- * Element providing more information about the status.
- *
- */
-export interface StatusInfoType {
+deduplicate_blocks.OCPP20.push(`export interface StatusInfoType {
   customData?: CustomDataType;
-  /**
-   * A predefined code for the reason why the status is returned in this response. The string is case-insensitive.
-   *
-   */
   reasonCode: string;
-  /**
-   * Additional text to provide detailed information.
-   *
-   */
   additionalInfo?: string;
 }`);
 
@@ -377,3 +360,45 @@ deduplicate_blocks.OCPP21.push(`export type GetCertificateIdUseEnumType =
   | "OEMRootCertificate";`);
 
 deduplicate_blocks.OCPP21.push(`export type CertificateStatusSourceEnumType = "CRL" | "OCSP";`);
+
+deduplicate_blocks.OCPP21.push(`export interface StatusInfoType {
+  reasonCode: string;
+  additionalInfo?: string;
+  customData?: CustomDataType;
+}`);
+
+deduplicate_blocks.OCPP21.push(`export interface EVSEType {
+  id: number;
+  connectorId?: number;
+  customData?: CustomDataType;
+}`);
+
+deduplicate_blocks.OCPP21.push(`export interface IdTokenType {
+  additionalInfo?: AdditionalInfoType[];
+  idToken: string;
+  type: string;
+  customData?: CustomDataType;
+}`);
+
+deduplicate_blocks.OCPP21.push(`export interface ComponentType {
+  evse?: EVSEType;
+  name: string;
+  instance?: string;
+  customData?: CustomDataType;
+}`);
+
+deduplicate_blocks.OCPP21.push(`export interface VariableType {
+  name: string;
+  instance?: string;
+  customData?: CustomDataType;
+}`);
+
+deduplicate_blocks.OCPP21.push(`export interface AddressType {
+  name: string;
+  address1: string;
+  address2?: string;
+  city: string;
+  postalCode?: string;
+  country: string;
+  customData?: CustomDataType;
+}`);

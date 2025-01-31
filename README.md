@@ -297,6 +297,56 @@ OCPP21.ConnectorStatus      // connector status ("Available", "Occupied", ...)
 OCPP21.ChargingState        // charging status ("Charging", "EVConnected", ...)
 ```
 
+### `ChargingScheduleManager` class
+
+> **WARNING: experimental!**
+> 
+> The `ChargingScheduleManager` class is experimental and unstable. It is only
+> available in its OCPP 1.6 variant under the respective namespace, though the
+> plan is to eventually provide implementations for OCPP 2.0 and OCPP 2.1.
+
+A _charging schedule_ is an array of _charging periods_, each defined by
+a start date, an end date and a set of charging limits:
+
+```typescript
+{
+  start: Date;
+  end: Date;
+  data: {
+    charging: { min: number;  max: number; phases: { qty: number; }; };
+    discharging: { min: number; max: number; phases: { qty: number; }; };
+    shouldDischarge: boolean;
+    unit: 'W' | 'A';
+  },
+}[]
+```
+
+The `OCPP16.ChargingScheduleManager` class implements a repository of charging
+profiles that can merge all of its entries into charging schedules computed
+on-demand. Overlapping charging intervals will be merged together according to
+the stack level and purpose of the respective profiles.
+
+```typescript
+// Create the store passing the physical characteristics of the EVSE.
+const store = new OCPP16.ChargingScheduleManager();
+
+// Add a new profile by passing the payload of a SetChargingProfile call.
+const setProfileCall = {} as OCPP16.SetChargingProfileCall; 
+store.setChargingProfile(setProfileCall[3]);
+
+// Clear profiles by passing the payload of a ClearChargingProfiles call.
+const clearProfileCall = {} as OCPP16.ClearChargingProfiles; 
+store.clearChargingProfile(clearProfileCall[3]);
+
+// Get an absolute schedule for the next 4 hours.
+const schedule = store.getEvseChargingSchedule(
+  1,                                  // connector id
+  new Date(),                         // start date
+  new Date(Date.now() + 14_400_000),  // end date
+  'W',                                // charging rate unit ("W" or "A")
+); 
+```
+
 ### JSON Schema(s) 
 
 The `OCPP16`, `OCPP20` and `OCPP21` namespaces export the official JSON Schema
