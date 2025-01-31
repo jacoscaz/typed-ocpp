@@ -72,7 +72,7 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
     });
   }
 
-  #reduceChargingProfilesToSchedule = (purpose: ChargingProfilePurpose, profileFilterFn: (profile: WrappedProfile<SetChargingProfileType>) => boolean, fromDate: Date, toDate: Date, unit: ChargingRateUnit, limitsMergerFn: MergeDataFn<ChargingLimits>): ChargingSchedule => {
+  #reduceChargingProfilesToSchedule = (purpose: ChargingProfilePurpose, profileFilterFn: (profile: WrappedProfile<SetChargingProfileType>) => boolean, fromDate: Date, toDate: Date, limitsMergerFn: MergeDataFn<ChargingLimits>): ChargingSchedule => {
     return this.#profiles[purpose].reduce((schedule, profile) => {
       if (profileFilterFn(profile)) {
         return merge(
@@ -86,14 +86,13 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
     }, [] as ChargingSchedule);
   };
 
-  getStationSchedule(fromDate: Date, toDate: Date, unit: ChargingRateUnit): ChargingSchedule {
+  getStationSchedule(fromDate: Date, toDate: Date): ChargingSchedule {
     let schedule: ChargingSchedule = [];
     const maxSchedule = this.#reduceChargingProfilesToSchedule(
       'ChargingStationMaxProfile', 
       (profile) => true,
       fromDate,
       toDate,
-      unit,
       mergeChargingLimitsRight,
     );
     schedule = merge(schedule, maxSchedule, cloneChargingLimits, mergeChargingLimitsRight);
@@ -102,7 +101,6 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
       (profile) => true,
       fromDate,
       toDate,
-      unit,
       mergeChargingLimitsRight,
     );
     schedule = merge(schedule, localGenerationSchedule, cloneChargingLimits, mergeChargingLimitsAdd);
@@ -111,21 +109,19 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
       (profile) => profile.evseId === 0,
       fromDate,
       toDate,
-      unit,
       mergeChargingLimitsRight,
     );
     schedule = merge(schedule, externalMaxSchedule, cloneChargingLimits, mergeChargingLimitsMin);
     return schedule;
   }
 
-  getEvseSchedule(evseId: number, fromDate: Date, toDate: Date, unit: ChargingRateUnit, priority?: boolean): ChargingSchedule {
+  getEvseSchedule(evseId: number, fromDate: Date, toDate: Date, priority?: boolean): ChargingSchedule {
     let schedule: ChargingSchedule = [];
     const defaultSchedule = this.#reduceChargingProfilesToSchedule(
       'TxDefaultProfile', 
       (profile) => profile.evseId === 0 || profile.evseId === evseId,
       fromDate,
       toDate,
-      unit,
       mergeChargingLimitsRight,
     );
     schedule = merge(schedule, defaultSchedule, cloneChargingLimits, mergeChargingLimitsRight);
@@ -135,7 +131,6 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
         (profile) => profile.evseId === 0,
         fromDate,
         toDate,
-        unit,
         mergeChargingLimitsRight,
       ) 
       schedule = merge(schedule, defaultPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight);
@@ -146,7 +141,6 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
         (profile) => profile.evseId === evseId,
         fromDate,
         toDate,
-        unit,
         mergeChargingLimitsRight,
       ) 
       schedule = merge(schedule, transactionSchedule, cloneChargingLimits, mergeChargingLimitsRight);
@@ -156,7 +150,6 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
           (profile) => profile.evseId === evseId,
           fromDate,
           toDate,
-          unit,
           mergeChargingLimitsRight,
         ) 
         schedule = merge(schedule, transactionPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight);
@@ -165,15 +158,15 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
     return schedule;
   }
 
-  getStationLimitsAtDate(atDate: Date, unit: ChargingRateUnit): ChargingLimits | undefined {
-    const schedule = this.getStationSchedule(atDate, addHours(atDate, 1), unit);
+  getStationLimitsAtDate(atDate: Date): ChargingLimits | undefined {
+    const schedule = this.getStationSchedule(atDate, addHours(atDate, 1));
     if (schedule) {
       return getPeriodForDate(schedule, atDate)?.data;
     }
   }
 
-  getEvseLimitsAtDate(evseId: Exclude<number, 0>, atDate: Date, unit: ChargingRateUnit, priority?: boolean): ChargingLimits | undefined {
-    const schedule = this.getEvseSchedule(evseId, atDate, addHours(atDate, 1), unit, priority);
+  getEvseLimitsAtDate(evseId: Exclude<number, 0>, atDate: Date, priority?: boolean): ChargingLimits | undefined {
+    const schedule = this.getEvseSchedule(evseId, atDate, addHours(atDate, 1), priority);
     if (schedule) {
       return getPeriodForDate(schedule, atDate)?.data;
     }

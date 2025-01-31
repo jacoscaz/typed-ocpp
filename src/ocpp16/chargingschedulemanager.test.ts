@@ -30,7 +30,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getEvseSchedule(1, now_date, end_date, 'W');
+      const schedule = store.getEvseSchedule(1, now_date, end_date);
       deepStrictEqual(schedule, [{
         start: now_date,
         end: end_date,
@@ -73,7 +73,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getEvseSchedule(1, now_date, end_date, 'W');
+      const schedule = store.getEvseSchedule(1, now_date, end_date);
       deepStrictEqual(schedule, [{
         start: now_date,
         end: end_date,
@@ -124,7 +124,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getEvseSchedule(1, now_date, end_date, 'W');
+      const schedule = store.getEvseSchedule(1, now_date, end_date);
       deepStrictEqual(schedule, [{
         start: start_date,
         end: end_date,
@@ -198,7 +198,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getEvseSchedule(1, now_date, end_date, 'W');
+      const schedule = store.getEvseSchedule(1, now_date, end_date);
       deepStrictEqual(schedule,  [
         {
           start: start_date,
