@@ -18,8 +18,6 @@ export const assign = <TGT extends {}, SRC extends {}>(target: TGT, source: SRC)
 
 export type ChargingRateUnit = 'W' | 'A';
 
-// export type IndividualPhases = [boolean, boolean, boolean];
-
 export type NumberOfPhases = 1 | 2 | 3;
 
 export type Phases = { 
@@ -51,3 +49,5 @@ export const CHARGING_PROFILE_PURPOSES = [
 ] as const;
 
 export type ChargingProfilePurpose = (typeof CHARGING_PROFILE_PURPOSES)[number];
+
+export type PhaseVoltage = 240 | 230 | 220 | 127 | 120 | 115 | 110;

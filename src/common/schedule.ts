@@ -27,13 +27,13 @@ export type Schedule<T> = Period<T>[];
  * identical copies of period's data. A data cloning function **must** return a
  * deep copy of the provided value.
  */
-export type CloneDataFn<T> = (t: T) => T;
+export type CloneDataFn<T> = (data: T) => T;
 
 /**
  * Data merging functions are used by other functions in this module to merge
  * the data of two different periods into a new data value for a new period.
  */
-export type MergeDataFn<T> = (l: T, r: T) => T;
+export type MergeDataFn<T> = (left: T, right: T) => T;
 
 /**
  * Returns the first (and only) period in the schedule which covers the time

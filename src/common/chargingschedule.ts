@@ -5,9 +5,12 @@
  */
 
 import type { Schedule, CloneDataFn, MergeDataFn } from './schedule.js';
+import type { Models } from './models.js';
 import type { ChargingLimits, NumberOfPhases } from './utils.js';
 
-
+export interface ChargingContext {
+  model: Models.EnergyExchange;
+}
 
 /**
  * Specializes the generic `Schedule` type into a schedule of periods described
