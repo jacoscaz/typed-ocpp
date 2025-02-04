@@ -333,12 +333,20 @@ A _charging schedule_ is an array of _charging periods_, each defined by
 a start date, an end date and a set of charging limits:
 
 ```typescript
-{
+export type ChargingSchedule = {
   start: Date;
   end: Date;
   data: {
-    charging: { min: number;  max: number; phases: { qty: number; }; };
-    discharging: { min: number; max: number; phases: { qty: number; }; };
+    charging: { 
+      min: number;  
+      max: number; 
+      phases: { qty: number; };
+    };
+    discharging: { 
+      min: number; 
+      max: number; 
+      phases: { qty: number; };
+    };
     shouldDischarge: boolean;
     unit: 'W' | 'A';
   },
