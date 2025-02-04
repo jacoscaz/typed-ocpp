@@ -1,7 +1,7 @@
 
 import type { ClearChargingProfileRequest, SetChargingProfileRequest } from './types.js';
-import type { ChargingSchedule } from '../common/chargingschedule.js';
-import type { NumberOfPhases } from '../common/utils.js';
+import type { ChargingSchedule, ChargingContext } from '../common/chargingschedule.js';
+import type { ChargingRateUnit, NumberOfPhases } from '../common/utils.js';
 
 import { startOfDay, addMilliseconds, startOfWeek, differenceInMilliseconds, addWeeks, addDays, addSeconds, min } from 'date-fns';
 import { AbstractChargingScheduleManager } from '../common/chargingschedulemanager.js'; 
@@ -10,14 +10,14 @@ export class ChargingScheduleManager extends AbstractChargingScheduleManager<Set
 
   setChargingProfile(request: SetChargingProfileRequest) {
     const { csChargingProfiles: { chargingProfilePurpose, stackLevel }, connectorId } = request;
-    this._addChargingProfile(chargingProfilePurpose, connectorId, stackLevel, request);
+    this._setChargingProfile(chargingProfilePurpose, connectorId, stackLevel, request);
   }
 
   clearChargingProfile(request: ClearChargingProfileRequest) {
     this._clearChargingProfiles(request.chargingProfilePurpose, request.connectorId, request.stackLevel);
   }
 
-  protected _getScheduleFromProfile(profile: SetChargingProfileRequest, fromDate: Date, toDate: Date): ChargingSchedule {
+  protected _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileRequest, fromDate: Date, toDate: Date, unit: ChargingRateUnit): ChargingSchedule {
     const { csChargingProfiles: { chargingSchedule, validFrom, validTo, recurrencyKind, chargingProfileKind } } = profile;
     const schedule: ChargingSchedule = [];
     if (validFrom && fromDate < new Date(validFrom)) {
@@ -65,17 +65,17 @@ export class ChargingScheduleManager extends AbstractChargingScheduleManager<Set
           end: periodEndDate,
           data: {
             charging: { 
-              min: minChargingRate ?? 0,
-              max: limit >= 0 ? limit : 0, 
+              min: context.model.convert(minChargingRate ?? 0, chargingRateUnit, unit, numberPhases as NumberOfPhases),
+              max: context.model.convert(limit >= 0 ? limit : 0, chargingRateUnit, unit, numberPhases as NumberOfPhases),
               phases: { qty: numberPhases as NumberOfPhases },
             },
             discharging: { 
-              min: 0, 
-              max: limit < 0 ? Math.abs(limit) : 0, 
+              min: context.model.convert(0, chargingRateUnit, unit, numberPhases as NumberOfPhases),
+              max: context.model.convert(limit < 0 ? Math.abs(limit) : 0, chargingRateUnit, unit, numberPhases as NumberOfPhases),
               phases: { qty: numberPhases as NumberOfPhases },
             },
             shouldDischarge: limit < 0,
-            unit: chargingRateUnit,
+            unit,
           },
         });
       });
