@@ -1,7 +1,10 @@
+
+import type { Mode } from './common.js';
+
 /**
  * Code blocks to be deduplicated by ./json2types.js . 
  */
-export const deduplicate_blocks = { 
+export const deduplicate_blocks: Record<Mode, string[]> = { 
   OCPP16: [],
   OCPP20: [],
   OCPP21: [],

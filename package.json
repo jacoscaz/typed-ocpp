@@ -29,6 +29,7 @@
     "codegen:ocpp21:clean": "rm -f ./src/ocpp21/types.ts && rm -f ./src/ocpp21/schemas.ts",
     "codegen:ocpp21": "npm run codegen:ocpp21:clean && npm run codegen:ocpp21:types && npm run codegen:ocpp21:schemas",
     "codegen": "npm run codegen:ocpp16 && npm run codegen:ocpp20 && npm run codegen:ocpp21",
+    "ts:codegen": "tsc -p codegen/tsconfig.json",
     "ts:build": "tsc",
     "ts:clean": "rm -rf ./dist",
     "build": "npm run ts:clean && npm run ts:build"
