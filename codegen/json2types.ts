@@ -9,7 +9,6 @@
 
 import { writeFile } from 'node:fs/promises';
 import { compile } from 'json-schema-to-typescript';
-import { deduplicate_blocks } from './json2types-blocks.js';
 import { readCLIParams, readSchemaFiles, output_file_header } from './common.js';
 
 (async () => {
@@ -18,10 +17,25 @@ import { readCLIParams, readSchemaFiles, output_file_header } from './common.js'
 
   let output_file_data = output_file_header;
 
-  for await (const { schema_name, schema_defn } of readSchemaFiles(mode, input_dir_abspath)) {
+  const { schemas, definitions } = await readSchemaFiles(mode, input_dir_abspath);
+
+  for (let [ schema_name, schema_defn ] of Object.entries(definitions)) {
+
+    schema_defn = { ...schema_defn, definitions }; 
+
+    const compiled_type = await compile(schema_defn, schema_name, {
+      ignoreMinAndMaxItems: true,
+      declareExternallyReferenced: false,
+    });
+
+    output_file_data += compiled_type;
+  }
+
+  for (const [schema_name, schema_defn] of Object.entries(schemas)) {
         
     const compiled_type = await compile(schema_defn, schema_name, {
       ignoreMinAndMaxItems: true,
+      declareExternallyReferenced: false,
     });
 
     output_file_data += compiled_type;
@@ -31,14 +45,6 @@ import { readCLIParams, readSchemaFiles, output_file_header } from './common.js'
   // Remove comments
   output_file_data = output_file_data.replaceAll(/^\s*?\/\*\*(?:.|\n)*?\*\/\n/mg, '');
   output_file_data = output_file_data.replaceAll('/* eslint-disable */', '');
-
-  // Deduplicate code blocks
-  deduplicate_blocks[mode].forEach((block) => {
-    if (output_file_data === (output_file_data = output_file_data.replaceAll(block, ''))) {
-      throw new Error(`\n\nFailed to deduplicate block:\n\n${block}\n\n`);
-    }
-    output_file_data += '\n\n' + block;
-  });
 
   await writeFile(output_file_abspath, output_file_data, 'utf8');
   

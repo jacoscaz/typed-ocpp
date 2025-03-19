@@ -1,6 +1,7 @@
 
 import { resolve } from 'path';
 import { readdir, readFile } from 'fs/promises';
+import { deepStrictEqual } from 'assert';
 
 export type Mode = 'OCPP16' | 'OCPP20' | 'OCPP21';
 
@@ -21,13 +22,12 @@ export interface SchemaDescriptor<T extends {} = any> {
 }
 
 export const cleanupSchema = (mode: Mode, schema_name: string, schema_defn: any, parent_schema: any) => {
-  
   delete schema_defn.id;
   delete schema_defn.$id;
   delete schema_defn.$schema;
   delete schema_defn.comment;
   delete schema_defn.javaType;
-
+  delete schema_defn.description;
   // The official OCPP 1.6 schema files contain a mispelling of the unit of
   // measure "Celsius", which is spelled "Celcius". Thus we add the correct
   // spelling wherever needed.
@@ -36,12 +36,13 @@ export const cleanupSchema = (mode: Mode, schema_name: string, schema_defn: any,
   }
 };
 
-export const readSchemaFiles = async function *(mode: Mode, dir_abspath: string): AsyncIterable<SchemaDescriptor> {
+export const readSchemaFiles = async (mode: Mode, dir_abspath: string): Promise<{ schemas: Record<string, any>; definitions: Record<string, any>; }> => {
+  const schemas: Record<string, any> = {};
+  const definitions: Record<string, any> = {};
   for (const file_name of await readdir(dir_abspath)) {
     if (!file_name.endsWith('.json')) {
       continue;
     }
-
     let schema_name = file_name.slice(0, -5);
     if (mode === 'OCPP16' && !schema_name.endsWith('Response')) {
       // The names of schema files for CALL messages within the OCPP 1.6 spec
@@ -58,17 +59,21 @@ export const readSchemaFiles = async function *(mode: Mode, dir_abspath: string)
     // Ensure that the file's contents is actually valid JSON and cleanup 
     // keywords that break Ajv in strict mode.
     const schema_defn = JSON.parse(file_data);
-
     cleanupSchema(mode, schema_name, schema_defn, null);
-
     if (schema_defn.definitions) {
       Object.entries(schema_defn.definitions).forEach(([child_schema_name, child_schema_defn]) => {
         cleanupSchema(mode, child_schema_name, child_schema_defn, schema_defn);
+        if (child_schema_name in definitions) {
+          deepStrictEqual(definitions[child_schema_name], child_schema_defn);
+        } else {
+          definitions[child_schema_name] = child_schema_defn;
+        }
       });
+      schema_defn.definitions = definitions;
     }
-
-    yield { schema_name, schema_defn };
+    schemas[schema_name] = schema_defn;
   }
+  return { schemas, definitions };
 };
 
 export interface CLIParams {

@@ -12,9 +12,15 @@ import { readCLIParams, readSchemaFiles, output_file_header } from './common.js'
   const { input_dir_abspath, output_file_abspath, mode } = readCLIParams();
 
   let output_file_data = output_file_header;
-  
-  for await (const { schema_name, schema_defn } of readSchemaFiles(mode, input_dir_abspath)) {
-    output_file_data += `\n\nexport const ${schema_name}: any = ${JSON.stringify(schema_defn, null, 2)};`;
+
+  const { schemas, definitions } = await readSchemaFiles(mode, input_dir_abspath);
+
+  output_file_data += `\n\nexport const definitions: any = ${JSON.stringify(definitions, null, 2)};`;
+
+  for (let [schema_name, schema_defn] of Object.entries(schemas)) {
+    schema_defn = { ...schema_defn, definitions: undefined };
+    const serialized_defn = `{\n  definitions,  ${JSON.stringify(schema_defn, null, 2).slice(1)}`;
+    output_file_data += `\n\nexport const ${schema_name}: any = ${serialized_defn};`;
   }
 
   await writeFile(output_file_abspath, output_file_data, 'utf8');
