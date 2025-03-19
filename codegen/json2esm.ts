@@ -13,8 +13,8 @@ import { readCLIParams, readSchemaFiles, output_file_header } from './common.js'
 
   let output_file_data = output_file_header;
   
-  for await (const { name, schema } of readSchemaFiles(mode, input_dir_abspath)) {
-    output_file_data += `\n\nexport const ${name}: any = ${JSON.stringify(schema, null, 2)};`;
+  for await (const { schema_name, schema_defn } of readSchemaFiles(mode, input_dir_abspath)) {
+    output_file_data += `\n\nexport const ${schema_name}: any = ${JSON.stringify(schema_defn, null, 2)};`;
   }
 
   await writeFile(output_file_abspath, output_file_data, 'utf8');

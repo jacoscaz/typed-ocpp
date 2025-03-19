@@ -18,9 +18,9 @@ import { readCLIParams, readSchemaFiles, output_file_header } from './common.js'
 
   let output_file_data = output_file_header;
 
-  for await (const { name, schema } of readSchemaFiles(mode, input_dir_abspath)) {
+  for await (const { schema_name, schema_defn } of readSchemaFiles(mode, input_dir_abspath)) {
         
-    const compiled_type = await compile(schema, name, {
+    const compiled_type = await compile(schema_defn, schema_name, {
       ignoreMinAndMaxItems: true,
     });
 
