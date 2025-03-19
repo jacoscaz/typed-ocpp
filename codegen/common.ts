@@ -27,11 +27,14 @@ export const readSchemaFiles = async function *(mode: Mode, dir_abspath: string)
     }
 
     let schema_name = file_name.slice(0, -5);
-    if (mode === 'OCPP16') {
-      if (!schema_name.match(/(?:Request|Response)$/)) {
-        // The names of schema files for CALL messages within the OCPP 1.6 spec
-        // archive do not have the `Request` suffix.
-        schema_name += 'Request';
+    if (mode === 'OCPP16' && !schema_name.endsWith('Response')) {
+      // The names of schema files for CALL messages within the OCPP 1.6 spec
+      // archive do not have the `Request` suffix.
+      schema_name += 'Request';
+    }
+    if (!schema_name.match(/(?:Request|Response)$/)) {
+      if (mode !== 'OCPP21' && schema_name !== 'NotifyPeriodicEventStream') {
+        throw new Error(`invalid schema name ${schema_name}: does not end with either "Request" or "Response"`);
       }
     }
     const file_abspath = resolve(dir_abspath, file_name);
