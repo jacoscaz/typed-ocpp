@@ -19,16 +19,8 @@ import { readCLIParams, readSchemaFiles, output_file_header } from './common.js'
   let output_file_data = output_file_header;
 
   for await (const { name, schema } of readSchemaFiles(mode, input_dir_abspath)) {
-    
-    // if ((mode === 'OCPP20' || mode === 'OCPP21') && schema.$id.indexOf(':') > -1) {
-    //   // The schema files within the OCPP 2.0.1 spec have namespaced $id
-    //   // attributes such as `urn:OCPP:Cp:2:2020:3:CancelReservationRequest`.
-    //   // Here we get rid of the "urn" part of the $id so that json2ts will
-    //   // name the type correctly.
-    //   schema.$id = schema.$id.split(':').slice(-1)[0];
-    // }
-    
-    const compiled_type = await compile(schema, name as any, {
+        
+    const compiled_type = await compile(schema, name, {
       ignoreMinAndMaxItems: true,
     });
 

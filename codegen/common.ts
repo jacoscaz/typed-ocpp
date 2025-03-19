@@ -20,6 +20,14 @@ export interface SchemaDescriptor<T extends {} = any> {
   schema: T;
 }
 
+export const cleanupSchema = (schema: any) => {
+  delete schema.id;
+  delete schema.$id;
+  delete schema.$schema;
+  delete schema.comment;
+  delete schema.javaType;
+};
+
 export const readSchemaFiles = async function *(mode: Mode, dir_abspath: string): AsyncIterable<SchemaDescriptor> {
   for (const file_name of await readdir(dir_abspath)) {
     if (!file_name.endsWith('.json')) {
@@ -42,6 +50,15 @@ export const readSchemaFiles = async function *(mode: Mode, dir_abspath: string)
     // Ensure that the file's contents is actually valid JSON and cleanup 
     // keywords that break Ajv in strict mode.
     const schema = JSON.parse(file_data);
+
+    cleanupSchema(schema);
+
+    if (schema.definitions) {
+      Object.values(schema.definitions).forEach((def_schema) => {
+        cleanupSchema(def_schema);
+      });
+    }
+
     yield { name: schema_name, schema };
   }
 };
