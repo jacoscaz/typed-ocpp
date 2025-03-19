@@ -330,3 +330,4 @@ src/ocpp21/types.ts
 src/ocpp21/schemas.ts
 
 codegen/**/*.js
+codegen/**/*.d.ts
