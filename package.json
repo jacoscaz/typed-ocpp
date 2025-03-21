@@ -1,13 +1,13 @@
 {
   "name": "typed-ocpp",
-  "version": "1.4.2",
+  "version": "1.5.0-alpha.2",
   "description": "A library for type-aware parsing, serialization and validation of OCPP 1.6, OCPP 2.0 and OCPP 2.1 messages",
   "main": "dist/index.js",
   "type": "module",
   "devDependencies": {
-    "@types/node": "^22.5.4",
-    "json-schema-to-typescript": "^15.0.2",
-    "typescript": "^5.5.4"
+    "@types/node": "^22.13.10",
+    "json-schema-to-typescript": "^15.0.4",
+    "typescript": "^5.8.2"
   },
   "dependencies": {
     "ajv": "^8.17.1",
@@ -28,7 +28,8 @@
     "codegen:ocpp21:schemas": "node codegen/json2esm.js schemas/ocpp21 src/ocpp21/schemas.ts OCPP21",
     "codegen:ocpp21:clean": "rm -f ./src/ocpp21/types.ts && rm -f ./src/ocpp21/schemas.ts",
     "codegen:ocpp21": "npm run codegen:ocpp21:clean && npm run codegen:ocpp21:types && npm run codegen:ocpp21:schemas",
-    "codegen": "npm run codegen:ocpp16 && npm run codegen:ocpp20 && npm run codegen:ocpp21",
+    "codegen": "npm run ts:codegen && npm run codegen:ocpp16 && npm run codegen:ocpp20 && npm run codegen:ocpp21",
+    "ts:codegen": "tsc -p codegen/tsconfig.json",
     "ts:build": "tsc",
     "ts:clean": "rm -rf ./dist",
     "build": "npm run ts:clean && npm run ts:build"
