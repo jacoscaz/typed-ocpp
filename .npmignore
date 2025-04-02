@@ -1,6 +1,7 @@
 src/**/*.*
 dist/**/*.test.js
 dist/**/*.test.d.ts
+dist/**/*.js.map
 schemas/**/*.*
 tsconfig.json
 node_modules
