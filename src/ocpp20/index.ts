@@ -161,16 +161,15 @@ import type {
 
 import { assign, EMPTY_ARR, type ValidateFn } from '../common/utils.js';
 
-import * as schemas from './schemas.js';
+import * as schemas_ from './schemas.js';
 
-import { validateCall } from './call.js';
-import { validateCallError } from './callerror.js';
-import { validateCallResult, checkCallResult } from './callresult.js';
-import { Action, MessageType, ErrorCode } from './utils.js';
+import { validateCall as validateCall_ } from './call.js';
+import { validateCallError as validateCallError_ } from './callerror.js';
+import { validateCallResult as validateCallResult_, checkCallResult as checkCallResult_ } from './callresult.js';
+import { Action as Action_, MessageType as MessageType_, ErrorCode as ErrorCode_ } from './utils.js';
 import { compile } from '../common/ajv.js';
-import { Namespace } from '../common/namespace.js';
 
-Object.values(schemas).forEach((schema) => {
+Object.values(schemas_).forEach((schema) => {
   compile(schema);
 });
 
@@ -336,67 +335,61 @@ export declare namespace OCPP20 {
 
 };
 
-const validate: ValidateFn<any, OCPP20.Call | OCPP20.CallError | OCPP20.CallResult> = assign(
-  (data: any): data is OCPP20.Call | OCPP20.CallError | OCPP20.CallResult => {
-    switch (Array.isArray(data) ? data[0] : null) {
-      case MessageType.CALL:
-        if (!validateCall(data)) {
-          validate.errors = validateCall.errors;
+export namespace OCPP20 {
+
+  export import MessageType = MessageType_; 
+  export import Action = Action_; 
+  export import ErrorCode = ErrorCode_;
+
+  export const schemas = schemas_;
+  export const checkCallResult = checkCallResult_;
+
+  export const validateCall = validateCall_;
+  export const validateCallError = validateCallError_;
+  export const validateCallResult = validateCallResult_;
+
+  export const validate: ValidateFn<any, OCPP20.Call | OCPP20.CallError | OCPP20.CallResult> = assign(
+    (data: any): data is OCPP20.Call | OCPP20.CallError | OCPP20.CallResult => {
+      switch (Array.isArray(data) ? data[0] : null) {
+        case MessageType_.CALL:
+          if (!validateCall_(data)) {
+            validate.errors = validateCall_.errors;
+            return false;
+          }
+          validate.errors = EMPTY_ARR;
+          return true;
+        case MessageType_.CALLERROR:
+          if (!validateCallError_(data)) {
+            validate.errors = validateCallError_.errors;
+            return false;
+          }
+          validate.errors = EMPTY_ARR;
+          return true;
+        case MessageType_.CALLRESULT:
+          if (!validateCallResult_(data)) {
+            validate.errors = validateCallResult_.errors;
+            return false;
+          }
+          validate.errors = EMPTY_ARR;
+          return true;
+        default:
+          validate.errors = ['Invalid OCPP message: invalid message type'];
           return false;
-        }
-        validate.errors = EMPTY_ARR;
-        return true;
-      case MessageType.CALLERROR:
-        if (!validateCallError(data)) {
-          validate.errors = validateCallError.errors;
-          return false;
-        }
-        validate.errors = EMPTY_ARR;
-        return true;
-      case MessageType.CALLRESULT:
-        if (!validateCallResult(data)) {
-          validate.errors = validateCallResult.errors;
-          return false;
-        }
-        validate.errors = EMPTY_ARR;
-        return true;
-      default:
-        validate.errors = ['Invalid OCPP message: invalid message type'];
-        return false;
-    }
-  },
-  { errors: EMPTY_ARR },
-);
+      }
+    },
+    { errors: EMPTY_ARR },
+  );
 
-const isCall = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.Call> => {
-  return msg[0] === MessageType.CALL;
-};
+  export const isCall = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.Call> => {
+    return msg[0] === MessageType_.CALL;
+  };
 
-const isCallError = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.CallError> => {
-  return msg[0] === MessageType.CALLERROR;
-};
+  export const isCallError = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.CallError> => {
+    return msg[0] === MessageType_.CALLERROR;
+  };
 
-const isCallResult = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.UncheckedCallResult | OCPP20.CallResult> => {
-  return msg[0] === MessageType.CALLRESULT;
-};
-
-export abstract class OCPP20 extends Namespace {
-
-  static MessageType = MessageType; 
-  static Action = Action; 
-  static ErrorCode = ErrorCode;
-
-  static schemas = schemas;
-  static checkCallResult = checkCallResult;
-
-  static validate = validate;
-
-  static validateCall = validateCall;
-  static validateCallError = validateCallError;
-  static validateCallResult = validateCallResult;
-
-  static isCall = isCall;
-  static isCallError = isCallError;
-  static isCallResult = isCallResult;
+  export const isCallResult = <C extends OCPP20.Call | OCPP20.CallError | OCPP20.UncheckedCallResult | OCPP20.CallResult>(msg: C): msg is Extract<C, OCPP20.UncheckedCallResult | OCPP20.CallResult> => {
+    return msg[0] === MessageType_.CALLRESULT;
+  };
 
 };
