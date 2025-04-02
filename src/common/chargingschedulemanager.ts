@@ -41,6 +41,10 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
 
   abstract clearChargingProfile(request: ClearChargingProfileType): void;
 
+  abstract getEvseCompositeSchedule(fromDate: Date, toDate: Date, evseId: number, model: Models.ChargingSession): any;
+
+  abstract getEvseCompositeProfile(fromDate: Date, toDate: Date, evseId: number, model: Models.ChargingSession, opts: any): any;
+
   protected _setChargingProfile(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile', evseId: number, stackLevel: number, profile: SetChargingProfileType) {
     const _purpose = purpose === 'ChargePointMaxProfile' ? 'ChargingStationMaxProfile' : purpose;
     if (_purpose === 'ChargingStationMaxProfile' || _purpose === 'LocalGeneration' && evseId !== 0) {

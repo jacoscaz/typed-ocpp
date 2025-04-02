@@ -1,10 +1,19 @@
 
-import type { ClearChargingProfileRequest, SetChargingProfileRequest } from './types.js';
+import type { ClearChargingProfileRequest, GetCompositeScheduleResponse, SetChargingProfileRequest } from './types.js';
 import type { ChargingSchedule, ChargingContext } from '../common/chargingschedule.js';
 import type { ChargingRateUnit, NumberOfPhases } from '../common/utils.js';
+import type { Models } from '../common/models.js';
 
-import { startOfDay, addMilliseconds, startOfWeek, differenceInMilliseconds, addWeeks, addDays, addSeconds, min } from 'date-fns';
+import { startOfDay, addMilliseconds, startOfWeek, differenceInMilliseconds, addWeeks, addDays, addSeconds, min, differenceInSeconds } from 'date-fns';
 import { AbstractChargingScheduleManager } from '../common/chargingschedulemanager.js'; 
+
+
+export type getCompositeProfileOpts = Pick<SetChargingProfileRequest['csChargingProfiles'], 
+  | 'stackLevel'
+  | 'chargingProfileId'
+  | 'chargingProfileKind'
+  | 'chargingProfilePurpose'
+>;
 
 export class ChargingScheduleManager extends AbstractChargingScheduleManager<SetChargingProfileRequest, ClearChargingProfileRequest> {
 
@@ -83,4 +92,53 @@ export class ChargingScheduleManager extends AbstractChargingScheduleManager<Set
     return schedule;
   }
 
+  getEvseCompositeSchedule(fromDate: Date, toDate: Date, evseId: number, model: Models.ChargingSession) {
+    const now = new Date();
+    const schedule = this.getEvseSchedule(evseId, fromDate, toDate, 'W', model);
+    if (schedule.length === 0) {
+      return null;
+    }
+    const min_date: Date = schedule[0].start;
+    const max_date: Date = schedule.at(-1)!.end;
+    return {
+      status: 'Accepted',
+      connectorId: evseId,
+      chargingSchedule: {
+        startSchedule: now.toISOString(),
+        duration: differenceInSeconds(max_date, min_date),
+        chargingRateUnit: 'W',
+        chargingSchedulePeriod: schedule.map((interval) => {
+          const { start, data: { charging, discharging, shouldDischarge} } = interval;
+          return shouldDischarge
+            ? { 
+                startPeriod: differenceInSeconds(start, min_date), 
+                limit: -1 * discharging.max, 
+                numberPhases: discharging.phases.qty,
+              }
+            : { 
+                startPeriod: differenceInSeconds(start, min_date), 
+                limit: charging.max,  
+                numberPhases: charging.phases.qty,
+              }
+        }),
+      },
+    } satisfies GetCompositeScheduleResponse;  
+  }
+
+  getEvseCompositeProfile(fromDate: Date, toDate: Date, evseId: number, model: Models.ChargingSession, opts: getCompositeProfileOpts): SetChargingProfileRequest | null {
+    const compositeSchedule = this.getEvseCompositeSchedule(fromDate, toDate, evseId, model);
+    if (!compositeSchedule) {
+      return null;
+    }
+    return {
+      connectorId: compositeSchedule.connectorId,
+      csChargingProfiles: {
+        ...opts,
+        validFrom: fromDate.toISOString(),
+        validTo: fromDate.toISOString(),
+        chargingSchedule: compositeSchedule.chargingSchedule,
+      },
+    };
+  }
+  
 }
