@@ -1,11 +1,11 @@
 
 import type { ClearChargingProfileRequest, GetCompositeScheduleResponse, SetChargingProfileRequest } from './types.js';
-import type { ChargingSchedule, ChargingContext } from '../common/chargingschedule.js';
-import type { ChargingRateUnit, NumberOfPhases } from '../common/utils.js';
+import type { ChargingSchedule, ChargingContext } from '../common/chargingmanager/utils.js';
+import type { ChargingRateUnit, NumberOfPhases, ChargingLimits } from '../common/utils.js';
 import type { Models } from '../common/models.js';
 
 import { startOfDay, addMilliseconds, startOfWeek, differenceInMilliseconds, addWeeks, addDays, addSeconds, min, differenceInSeconds } from 'date-fns';
-import { AbstractChargingScheduleManager } from '../common/chargingschedulemanager.js'; 
+import { AbstractChargingManager } from '../common/chargingmanager/chargingmanager.js'; 
 
 
 export type getCompositeProfileOpts = Pick<SetChargingProfileRequest['csChargingProfiles'], 
@@ -15,7 +15,7 @@ export type getCompositeProfileOpts = Pick<SetChargingProfileRequest['csCharging
   | 'chargingProfilePurpose'
 >;
 
-export class ChargingScheduleManager extends AbstractChargingScheduleManager<SetChargingProfileRequest, ClearChargingProfileRequest> {
+export class ChargingManager extends AbstractChargingManager<SetChargingProfileRequest, ClearChargingProfileRequest, GetCompositeScheduleResponse> {
 
   setChargingProfile(request: SetChargingProfileRequest) {
     const { csChargingProfiles: { chargingProfilePurpose, stackLevel }, connectorId } = request;
@@ -92,17 +92,17 @@ export class ChargingScheduleManager extends AbstractChargingScheduleManager<Set
     return schedule;
   }
 
-  getEvseCompositeSchedule(fromDate: Date, toDate: Date, evseId: number, model: Models.ChargingSession) {
+  protected _getChargerCompositeSchedule(fromDate: Date, toDate: Date, chargerId: number, model: Models.ChargingSession) {
     const now = new Date();
-    const schedule = this.getEvseSchedule(evseId, fromDate, toDate, 'W', model);
+    const schedule = this._getChargerSchedule(fromDate, toDate, chargerId, 'W', model);
     if (schedule.length === 0) {
-      return null;
+      return;
     }
     const min_date: Date = schedule[0].start;
     const max_date: Date = schedule.at(-1)!.end;
     return {
       status: 'Accepted',
-      connectorId: evseId,
+      connectorId: chargerId,
       chargingSchedule: {
         startSchedule: now.toISOString(),
         duration: differenceInSeconds(max_date, min_date),
@@ -125,10 +125,10 @@ export class ChargingScheduleManager extends AbstractChargingScheduleManager<Set
     } satisfies GetCompositeScheduleResponse;  
   }
 
-  getEvseCompositeProfile(fromDate: Date, toDate: Date, evseId: number, model: Models.ChargingSession, opts: getCompositeProfileOpts): SetChargingProfileRequest | null {
-    const compositeSchedule = this.getEvseCompositeSchedule(fromDate, toDate, evseId, model);
+  protected _getChargerCompositeProfile(fromDate: Date, toDate: Date, evseId: number, model: Models.ChargingSession, opts: getCompositeProfileOpts): SetChargingProfileRequest | undefined {
+    const compositeSchedule = this._getChargerCompositeSchedule(fromDate, toDate, evseId, model);
     if (!compositeSchedule) {
-      return null;
+      return;
     }
     return {
       connectorId: compositeSchedule.connectorId,
@@ -140,5 +140,22 @@ export class ChargingScheduleManager extends AbstractChargingScheduleManager<Set
       },
     };
   }
+
+  getConnectorSchedule(fromDate: Date, toDate: Date, connectorId: number, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingSchedule {
+    return this._getChargerSchedule(fromDate, toDate, connectorId, unit, model);
+  }
+
+  getConnectorLimitsAtDate(atDate: Date, connectorId: Exclude<number, 0>, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingLimits | undefined {
+    return this._getChargerLimitsAtDate(atDate, connectorId, unit, model);
+  }
+
+  getConnectorCompositeSchedule(fromDate: Date, toDate: Date, connectorId: number, model: Models.ChargingSession): GetCompositeScheduleResponse | undefined {
+    return this._getChargerCompositeSchedule(fromDate, toDate, connectorId, model)
+  }
+
+  getConnectorCompositeProfile(fromDate: Date, toDate: Date, connectorId: number, model: Models.ChargingSession, opts: getCompositeProfileOpts): SetChargingProfileRequest | undefined {
+    return this._getChargerCompositeProfile(fromDate, toDate, connectorId, model, opts);
+  }
+
   
 }

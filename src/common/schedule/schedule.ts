@@ -148,3 +148,24 @@ export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDat
   return merged_schedule;
 
 };
+
+/**
+ * Fills empty gaps in a schedule with new periods built upon the provided
+ * `defaults` data object.
+ */
+export const fillGaps = <T>(schedule: Schedule<T>, start: Date, end: Date, getPeriodData: (start: Date, end: Date) => T): Schedule<T> => {
+  const filled: Schedule<T> = [];
+  let curr = start;
+  for (const period of schedule) {
+    if (curr < period.start) {
+      filled.push({ start: curr, end: period.start, data: getPeriodData(curr, period.start) });
+    }
+    filled.push(period);
+    curr = period.end;
+  }
+  if (curr < end) {
+    filled.push({ start: curr, end, data: getPeriodData(curr, end) });
+  }
+  return filled;
+};
+

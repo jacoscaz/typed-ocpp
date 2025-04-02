@@ -1,30 +1,36 @@
 
-import type { ChargingRateUnit, ChargingProfilePurpose, ChargingLimits } from './utils.js';
-import type { ChargingContext, ChargingSchedule } from './chargingschedule.js';
-import type { MergeDataFn } from './schedule.js';
-import type { Models } from './models.js';
+import type { ChargingRateUnit, ChargingProfilePurpose, ChargingLimits } from '../utils.js';
+import type { ChargingContext, ChargingSchedule } from './utils.js';
+import type { MergeDataFn } from '../schedule/schedule.js';
+import type { Models } from '../models.js';
 
 import { addHours } from 'date-fns';
-import { merge, getPeriodForDate } from './schedule.js';
-import { CHARGING_PROFILE_PURPOSES } from './utils.js';
+import { merge, getPeriodForDate, fillGaps } from '../schedule/schedule.js';
+import { CHARGING_PROFILE_PURPOSES } from '../utils.js';
 import { 
   mergeChargingLimitsMin, 
   mergeChargingLimitsRight, 
   mergeChargingLimitsAdd, 
   cloneChargingLimits,
-} from './chargingschedule.js';
+} from './utils.js';
 
 export interface WrappedProfile<ProfileType> {
   profile: ProfileType;
   stackLevel: number;
-  evseId: number;
+  /**
+   * This maps to `connectorId` when using OCPP 1.6 and to `evseId` when using
+   * OCPP 2.0 or OCPP 2.1.
+   */
+  chargerId: number;
 }
 
-export abstract class AbstractChargingScheduleManager<SetChargingProfileType, ClearChargingProfileType> {
+export abstract class AbstractChargingManager<ChargingProfileType, ClearChargingProfileRequestType, CompositeScheduleType> {
 
-  #profiles: Record<ChargingProfilePurpose, WrappedProfile<SetChargingProfileType>[]>;
+  #defaults: ChargingLimits;
+  #profiles: Record<ChargingProfilePurpose, WrappedProfile<ChargingProfileType>[]>;
 
-  constructor() {
+  constructor(defaults: ChargingLimits) {
+    this.#defaults = defaults;
     this.#profiles = {
       ['ChargingStationExternalConstraints']: [],
       ['ChargingStationMaxProfile']: [],
@@ -35,38 +41,34 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
     };
   }
 
-  protected abstract  _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileType, fromDate: Date, endDate: Date, unit: ChargingRateUnit): ChargingSchedule;
+  protected abstract  _getScheduleFromProfile(context: ChargingContext, profile: ChargingProfileType, fromDate: Date, endDate: Date, unit: ChargingRateUnit): ChargingSchedule;
   
-  abstract setChargingProfile(profile: SetChargingProfileType): void;
+  abstract setChargingProfile(profile: ChargingProfileType): void;
 
-  abstract clearChargingProfile(request: ClearChargingProfileType): void;
+  abstract clearChargingProfile(request: ClearChargingProfileRequestType): void;
 
-  abstract getEvseCompositeSchedule(fromDate: Date, toDate: Date, evseId: number, model: Models.ChargingSession): any;
-
-  abstract getEvseCompositeProfile(fromDate: Date, toDate: Date, evseId: number, model: Models.ChargingSession, opts: any): any;
-
-  protected _setChargingProfile(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile', evseId: number, stackLevel: number, profile: SetChargingProfileType) {
+  protected _setChargingProfile(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile', chargerId: number, stackLevel: number, profile: ChargingProfileType) {
     const _purpose = purpose === 'ChargePointMaxProfile' ? 'ChargingStationMaxProfile' : purpose;
-    if (_purpose === 'ChargingStationMaxProfile' || _purpose === 'LocalGeneration' && evseId !== 0) {
+    if (_purpose === 'ChargingStationMaxProfile' || _purpose === 'LocalGeneration' && chargerId !== 0) {
       throw new Error(`"${purpose}" profiles cannot be added for evseId other than "0"`);
     }
-    if (_purpose === 'TxProfile' && evseId === 0) {
+    if (_purpose === 'TxProfile' && chargerId === 0) {
       throw new Error('"TxProfile" profiles cannot be added for evseId "0"');
     }
-    this._clearChargingProfiles(purpose, evseId, stackLevel);
+    this._clearChargingProfiles(purpose, chargerId, stackLevel);
     this.#profiles[_purpose].push({
-      evseId,
+      chargerId,
       stackLevel,
       profile,
     });
     this.#profiles[_purpose].sort((l, r) => l.stackLevel < r.stackLevel ? -1 : 1);
   }
 
-  protected _clearChargingProfiles(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile' | undefined, evseId: number | undefined, stackLevel: number | undefined) {
+  protected _clearChargingProfiles(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile' | undefined, chargerId: number | undefined, stackLevel: number | undefined) {
     purpose = purpose === 'ChargePointMaxProfile' ? 'ChargingStationMaxProfile' : purpose;
     (purpose ? [purpose] : CHARGING_PROFILE_PURPOSES).forEach((purpose) => {
       this.#profiles[purpose] = this.#profiles[purpose].filter((profile) => {
-        if (typeof evseId === 'number' && evseId !== profile.evseId) {
+        if (typeof chargerId === 'number' && chargerId !== profile.chargerId) {
           return false;
         }
         if (typeof stackLevel === 'number' && stackLevel !== profile.stackLevel) {
@@ -77,7 +79,7 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
     });
   }
 
-  #reduceChargingProfilesToSchedule = (context: ChargingContext, purpose: ChargingProfilePurpose, profileFilterFn: (profile: WrappedProfile<SetChargingProfileType>) => boolean, fromDate: Date, toDate: Date, limitsMergerFn: MergeDataFn<ChargingLimits>, unit: ChargingRateUnit): ChargingSchedule => {
+  #reduceChargingProfilesToSchedule = (context: ChargingContext, purpose: ChargingProfilePurpose, profileFilterFn: (profile: WrappedProfile<ChargingProfileType>) => boolean, fromDate: Date, toDate: Date, limitsMergerFn: MergeDataFn<ChargingLimits>, unit: ChargingRateUnit): ChargingSchedule => {
     return this.#profiles[purpose].reduce((schedule, profile) => {
       if (profileFilterFn(profile)) {
         return merge(
@@ -117,23 +119,23 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
     const externalMaxSchedule = this.#reduceChargingProfilesToSchedule(
       context,
       'ChargingStationExternalConstraints', 
-      (profile) => profile.evseId === 0,
+      (profile) => profile.chargerId === 0,
       fromDate,
       toDate,
       mergeChargingLimitsRight,
       unit,
     );
-    schedule = merge(schedule, externalMaxSchedule, cloneChargingLimits, mergeChargingLimitsMin);
+    schedule = fillGaps(merge(schedule, externalMaxSchedule, cloneChargingLimits, mergeChargingLimitsMin), fromDate, toDate, () => this.#defaults);
     return schedule;
   }
 
-  getEvseSchedule(evseId: number, fromDate: Date, toDate: Date, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingSchedule {
+  protected _getChargerSchedule(fromDate: Date, toDate: Date, chargerId: number, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingSchedule {
     let schedule: ChargingSchedule = [];
     const context: ChargingContext = { model };
     const defaultSchedule = this.#reduceChargingProfilesToSchedule(
       context,
       'TxDefaultProfile', 
-      (profile) => profile.evseId === 0 || profile.evseId === evseId,
+      (profile) => profile.chargerId === 0 || profile.chargerId === chargerId,
       fromDate,
       toDate,
       mergeChargingLimitsRight,
@@ -144,7 +146,7 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
       const defaultPrioritySchedule = this.#reduceChargingProfilesToSchedule(
         context,
         'PriorityCharging', 
-        (profile) => profile.evseId === 0,
+        (profile) => profile.chargerId === 0,
         fromDate,
         toDate,
         mergeChargingLimitsRight,
@@ -152,11 +154,11 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
       ) 
       schedule = merge(schedule, defaultPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight);
     }
-    if (evseId !== 0) {
+    if (chargerId !== 0) {
       const transactionSchedule = this.#reduceChargingProfilesToSchedule(
         context,
         'TxProfile', 
-        (profile) => profile.evseId === evseId,
+        (profile) => profile.chargerId === chargerId,
         fromDate,
         toDate,
         mergeChargingLimitsRight,
@@ -167,13 +169,13 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
         const transactionPrioritySchedule = this.#reduceChargingProfilesToSchedule(
           context,
           'PriorityCharging', 
-          (profile) => profile.evseId === evseId,
+          (profile) => profile.chargerId === chargerId,
           fromDate,
           toDate,
           mergeChargingLimitsRight,
           unit,
         ) 
-        schedule = merge(schedule, transactionPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight);
+        schedule = fillGaps(merge(schedule, transactionPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight), fromDate, toDate, () => this.#defaults);
       }
     }
     return schedule;
@@ -181,16 +183,16 @@ export abstract class AbstractChargingScheduleManager<SetChargingProfileType, Cl
 
   getStationLimitsAtDate(atDate: Date, unit: ChargingRateUnit, model: Models.ChargingStation): ChargingLimits | undefined {
     const schedule = this.getStationSchedule(atDate, addHours(atDate, 1), unit, model);
-    if (schedule) {
-      return getPeriodForDate(schedule, atDate)?.data;
-    }
+    return getPeriodForDate(schedule, atDate)?.data;
   }
 
-  getEvseLimitsAtDate(evseId: Exclude<number, 0>, atDate: Date, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingLimits | undefined {
-    const schedule = this.getEvseSchedule(evseId, atDate, addHours(atDate, 1), unit, model, priority);
-    if (schedule) {
-      return getPeriodForDate(schedule, atDate)?.data;
-    }
+  protected _getChargerLimitsAtDate(atDate: Date, chargerId: Exclude<number, 0>, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingLimits | undefined {
+    const schedule = this._getChargerSchedule(atDate, addHours(atDate, 1), chargerId, unit, model, priority);
+    return getPeriodForDate(schedule, atDate)?.data;
   }
+
+  protected abstract _getChargerCompositeSchedule(fromDate: Date, toDate: Date, chargerId: number, model: Models.ChargingSession): CompositeScheduleType | undefined;
+
+  protected abstract _getChargerCompositeProfile(fromDate: Date, toDate: Date, chargerId: number, model: Models.ChargingSession, opts: any): ChargingProfileType | undefined;
 
 }

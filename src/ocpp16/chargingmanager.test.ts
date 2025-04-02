@@ -1,4 +1,6 @@
 
+import type { ChargingLimits } from '../common/utils.js';
+
 import { OCPP16, Models } from '../index.js';
 import { describe, it } from 'node:test';
 import { deepStrictEqual } from 'node:assert';
@@ -9,7 +11,8 @@ describe('OCPP16 - ChargingScheduleManager', () => {
   describe('with one charging profile [kind: Absolute, purpose: TxProfile]', () => {
 
     it('should follow the limit set by matching charging periods', () => {
-      const store = new OCPP16.ChargingScheduleManager();
+      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
+      const store = new OCPP16.ChargingManager(defaults);
       const now_date = new Date();
       const end_date = addSeconds(now_date, 3600);
       store.setChargingProfile({
@@ -30,7 +33,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getEvseSchedule(1, now_date, end_date, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
       deepStrictEqual(schedule, [{
         start: now_date,
         end: end_date,
@@ -51,8 +54,54 @@ describe('OCPP16 - ChargingScheduleManager', () => {
       }]);
     });
 
+    it('should follow the limit set by charging periods with start dates prior to the requested schedule\'s start date', () => {
+      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
+      const store = new OCPP16.ChargingManager(defaults);
+      const now_date = new Date();
+      const end_date = addSeconds(now_date, 3600);
+      store.setChargingProfile({
+        connectorId: 1,
+        csChargingProfiles: {
+          chargingProfileId: 0,
+          chargingProfileKind: 'Absolute',
+          chargingProfilePurpose: 'TxProfile',
+          chargingSchedule: {
+            chargingRateUnit: 'W',
+            chargingSchedulePeriod: [
+              {
+                startPeriod: 0,
+                limit: 13_000,
+              }
+            ],
+          },
+          stackLevel: 0,
+        },
+      });
+      const start_schedule_date = new Date(now_date.valueOf() + 300_000);
+      const schedule = store.getConnectorSchedule(start_schedule_date, end_date, 1, 'W', new Models.ACChargingSession(230));
+      deepStrictEqual(schedule, [{
+        start: start_schedule_date,
+        end: end_date,
+        data: {
+          charging: { 
+            min: 0, 
+            max: 13_000, 
+            phases: { qty: 3 },
+          },
+          discharging: { 
+            min: 0, 
+            max: 0, 
+            phases: { qty: 3 },
+          },
+          shouldDischarge:false,
+          unit: 'W',
+        },
+      }]);
+    });
+
     it('should follow the limit set by matching discharging periods', () => {
-      const store = new OCPP16.ChargingScheduleManager();
+      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
+      const store = new OCPP16.ChargingManager(defaults);
       const now_date = new Date();
       const end_date = addSeconds(now_date, 3600);
       store.setChargingProfile({
@@ -73,7 +122,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getEvseSchedule(1, now_date, end_date, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
       deepStrictEqual(schedule, [{
         start: now_date,
         end: end_date,
@@ -102,7 +151,8 @@ describe('OCPP16 - ChargingScheduleManager', () => {
       const now_date = new Date();
       const start_date = new Date(now_date.valueOf() - 1);
       const end_date = addHours(start_date, 4);
-      const store = new OCPP16.ChargingScheduleManager();
+      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
+      const store = new OCPP16.ChargingManager(defaults);
       store.setChargingProfile({
         connectorId: 1,
         csChargingProfiles: {
@@ -124,7 +174,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getEvseSchedule(1, now_date, end_date, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
       deepStrictEqual(schedule, [{
         start: start_date,
         end: end_date,
@@ -152,7 +202,8 @@ describe('OCPP16 - ChargingScheduleManager', () => {
       const now_date = new Date();
       const start_date = new Date(now_date.valueOf() - 1);
       const end_date = addHours(start_date, 4);
-      const store = new OCPP16.ChargingScheduleManager();
+      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
+      const store = new OCPP16.ChargingManager(defaults);
       store.setChargingProfile({
         connectorId: 0,
         csChargingProfiles: {
@@ -198,7 +249,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getEvseSchedule(1, now_date, end_date, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
       deepStrictEqual(schedule,  [
         {
           start: start_date,
@@ -261,7 +312,8 @@ describe('OCPP16 - ChargingScheduleManager', () => {
       const now_date = new Date();
       const start_date = new Date(now_date.valueOf() - 1);
       const end_date = addHours(start_date, 4);
-      const store = new OCPP16.ChargingScheduleManager();
+      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
+      const store = new OCPP16.ChargingManager(defaults);
       store.setChargingProfile({
         connectorId: 0,
         csChargingProfiles: {
@@ -307,7 +359,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getEvseSchedule(1, now_date, end_date, 'W', new Models.DCChargingSession(400));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.DCChargingSession(400));
       deepStrictEqual(schedule,  [
         {
           start: start_date,

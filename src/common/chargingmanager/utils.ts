@@ -4,9 +4,9 @@
  * shared by OCPP 1.6, 2.0.1 and 2.1.
  */
 
-import type { Schedule, CloneDataFn, MergeDataFn } from './schedule.js';
-import type { Models } from './models.js';
-import type { ChargingLimits, NumberOfPhases } from './utils.js';
+import type { Schedule, CloneDataFn, MergeDataFn } from '../schedule/schedule.js';
+import type { Models } from '../models.js';
+import type { ChargingLimits, NumberOfPhases } from '../utils.js';
 
 export interface ChargingContext {
   model: Models.EnergyExchange;
