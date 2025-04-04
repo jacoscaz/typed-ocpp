@@ -1,6 +1,6 @@
 
 import type { ClearChargingProfileRequest, GetCompositeScheduleResponse, SetChargingProfileRequest } from './types.js';
-import type { ChargingSchedule, ChargingContext } from '../common/chargingmanager/utils.js';
+import type { ChargingSchedule, ChargingContext, MaybeChargingSchedule } from '../common/chargingmanager/utils.js';
 import type { ChargingRateUnit, NumberOfPhases, ChargingLimits } from '../common/utils.js';
 import type { Models } from '../common/models.js';
 
@@ -16,9 +16,9 @@ export type getCompositeProfileOpts = Pick<SetChargingProfileRequest['csCharging
 
 export class ChargingManager extends AbstractChargingManager<SetChargingProfileRequest, ClearChargingProfileRequest> {
 
-  protected _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileRequest, fromDate: Date, toDate: Date, unit: ChargingRateUnit): ChargingSchedule {
+  protected _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileRequest, fromDate: Date, toDate: Date, unit: ChargingRateUnit): MaybeChargingSchedule {
     const { csChargingProfiles: { chargingSchedule, validFrom, validTo, recurrencyKind, chargingProfileKind } } = profile;
-    const schedule: ChargingSchedule = [];
+    const schedule: MaybeChargingSchedule = [];
     if (validFrom && fromDate < new Date(validFrom)) {
       return schedule;
     }
@@ -95,7 +95,7 @@ export class ChargingManager extends AbstractChargingManager<SetChargingProfileR
     return this._getChargerSchedule(fromDate, toDate, connectorId, unit, model);
   }
 
-  getConnectorLimitsAtDate(atDate: Date, connectorId: number, unit: ChargingRateUnit, model: Models.ChargingSession): ChargingLimits | undefined {
+  getConnectorLimitsAtDate(atDate: Date, connectorId: number, unit: ChargingRateUnit, model: Models.ChargingSession): ChargingLimits {
     return this._getChargerLimitsAtDate(atDate, connectorId, unit, model);
   }
 

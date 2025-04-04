@@ -17,10 +17,18 @@ export interface Period<T> {
 }
 
 /** 
- * A schedule is a temporally-ordered collection of discrete, 
- * non-overlapping periods.
+ * A Schedule is a temporally-ordered collection of discrete, 
+ * non-overlapping periods. A schedule contains at least one
+ * period.
  */
-export type Schedule<T> = Period<T>[];
+export type Schedule<T> = [first: Period<T>, ...rest: Period<T>[]];
+
+/** 
+ * A MaybeSchdule is a temporally-ordered collection of discrete,
+ * non-overlapping periods. Contrary to a Schedule, a MaybeSchedule
+ * can be empty, i.e. it can contain zero periods.
+ */
+export type MaybeSchedule<T> = Period<T>[];
 
 /**
  * Data cloning functions are used by other functions in this module to create
@@ -40,7 +48,7 @@ export type MergeDataFn<T> = (left: T, right: T) => T;
  * instant represented by the provided date. Returns undefined if the schedule
  * does not contain one such period.
  */
-export const getPeriodForDate = <T>(schedule: Schedule<T>, value: Date): Period<T> | undefined => {
+export const getPeriodForDate = <T>(schedule: MaybeSchedule<T>, value: Date): Period<T> | undefined => {
   return schedule.find(p => p.start <= value);
 };
 
@@ -50,9 +58,9 @@ export const getPeriodForDate = <T>(schedule: Schedule<T>, value: Date): Period<
  * the resulting periods and may be used to customize the merging logic in the
  * case of partially or completely overlapping periods.
  */
-export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDataFn<T>, merger: MergeDataFn<T>): Schedule<T> => {
+export const merge = <T>(left: MaybeSchedule<T>, right: MaybeSchedule<T>, cloner: CloneDataFn<T>, merger: MergeDataFn<T>): MaybeSchedule<T> => {
 
-  const merged_schedule: Schedule<T> = [];
+  const merged_schedule: MaybeSchedule<T> = [];
 
   let lp = 0;
   let rp = 0;
@@ -145,7 +153,7 @@ export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDat
 
   }
 
-  return merged_schedule;
+  return merged_schedule as MaybeSchedule<T>;
 
 };
 
@@ -153,8 +161,8 @@ export const merge = <T>(left: Schedule<T>, right: Schedule<T>, cloner: CloneDat
  * Fills empty gaps in a schedule with new periods built upon the provided
  * `defaults` data object.
  */
-export const fillGaps = <T>(schedule: Schedule<T>, start: Date, end: Date, getPeriodData: (start: Date, end: Date) => T): Schedule<T> => {
-  const filled: Schedule<T> = [];
+export const fillGaps = <T>(schedule: MaybeSchedule<T>, start: Date, end: Date, getPeriodData: (start: Date, end: Date) => T): Schedule<T> => {
+  const filled: MaybeSchedule<T> = [];
   let curr = start;
   for (const period of schedule) {
     if (curr < period.start) {
@@ -166,6 +174,6 @@ export const fillGaps = <T>(schedule: Schedule<T>, start: Date, end: Date, getPe
   if (curr < end) {
     filled.push({ start: curr, end, data: getPeriodData(curr, end) });
   }
-  return filled;
+  return filled as Schedule<T>;
 };
 

@@ -1,6 +1,6 @@
 
 import type { ChargingRateUnit, ChargingProfilePurpose, ChargingLimits } from '../utils.js';
-import type { ChargingContext, ChargingSchedule } from './utils.js';
+import type { ChargingContext, ChargingSchedule, MaybeChargingSchedule } from './utils.js';
 import type { MergeDataFn } from '../schedule/schedule.js';
 import type { Models } from '../models.js';
 
@@ -48,7 +48,7 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     };
   }
 
-  protected abstract  _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileType, fromDate: Date, endDate: Date, unit: ChargingRateUnit): ChargingSchedule;
+  protected abstract  _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileType, fromDate: Date, endDate: Date, unit: ChargingRateUnit): MaybeChargingSchedule;
   
   abstract setChargingProfile(profile: SetChargingProfileType): void;
 
@@ -86,7 +86,7 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     });
   }
 
-  #reduceChargingProfilesToSchedule(context: ChargingContext, purpose: ChargingProfilePurpose, profileFilterFn: (profile: WrappedProfile<SetChargingProfileType>) => boolean, fromDate: Date, toDate: Date, mergeLimits: MergeDataFn<ChargingLimits>, unit: ChargingRateUnit): ChargingSchedule {
+  #reduceChargingProfilesToSchedule(context: ChargingContext, purpose: ChargingProfilePurpose, profileFilterFn: (profile: WrappedProfile<SetChargingProfileType>) => boolean, fromDate: Date, toDate: Date, mergeLimits: MergeDataFn<ChargingLimits>, unit: ChargingRateUnit): MaybeChargingSchedule {
     return this.#profiles[purpose].reduce((schedule, profile) => {
       if (profileFilterFn(profile)) {
         return merge(
@@ -97,11 +97,11 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
         );
       }
       return schedule;
-    }, [] as ChargingSchedule);
-  };
+    }, [] as MaybeChargingSchedule);
+  }
 
   getStationSchedule(fromDate: Date, toDate: Date, unit: ChargingRateUnit, model: Models.ChargingStation): ChargingSchedule {
-    let schedule: ChargingSchedule = [];
+    let schedule: MaybeChargingSchedule = [];
     const context = { model };
     const maxSchedule = this.#reduceChargingProfilesToSchedule(
       context,
@@ -133,12 +133,11 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
       unit,
     );
     schedule = merge(schedule, externalMaxSchedule, cloneChargingLimits, mergeChargingLimitsMin);
-    schedule = fillGaps(schedule, fromDate, toDate, (fromDate, toDate) => this.getDefaultLimits(fromDate, toDate, 0));
-    return schedule;
+    return fillGaps(schedule, fromDate, toDate, (fromDate, toDate) => this.getDefaultLimits(fromDate, toDate, 0));
   }
 
   protected _getChargerSchedule(fromDate: Date, toDate: Date, chargerId: number, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingSchedule {
-    let schedule: ChargingSchedule = [];
+    let schedule: MaybeChargingSchedule = [];
     const context: ChargingContext = { model };
     const defaultSchedule = this.#reduceChargingProfilesToSchedule(
       context,
@@ -186,18 +185,25 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
         merge(schedule, transactionPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight);
       }
     }
-    schedule = fillGaps(schedule, fromDate, toDate, (fromDate, toDate) => this.getDefaultLimits(fromDate, toDate, 0));
-    return schedule;
+    return fillGaps(schedule, fromDate, toDate, (fromDate, toDate) => this.getDefaultLimits(fromDate, toDate, 0));
   }
 
-  getStationLimitsAtDate(atDate: Date, unit: ChargingRateUnit, model: Models.ChargingStation): ChargingLimits | undefined {
+  getStationLimitsAtDate(atDate: Date, unit: ChargingRateUnit, model: Models.ChargingStation): ChargingLimits {
     const schedule = this.getStationSchedule(atDate, addHours(atDate, 1), unit, model);
-    return getPeriodForDate(schedule, atDate)?.data;
+    const period = getPeriodForDate(schedule, atDate);
+    if (!period) {
+      throw new Error('period not found');
+    }
+    return period.data;
   }
 
-  protected _getChargerLimitsAtDate(atDate: Date, chargerId: number, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingLimits | undefined {
+  protected _getChargerLimitsAtDate(atDate: Date, chargerId: number, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingLimits {
     const schedule = this._getChargerSchedule(atDate, addHours(atDate, 1), chargerId, unit, model, priority);
-    return getPeriodForDate(schedule, atDate)?.data;
+    const period = getPeriodForDate(schedule, atDate);
+    if (!period) {
+      throw new Error('period not found');
+    }
+    return period.data;
   }
 
 }
