@@ -10,7 +10,6 @@ import { AbstractChargingManager } from '../common/chargingmanager/chargingmanag
 export type getCompositeProfileOpts = Pick<SetChargingProfileRequest['csChargingProfiles'], 
   | 'stackLevel'
   | 'chargingProfileId'
-  | 'chargingProfileKind'
   | 'chargingProfilePurpose'
 >;
 
@@ -141,6 +140,7 @@ export class ChargingManager extends AbstractChargingManager<SetChargingProfileR
       connectorId: compositeSchedule.connectorId,
       csChargingProfiles: {
         ...opts,
+        chargingProfileKind: 'Absolute',
         validFrom: fromDate.toISOString(),
         validTo: fromDate.toISOString(),
         chargingSchedule: compositeSchedule.chargingSchedule,
