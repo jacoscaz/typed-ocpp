@@ -1,6 +1,4 @@
 
-import type { ChargingLimits } from '../common/utils.js';
-
 import { OCPP16, Models } from '../index.js';
 import { describe, it } from 'node:test';
 import { deepStrictEqual } from 'node:assert';
@@ -8,11 +6,39 @@ import { addHours, addSeconds } from 'date-fns';
 
 describe('OCPP16 - ChargingScheduleManager', () => {
 
+  describe('with zero charging profiles', () => {
+
+    it('should fallback to default limits', () => {
+      const store = new OCPP16.ChargingManager();
+      const now_date = new Date();
+      const end_date = addSeconds(now_date, 3600);
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
+      deepStrictEqual(schedule, [{
+        start: now_date,
+        end: end_date,
+        data: {
+          charging: { 
+            min: 4200, 
+            max: 6000, 
+            phases: { qty: 1 },
+          },
+          discharging: { 
+            min: 0, 
+            max: 0, 
+            phases: { qty: 1 },
+          },
+          shouldDischarge:false,
+          unit: 'W',
+        },
+      }]);
+    });
+
+  });
+
   describe('with one charging profile [kind: Absolute, purpose: TxProfile]', () => {
 
     it('should follow the limit set by matching charging periods', () => {
-      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
-      const store = new OCPP16.ChargingManager(defaults);
+      const store = new OCPP16.ChargingManager();
       const now_date = new Date();
       const end_date = addSeconds(now_date, 3600);
       store.setChargingProfile({
@@ -55,8 +81,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
     });
 
     it('should follow the limit set by charging periods with start dates prior to the requested schedule\'s start date', () => {
-      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
-      const store = new OCPP16.ChargingManager(defaults);
+      const store = new OCPP16.ChargingManager();
       const now_date = new Date();
       const end_date = addSeconds(now_date, 3600);
       store.setChargingProfile({
@@ -100,8 +125,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
     });
 
     it('should follow the limit set by matching discharging periods', () => {
-      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
-      const store = new OCPP16.ChargingManager(defaults);
+      const store = new OCPP16.ChargingManager();
       const now_date = new Date();
       const end_date = addSeconds(now_date, 3600);
       store.setChargingProfile({
@@ -151,8 +175,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
       const now_date = new Date();
       const start_date = new Date(now_date.valueOf() - 1);
       const end_date = addHours(start_date, 4);
-      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
-      const store = new OCPP16.ChargingManager(defaults);
+      const store = new OCPP16.ChargingManager();
       store.setChargingProfile({
         connectorId: 1,
         csChargingProfiles: {
@@ -202,8 +225,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
       const now_date = new Date();
       const start_date = new Date(now_date.valueOf() - 1);
       const end_date = addHours(start_date, 4);
-      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
-      const store = new OCPP16.ChargingManager(defaults);
+      const store = new OCPP16.ChargingManager();
       store.setChargingProfile({
         connectorId: 0,
         csChargingProfiles: {
@@ -312,8 +334,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
       const now_date = new Date();
       const start_date = new Date(now_date.valueOf() - 1);
       const end_date = addHours(start_date, 4);
-      const defaults: ChargingLimits = { shouldDischarge: false, charging: {max: 10_000, min: 1300, phases: { qty: 3 } }, discharging: {max: 0, min: 0, phases: { qty: 3}}, unit: 'W' };
-      const store = new OCPP16.ChargingManager(defaults);
+      const store = new OCPP16.ChargingManager();
       store.setChargingProfile({
         connectorId: 0,
         csChargingProfiles: {

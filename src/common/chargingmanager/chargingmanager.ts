@@ -24,13 +24,11 @@ export interface WrappedProfile<ProfileType> {
   chargerId: number;
 }
 
-export abstract class AbstractChargingManager<ChargingProfileType, ClearChargingProfileRequestType, CompositeScheduleType> {
+export abstract class AbstractChargingManager<SetChargingProfileType, ClearChargingProfileRequestType> {
 
-  #defaults: ChargingLimits;
-  #profiles: Record<ChargingProfilePurpose, WrappedProfile<ChargingProfileType>[]>;
+  #profiles: Record<ChargingProfilePurpose, WrappedProfile<SetChargingProfileType>[]>;
 
-  constructor(defaults: ChargingLimits) {
-    this.#defaults = defaults;
+  constructor() {
     this.#profiles = {
       ['ChargingStationExternalConstraints']: [],
       ['ChargingStationMaxProfile']: [],
@@ -40,14 +38,23 @@ export abstract class AbstractChargingManager<ChargingProfileType, ClearCharging
       ['LocalGeneration']: [],
     };
   }
-
-  protected abstract  _getScheduleFromProfile(context: ChargingContext, profile: ChargingProfileType, fromDate: Date, endDate: Date, unit: ChargingRateUnit): ChargingSchedule;
   
-  abstract setChargingProfile(profile: ChargingProfileType): void;
+  getDefaultLimits = (fromDate: Date, toDate: Date, chargerId: number): ChargingLimits => {
+    return {
+      unit: 'W',
+      charging: { min: 4200, max: 6000, phases: { qty: 1 } },
+      discharging: { min: 0, max: 0, phases: { qty: 1 } },
+      shouldDischarge: false,
+    };
+  }
+
+  protected abstract  _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileType, fromDate: Date, endDate: Date, unit: ChargingRateUnit): ChargingSchedule;
+  
+  abstract setChargingProfile(profile: SetChargingProfileType): void;
 
   abstract clearChargingProfile(request: ClearChargingProfileRequestType): void;
 
-  protected _setChargingProfile(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile', chargerId: number, stackLevel: number, profile: ChargingProfileType) {
+  protected _setChargingProfile(purpose: ChargingProfilePurpose | 'ChargePointMaxProfile', chargerId: number, stackLevel: number, profile: SetChargingProfileType) {
     const _purpose = purpose === 'ChargePointMaxProfile' ? 'ChargingStationMaxProfile' : purpose;
     if (_purpose === 'ChargingStationMaxProfile' || _purpose === 'LocalGeneration' && chargerId !== 0) {
       throw new Error(`"${purpose}" profiles cannot be added for evseId other than "0"`);
@@ -79,14 +86,14 @@ export abstract class AbstractChargingManager<ChargingProfileType, ClearCharging
     });
   }
 
-  #reduceChargingProfilesToSchedule = (context: ChargingContext, purpose: ChargingProfilePurpose, profileFilterFn: (profile: WrappedProfile<ChargingProfileType>) => boolean, fromDate: Date, toDate: Date, limitsMergerFn: MergeDataFn<ChargingLimits>, unit: ChargingRateUnit): ChargingSchedule => {
+  #reduceChargingProfilesToSchedule(context: ChargingContext, purpose: ChargingProfilePurpose, profileFilterFn: (profile: WrappedProfile<SetChargingProfileType>) => boolean, fromDate: Date, toDate: Date, mergeLimits: MergeDataFn<ChargingLimits>, unit: ChargingRateUnit): ChargingSchedule {
     return this.#profiles[purpose].reduce((schedule, profile) => {
       if (profileFilterFn(profile)) {
         return merge(
           schedule, 
           this._getScheduleFromProfile(context, profile.profile, fromDate, toDate, unit), 
           cloneChargingLimits, 
-          limitsMergerFn,
+          mergeLimits,
         );
       }
       return schedule;
@@ -125,7 +132,8 @@ export abstract class AbstractChargingManager<ChargingProfileType, ClearCharging
       mergeChargingLimitsRight,
       unit,
     );
-    schedule = fillGaps(merge(schedule, externalMaxSchedule, cloneChargingLimits, mergeChargingLimitsMin), fromDate, toDate, () => this.#defaults);
+    schedule = merge(schedule, externalMaxSchedule, cloneChargingLimits, mergeChargingLimitsMin);
+    schedule = fillGaps(schedule, fromDate, toDate, (fromDate, toDate) => this.getDefaultLimits(fromDate, toDate, 0));
     return schedule;
   }
 
@@ -174,10 +182,11 @@ export abstract class AbstractChargingManager<ChargingProfileType, ClearCharging
           toDate,
           mergeChargingLimitsRight,
           unit,
-        ) 
-        schedule = fillGaps(merge(schedule, transactionPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight), fromDate, toDate, () => this.#defaults);
+        ); 
+        merge(schedule, transactionPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight);
       }
     }
+    schedule = fillGaps(schedule, fromDate, toDate, (fromDate, toDate) => this.getDefaultLimits(fromDate, toDate, 0));
     return schedule;
   }
 
@@ -186,13 +195,9 @@ export abstract class AbstractChargingManager<ChargingProfileType, ClearCharging
     return getPeriodForDate(schedule, atDate)?.data;
   }
 
-  protected _getChargerLimitsAtDate(atDate: Date, chargerId: Exclude<number, 0>, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingLimits | undefined {
+  protected _getChargerLimitsAtDate(atDate: Date, chargerId: number, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingLimits | undefined {
     const schedule = this._getChargerSchedule(atDate, addHours(atDate, 1), chargerId, unit, model, priority);
     return getPeriodForDate(schedule, atDate)?.data;
   }
-
-  protected abstract _getChargerCompositeSchedule(fromDate: Date, toDate: Date, chargerId: number, model: Models.ChargingSession): CompositeScheduleType | undefined;
-
-  protected abstract _getChargerCompositeProfile(fromDate: Date, toDate: Date, chargerId: number, model: Models.ChargingSession, opts: any): ChargingProfileType | undefined;
 
 }
