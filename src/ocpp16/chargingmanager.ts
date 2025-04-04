@@ -101,9 +101,6 @@ export class ChargingManager extends AbstractChargingManager<SetChargingProfileR
   getConnectorCompositeSchedule(fromDate: Date, toDate: Date, chargerId: number, model: Models.ChargingSession) {
     const now = new Date();
     const schedule = this._getChargerSchedule(fromDate, toDate, chargerId, 'W', model);
-    if (schedule.length === 0) {
-      return;
-    }
     const min_date: Date = schedule[0].start;
     const max_date: Date = schedule.at(-1)!.end;
     return {
@@ -131,11 +128,8 @@ export class ChargingManager extends AbstractChargingManager<SetChargingProfileR
     } satisfies GetCompositeScheduleResponse;  
   }
 
-  getConnectorCompositeProfile(fromDate: Date, toDate: Date, connectorId: number, model: Models.ChargingSession, opts: getCompositeProfileOpts): SetChargingProfileRequest | undefined {
+  getConnectorCompositeProfile(fromDate: Date, toDate: Date, connectorId: number, model: Models.ChargingSession, opts: getCompositeProfileOpts): SetChargingProfileRequest {
     const compositeSchedule = this.getConnectorCompositeSchedule(fromDate, toDate, connectorId, model);
-    if (!compositeSchedule) {
-      return;
-    }
     return {
       connectorId: compositeSchedule.connectorId,
       csChargingProfiles: {
