@@ -4,9 +4,9 @@
  * shared by OCPP 1.6, 2.0.1 and 2.1.
  */
 
-import type { Schedule, CloneDataFn, MergeDataFn } from './schedule.js';
-import type { Models } from './models.js';
-import type { ChargingLimits, NumberOfPhases } from './utils.js';
+import type { Schedule, CloneDataFn, MergeDataFn, MaybeSchedule } from '../schedule/schedule.js';
+import type { Models } from '../models.js';
+import type { ChargingLimits, NumberOfPhases } from '../utils.js';
 
 export interface ChargingContext {
   model: Models.EnergyExchange;
@@ -17,6 +17,12 @@ export interface ChargingContext {
  * by `ExchangeLimits` objects.
  */
 export type ChargingSchedule = Schedule<ChargingLimits>;
+
+/**
+ * Specializes the generic `MaybeSchedule` type into a schedule of periods
+ * described by `ExchangeLimits` objects.
+ */
+export type MaybeChargingSchedule = MaybeSchedule<ChargingLimits>;
 
 /**
  * Cloning function for use with scheduling methods in `./schedule.ts` that

@@ -27,7 +27,7 @@ by the [Open Charge Alliance][i1].
       - [Utility types for OCPP 1.6](#utility-types-for-ocpp-16)
       - [Utility types for OCPP 2.0](#utility-types-for-ocpp-20)
       - [Utility types for OCPP 2.1](#utility-types-for-ocpp-21)
-    - [`ChargingScheduleManager` class](#chargingschedulemanager-class)
+    - [`ChargingManager` class](#chargingmanager-class)
     - [JSON Schema(s)](#json-schemas)
   - [Building and testing](#building-and-testing)
   - [License](#license)
@@ -321,11 +321,11 @@ OCPP21.ConnectorStatus      // connector status ("Available", "Occupied", ...)
 OCPP21.ChargingState        // charging status ("Charging", "EVConnected", ...)
 ```
 
-### `ChargingScheduleManager` class
+### `ChargingManager` class
 
 > **WARNING: experimental!**
 > 
-> The `ChargingScheduleManager` class is experimental and unstable. It is only
+> The `ChargingManager` class is experimental and unstable. It is only
 > available in its OCPP 1.6 variant under the respective namespace, though the
 > plan is to eventually provide implementations for OCPP 2.0 and OCPP 2.1.
 
@@ -353,7 +353,7 @@ export type ChargingSchedule = {
 }[]
 ```
 
-The `OCPP16.ChargingScheduleManager` class implements a repository of charging
+The `OCPP16.ChargingManager` class implements a repository of charging
 profiles that can merge all of its entries into charging schedules computed
 on-demand. Overlapping charging intervals will be merged together according to
 the stack level and purpose of the respective profiles.
@@ -361,47 +361,66 @@ the stack level and purpose of the respective profiles.
 ```typescript
 import { OCPP16, Models } from 'typed-ocpp';
 
-// Create the store passing the physical characteristics of the EVSE.
-const store = new OCPP16.ChargingScheduleManager();
+// Instantiate the manager
+const manager = new OCPP16.ChargingManager();
 
 // Add a new profile by passing the payload of a SetChargingProfile call.
 const setProfileCall = {} as OCPP16.SetChargingProfileCall; 
-store.setChargingProfile(setProfileCall[3]);
+manager.setChargingProfile(setProfileCall[3]);
 
 // Clear profiles by passing the payload of a ClearChargingProfiles call.
-const clearProfileCall = {} as OCPP16.ClearChargingProfiles; 
-store.clearChargingProfile(clearProfileCall[3]);
+const clearProfileCall = {} as OCPP16.ClearChargingProfilesCall; 
+manager.clearChargingProfile(clearProfileCall[3]);
 
-// Get an absolute schedule for the entire station.
-const schedule = store.getStationSchedule(
+// Get an absolute schedule for the entire station
+const schedule = manager.getStationSchedule(
   new Date(),                         // start date
   new Date(Date.now() + 14_400_000),  // end date
   'W',                                // charging rate unit ("W" or "A")
   new Models.ACChargingStation(230),  // model used for unit conversions
 ); 
 
-// Get charging limits for the entire station at the given date.
-const limits = store.getStationLimitsAtDate(
+// Get charging limits for the entire station at the given date
+const limits = manager.getStationLimitsAtDate(
   new Date(),                         // reference date
   'W',                                // charging rate unit ("W" or "A")
   new Models.ACChargingStation(230),  // model used for unit conversions
 );
 
-// Get an absolute schedule for the next 4 hours for connector (OCPP 1.6)
-// or evse (OCPP 2.0, 2.1) with id 1.
-const schedule = store.getEvseSchedule(
-  1,                                  // connector id
+// Get the charging schedule for connector 1
+const schedule = manager.getConnectorSchedule(
   new Date(),                         // start date
   new Date(Date.now() + 14_400_000),  // end date
+  1,                                  // connector id
   'W',                                // charging rate unit ("W" or "A")
   new Models.DCChargingSession(400),  // model used for unit conversions
 ); 
 
-// Get charging limits for connector (OCPP 1.6) or evse (OCPP 2.0, 2.1) with
-// id 1 at the given date.
-const limits = store.getEvseLimitsAtDate(
-  1,                                  // connector id
+// Get charging limits for connector 1 at the given date
+const limits = manager.getConnectorLimitsAtDate(
   new Date(),                         // reference date
+  1,                                  // connector id
+  'W',                                // charging rate unit ("W" or "A")
+  new Models.DCChargingSession(400),  // model used for unit conversions
+);
+
+// Get the composite charging schedule for connector 1, suitable to be used
+// within OCPP16.GetCompositeScheduleCallResult messages
+const schedule = manager.getConnectorCompositeSchedule(
+  new Date(),                         // start date
+  new Date(Date.now() + 14_400_000),  // end date
+  1,                                  // connector id
+  'W',                                // charging rate unit ("W" or "A")
+  new Models.DCChargingSession(400),  // model used for unit conversions
+); 
+
+// Uses the `getConnectorCompositeSchedule()` to get the composite schedule for
+// connector 1 and return it as the payload for an OCPP16.SetChargingProfileCall
+// message
+const limits = manager.getConnectorCompositeProfile(
+  new Date(),                         // start date
+  new Date(Date.now() + 14_400_000),  // end date
+  1,                                  // connector id
   'W',                                // charging rate unit ("W" or "A")
   new Models.DCChargingSession(400),  // model used for unit conversions
 );
