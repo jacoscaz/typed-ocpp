@@ -1,4 +1,6 @@
 
+import type { ChargingLimits } from './index.js';
+
 import { OCPP16 } from './index.js';
 import { OCPP20 } from './index.js';
 import { OCPP21 } from './index.js';
@@ -57,6 +59,10 @@ describe('Exports', () => {
 
   it('The OCPP21 namespace exports schemas', () => {
     assert(typeof OCPP21.schemas === 'object', 'OCPP21.schemas is not an object');
+  });
+
+  it('The package exports common types', () => {
+    const cl = {} as ChargingLimits;
   });
 
 });
