@@ -1,6 +1,6 @@
 {
   "name": "typed-ocpp",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "A library for type-aware parsing, serialization and validation of OCPP 1.6, OCPP 2.0 and OCPP 2.1 messages",
   "main": "dist/index.js",
   "type": "module",
