@@ -227,6 +227,16 @@ OCPP16.MeterValuesCallResult
 /* ... and so on ...*/
 ```
 
+For each of these `Call` and `CallResult` types, the respective `Request` and
+`Response` types model their specific payloads and map directly to the official
+JSON schemas:
+
+```typescript
+OCPP16.MeterValuesRequest
+OCPP16.MeterValuesResponse
+/* ... and so on ...*/
+```
+
 #### The `CheckedCallResult<C extends Call>` type
 
 When returning `true`, the `checkCallResult()` function leads the TS compiler
