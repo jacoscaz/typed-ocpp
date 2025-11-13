@@ -7,10 +7,10 @@ import type { Models } from '../models.js';
 import { addHours } from 'date-fns';
 import { merge, getPeriodForDate, fillGaps } from '../schedule/schedule.js';
 import { CHARGING_PROFILE_PURPOSES } from '../utils.js';
-import { 
-  mergeChargingLimitsMin, 
-  mergeChargingLimitsRight, 
-  mergeChargingLimitsAdd, 
+import {
+  mergeChargingLimitsMin,
+  mergeChargingLimitsRight,
+  mergeChargingLimitsAdd,
   cloneChargingLimits,
 } from './utils.js';
 
@@ -38,7 +38,13 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
       ['LocalGeneration']: [],
     };
   }
-  
+
+  size(purpose?: ChargingProfilePurpose): number {
+    return (purpose ? ([purpose] as const): CHARGING_PROFILE_PURPOSES).reduce((acc, p) => {
+      return acc + this.#profiles[p as ChargingProfilePurpose].length;
+    }, 0);
+  }
+
   getDefaultLimits = (fromDate: Date, toDate: Date, chargerId: number): ChargingLimits => {
     return {
       unit: 'W',
@@ -49,7 +55,7 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
   }
 
   protected abstract  _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileType, fromDate: Date, endDate: Date, unit: ChargingRateUnit): MaybeChargingSchedule;
-  
+
   abstract setChargingProfile(profile: SetChargingProfileType): void;
 
   abstract clearChargingProfile(request: ClearChargingProfileRequestType): void;
@@ -90,9 +96,9 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     return this.#profiles[purpose].reduce((schedule, profile) => {
       if (profileFilterFn(profile)) {
         return merge(
-          schedule, 
-          this._getScheduleFromProfile(context, profile.profile, fromDate, toDate, unit), 
-          cloneChargingLimits, 
+          schedule,
+          this._getScheduleFromProfile(context, profile.profile, fromDate, toDate, unit),
+          cloneChargingLimits,
           mergeLimits,
         );
       }
@@ -105,7 +111,7 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     const context = { model };
     const maxSchedule = this.#reduceChargingProfilesToSchedule(
       context,
-      'ChargingStationMaxProfile', 
+      'ChargingStationMaxProfile',
       (profile) => true,
       fromDate,
       toDate,
@@ -115,7 +121,7 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     schedule = merge(schedule, maxSchedule, cloneChargingLimits, mergeChargingLimitsRight);
     const localGenerationSchedule = this.#reduceChargingProfilesToSchedule(
       context,
-      'LocalGeneration', 
+      'LocalGeneration',
       (profile) => true,
       fromDate,
       toDate,
@@ -125,7 +131,7 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     schedule = merge(schedule, localGenerationSchedule, cloneChargingLimits, mergeChargingLimitsAdd);
     const externalMaxSchedule = this.#reduceChargingProfilesToSchedule(
       context,
-      'ChargingStationExternalConstraints', 
+      'ChargingStationExternalConstraints',
       (profile) => profile.chargerId === 0,
       fromDate,
       toDate,
@@ -141,7 +147,7 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     const context: ChargingContext = { model };
     const defaultSchedule = this.#reduceChargingProfilesToSchedule(
       context,
-      'TxDefaultProfile', 
+      'TxDefaultProfile',
       (profile) => profile.chargerId === 0 || profile.chargerId === chargerId,
       fromDate,
       toDate,
@@ -152,36 +158,36 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     if (priority) {
       const defaultPrioritySchedule = this.#reduceChargingProfilesToSchedule(
         context,
-        'PriorityCharging', 
+        'PriorityCharging',
         (profile) => profile.chargerId === 0,
         fromDate,
         toDate,
         mergeChargingLimitsRight,
         unit,
-      ) 
+      )
       schedule = merge(schedule, defaultPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight);
     }
     if (chargerId !== 0) {
       const transactionSchedule = this.#reduceChargingProfilesToSchedule(
         context,
-        'TxProfile', 
+        'TxProfile',
         (profile) => profile.chargerId === chargerId,
         fromDate,
         toDate,
         mergeChargingLimitsRight,
         unit,
-      ) 
+      )
       schedule = merge(schedule, transactionSchedule, cloneChargingLimits, mergeChargingLimitsRight);
       if (priority) {
         const transactionPrioritySchedule = this.#reduceChargingProfilesToSchedule(
           context,
-          'PriorityCharging', 
+          'PriorityCharging',
           (profile) => profile.chargerId === chargerId,
           fromDate,
           toDate,
           mergeChargingLimitsRight,
           unit,
-        ); 
+        );
         merge(schedule, transactionPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight);
       }
     }

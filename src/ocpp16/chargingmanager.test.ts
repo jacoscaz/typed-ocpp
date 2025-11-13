@@ -17,17 +17,17 @@ describe('OCPP16 - ChargingScheduleManager', () => {
         start: now_date,
         end: end_date,
         data: {
-          charging: { 
-            min: 4200, 
-            max: 6000, 
+          charging: {
+            min: 4200,
+            max: 6000,
             phases: { qty: 1 },
           },
-          discharging: { 
-            min: 0, 
-            max: 0, 
+          discharging: {
+            min: 0,
+            max: 0,
             phases: { qty: 1 },
           },
-          shouldDischarge:false,
+          shouldDischarge: false,
           unit: 'W',
         },
       }]);
@@ -64,17 +64,17 @@ describe('OCPP16 - ChargingScheduleManager', () => {
         start: now_date,
         end: end_date,
         data: {
-          charging: { 
-            min: 0, 
-            max: 13_000, 
+          charging: {
+            min: 0,
+            max: 13_000,
             phases: { qty: 3 },
           },
-          discharging: { 
-            min: 0, 
-            max: 0, 
+          discharging: {
+            min: 0,
+            max: 0,
             phases: { qty: 3 },
           },
-          shouldDischarge:false,
+          shouldDischarge: false,
           unit: 'W',
         },
       }]);
@@ -108,17 +108,17 @@ describe('OCPP16 - ChargingScheduleManager', () => {
         start: start_schedule_date,
         end: end_date,
         data: {
-          charging: { 
-            min: 0, 
-            max: 13_000, 
+          charging: {
+            min: 0,
+            max: 13_000,
             phases: { qty: 3 },
           },
-          discharging: { 
-            min: 0, 
-            max: 0, 
+          discharging: {
+            min: 0,
+            max: 0,
             phases: { qty: 3 },
           },
-          shouldDischarge:false,
+          shouldDischarge: false,
           unit: 'W',
         },
       }]);
@@ -151,14 +151,14 @@ describe('OCPP16 - ChargingScheduleManager', () => {
         start: now_date,
         end: end_date,
         data: {
-          charging: { 
-            min: 0, 
-            max: 0, 
+          charging: {
+            min: 0,
+            max: 0,
             phases: { qty: 3 },
           },
-          discharging: { 
-            min: 0, 
-            max: 13_000, 
+          discharging: {
+            min: 0,
+            max: 13_000,
             phases: { qty: 3 },
           },
           shouldDischarge: true,
@@ -202,14 +202,14 @@ describe('OCPP16 - ChargingScheduleManager', () => {
         start: start_date,
         end: end_date,
         data: {
-          charging: { 
-            min: 0, 
-            max: 13_000, 
+          charging: {
+            min: 0,
+            max: 13_000,
             phases: { qty: 3 },
           },
-          discharging: { 
-            min: 0, 
-            max: 0, 
+          discharging: {
+            min: 0,
+            max: 0,
             phases: { qty: 3 },
           },
           shouldDischarge: false,
@@ -217,6 +217,72 @@ describe('OCPP16 - ChargingScheduleManager', () => {
         },
       }]);
     });
+  });
+
+  describe('with two charging profiles [kind: Absolute, purpose: TxProfile]', () => {
+
+    it('should follow the limit set by the profile most recently added if the stack level is the same', () => {
+      const store = new OCPP16.ChargingManager();
+      store.setChargingProfile({
+        connectorId: 1,
+        csChargingProfiles: {
+          chargingProfileId: 0,
+          chargingProfileKind: 'Absolute',
+          chargingProfilePurpose: 'TxProfile',
+          chargingSchedule: {
+            chargingRateUnit: 'W',
+            chargingSchedulePeriod: [
+              {
+                startPeriod: 0,
+                limit: 5432,
+              }
+            ],
+          },
+          stackLevel: 0,
+        },
+      });
+      store.setChargingProfile({
+        connectorId: 1,
+        csChargingProfiles: {
+          chargingProfileId: 1,
+          chargingProfileKind: 'Absolute',
+          chargingProfilePurpose: 'TxProfile',
+          chargingSchedule: {
+            chargingRateUnit: 'W',
+            chargingSchedulePeriod: [
+              {
+                startPeriod: 0,
+                limit: 5498,
+              }
+            ],
+          },
+          stackLevel: 0,
+        },
+      });
+      const now_date = new Date();
+      const end_date = addSeconds(now_date, 3600);
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
+      deepStrictEqual(schedule, [{
+        start: now_date,
+        end: end_date,
+        data: {
+          charging: {
+            min: 0,
+            max: 5498,
+            phases: { qty: 3 },
+          },
+          discharging: {
+            min: 0,
+            max: 0,
+            phases: { qty: 3 },
+          },
+          shouldDischarge: false,
+          unit: 'W',
+        },
+      }]);
+    });
+
+
   });
 
   describe('with two charging profiles [kind: Recurring(Daily), purpose: TxDefaultProfile] and [kind: Absolute, purpose: TxProfile]', () => {
