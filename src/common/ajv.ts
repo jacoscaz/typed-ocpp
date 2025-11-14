@@ -1,5 +1,5 @@
 
-import type { JSONSchemaType } from 'ajv'; 
+import type { JSONSchemaType } from 'ajv';
 
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
@@ -7,6 +7,7 @@ import { EMPTY_ARR } from './utils.js';
 
 const ajv = addFormats(new Ajv({
   strict: false,
+  multipleOfPrecision: 3,
 }));
 
 export interface AjvValidateFn {
@@ -22,7 +23,7 @@ export const validate: AjvValidateFn = Object.assign(
     }
     validate.errors = ajv.errors!.map((e: any) => `${prefix}: ${e.instancePath} ${e.message}`);
     return false;
-  }, 
+  },
   { errors: EMPTY_ARR },
 );
 
