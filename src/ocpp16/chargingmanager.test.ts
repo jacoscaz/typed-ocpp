@@ -12,7 +12,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
       const store = new OCPP16.ChargingManager();
       const now_date = new Date();
       const end_date = addSeconds(now_date, 3600);
-      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230), 3, false);
       deepStrictEqual(schedule, [{
         start: now_date,
         end: end_date,
@@ -59,7 +59,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230), 3, false);
       deepStrictEqual(schedule, [{
         start: now_date,
         end: end_date,
@@ -73,6 +73,138 @@ describe('OCPP16 - ChargingScheduleManager', () => {
             min: 0,
             max: 0,
             phases: { qty: 3 },
+          },
+          shouldDischarge: false,
+          unit: 'W',
+        },
+      }]);
+    });
+
+    it('should follow the limit set by matching charging periods (W -> A, 3p)', () => {
+      const store = new OCPP16.ChargingManager();
+      const now_date = new Date();
+      const end_date = addSeconds(now_date, 3600);
+      store.setChargingProfile({
+        connectorId: 1,
+        csChargingProfiles: {
+          chargingProfileId: 0,
+          chargingProfileKind: 'Absolute',
+          chargingProfilePurpose: 'TxProfile',
+          chargingSchedule: {
+            chargingRateUnit: 'W',
+            chargingSchedulePeriod: [
+              {
+                startPeriod: 0,
+                limit: 4140,
+                numberPhases: 3,
+              }
+            ],
+          },
+          stackLevel: 0,
+        },
+      });
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'A', new Models.ACChargingSession(230), 3, false);
+      deepStrictEqual(schedule, [{
+        start: now_date,
+        end: end_date,
+        data: {
+          charging: {
+            min: 0,
+            max: 6,
+            phases: { qty: 3 },
+          },
+          discharging: {
+            min: 0,
+            max: 0,
+            phases: { qty: 3 },
+          },
+          shouldDischarge: false,
+          unit: 'A',
+        },
+      }]);
+    });
+
+    it('should follow the limit set by matching charging periods (W -> A, 2p)', () => {
+      const store = new OCPP16.ChargingManager();
+      const now_date = new Date();
+      const end_date = addSeconds(now_date, 3600);
+      store.setChargingProfile({
+        connectorId: 1,
+        csChargingProfiles: {
+          chargingProfileId: 0,
+          chargingProfileKind: 'Absolute',
+          chargingProfilePurpose: 'TxProfile',
+          chargingSchedule: {
+            chargingRateUnit: 'W',
+            chargingSchedulePeriod: [
+              {
+                startPeriod: 0,
+                limit: 2760,
+                numberPhases: 2,
+              }
+            ],
+          },
+          stackLevel: 0,
+        },
+      });
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'A', new Models.ACChargingSession(230), 3, false);
+      deepStrictEqual(schedule, [{
+        start: now_date,
+        end: end_date,
+        data: {
+          charging: {
+            min: 0,
+            max: 6,
+            phases: { qty: 2 },
+          },
+          discharging: {
+            min: 0,
+            max: 0,
+            phases: { qty: 2 },
+          },
+          shouldDischarge: false,
+          unit: 'A',
+        },
+      }]);
+    });
+
+    it('should follow the limit set by matching charging periods (A -> W, 2p)', () => {
+      const store = new OCPP16.ChargingManager();
+      const now_date = new Date();
+      const end_date = addSeconds(now_date, 3600);
+      store.setChargingProfile({
+        connectorId: 1,
+        csChargingProfiles: {
+          chargingProfileId: 0,
+          chargingProfileKind: 'Absolute',
+          chargingProfilePurpose: 'TxProfile',
+          chargingSchedule: {
+            chargingRateUnit: 'A',
+            chargingSchedulePeriod: [
+              {
+                startPeriod: 0,
+                limit: 6,
+                numberPhases: 2,
+              }
+            ],
+          },
+          stackLevel: 0,
+        },
+      });
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230), 3, false);
+      deepStrictEqual(schedule, [{
+        start: now_date,
+        end: end_date,
+        data: {
+          charging: {
+            min: 0,
+            max: 2760,
+            phases: { qty: 2 },
+          },
+          discharging: {
+            min: 0,
+            max: 0,
+            phases: { qty: 2 },
           },
           shouldDischarge: false,
           unit: 'W',
@@ -103,7 +235,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
         },
       });
       const start_schedule_date = new Date(now_date.valueOf() + 300_000);
-      const schedule = store.getConnectorSchedule(start_schedule_date, end_date, 1, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(start_schedule_date, end_date, 1, 'W', new Models.ACChargingSession(230), 3, false);
       deepStrictEqual(schedule, [{
         start: start_schedule_date,
         end: end_date,
@@ -146,7 +278,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230), 3, false);
       deepStrictEqual(schedule, [{
         start: now_date,
         end: end_date,
@@ -197,7 +329,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230), 3, false);
       deepStrictEqual(schedule, [{
         start: start_date,
         end: end_date,
@@ -261,7 +393,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
       });
       const now_date = new Date();
       const end_date = addSeconds(now_date, 3600);
-      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230), 3, false);
       deepStrictEqual(schedule, [{
         start: now_date,
         end: end_date,
@@ -337,7 +469,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230), 3, false);
       deepStrictEqual(schedule,  [
         {
           start: start_date,
@@ -446,7 +578,7 @@ describe('OCPP16 - ChargingScheduleManager', () => {
           stackLevel: 0,
         },
       });
-      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.DCChargingSession(400));
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.DCChargingSession(400), 3, false);
       deepStrictEqual(schedule,  [
         {
           start: start_date,
@@ -504,6 +636,99 @@ describe('OCPP16 - ChargingScheduleManager', () => {
         }
       ]);
     });
+
+  });
+
+  describe('with a limit on the maximum number of phases', () => {
+
+    it('should convert power into current based on the minimum allowed number of phases', () => {
+      const store = new OCPP16.ChargingManager();
+      const now_date = new Date();
+      const end_date = addSeconds(now_date, 3600);
+      store.setChargingProfile({
+        connectorId: 1,
+        csChargingProfiles: {
+          chargingProfileId: 0,
+          chargingProfileKind: 'Absolute',
+          chargingProfilePurpose: 'TxProfile',
+          chargingSchedule: {
+            chargingRateUnit: 'A',
+            chargingSchedulePeriod: [
+              {
+                startPeriod: 0,
+                limit: 20,
+                numberPhases: 3,
+              }
+            ],
+          },
+          stackLevel: 0,
+        },
+      });
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230), 2, false);
+      deepStrictEqual(schedule, [{
+        start: now_date,
+        end: end_date,
+        data: {
+          charging: {
+            min: 0,
+            max: 9200,
+            phases: { qty: 2 },
+          },
+          discharging: {
+            min: 0,
+            max: 0,
+            phases: { qty: 2 },
+          },
+          shouldDischarge: false,
+          unit: 'W',
+        },
+      }]);
+    });
+
+    it('should let power pass-through if no conversion is required', () => {
+      const store = new OCPP16.ChargingManager();
+      const now_date = new Date();
+      const end_date = addSeconds(now_date, 3600);
+      store.setChargingProfile({
+        connectorId: 1,
+        csChargingProfiles: {
+          chargingProfileId: 0,
+          chargingProfileKind: 'Absolute',
+          chargingProfilePurpose: 'TxProfile',
+          chargingSchedule: {
+            chargingRateUnit: 'W',
+            chargingSchedulePeriod: [
+              {
+                startPeriod: 0,
+                limit: 9200,
+                numberPhases: 3,
+              }
+            ],
+          },
+          stackLevel: 0,
+        },
+      });
+      const schedule = store.getConnectorSchedule(now_date, end_date, 1, 'W', new Models.ACChargingSession(230), 2, false);
+      deepStrictEqual(schedule, [{
+        start: now_date,
+        end: end_date,
+        data: {
+          charging: {
+            min: 0,
+            max: 9200,
+            phases: { qty: 2 },
+          },
+          discharging: {
+            min: 0,
+            max: 0,
+            phases: { qty: 2 },
+          },
+          shouldDischarge: false,
+          unit: 'W',
+        },
+      }]);
+    });
+
   });
 
 });

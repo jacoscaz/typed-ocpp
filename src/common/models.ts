@@ -27,10 +27,10 @@ export namespace Models {
       super();
       this.#phaseVoltage = phaseVoltage;
     }
-    ampsToWatts(value: number, numberOfPhases: NumberOfPhases = 3): number {
+    ampsToWatts(value: number, numberOfPhases: NumberOfPhases): number {
       return value * (this.#phaseVoltage * numberOfPhases);
     }
-    wattsToAmps(value: number, numberOfPhases: NumberOfPhases = 3): number {
+    wattsToAmps(value: number, numberOfPhases: NumberOfPhases): number {
       return value / (this.#phaseVoltage * numberOfPhases);
     }
   }
@@ -47,10 +47,10 @@ export namespace Models {
       super();
       this.#phaseVoltage = phaseVoltage;
     }
-    ampsToWatts(value: number, numberOfPhases: NumberOfPhases = 3): number {
+    ampsToWatts(value: number, numberOfPhases: NumberOfPhases): number {
       return value * (this.#phaseVoltage * numberOfPhases);
     }
-    wattsToAmps(value: number, numberOfPhases: NumberOfPhases = 3): number {
+    wattsToAmps(value: number, numberOfPhases: NumberOfPhases): number {
       return value / (this.#phaseVoltage * numberOfPhases);
     }
   }

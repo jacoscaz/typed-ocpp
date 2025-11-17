@@ -20,7 +20,7 @@ describe('OCPP16 - Call', () => {
 
 
   describe('validation', () => {
-  
+
     describe('BootNotification', () => {
 
       it('minimal notification', () => {
@@ -30,7 +30,7 @@ describe('OCPP16 - Call', () => {
         }]), true);
         deepStrictEqual(validate.errors, []);
       });
-  
+
       it('invalid notification (missing model)', () => {
         deepStrictEqual(validate([MessageType.CALL, 'test', Action.BootNotification, {
           chargePointVendor: '55',
@@ -45,24 +45,24 @@ describe('OCPP16 - Call', () => {
     describe('StopTransaction', () => {
 
       it('Using "Celsius" unit in sampledValue array', () => {
-        const call = [ 
-          2, 
-          "983728ed-5d83-467f-be81-81282b93e8b2", 
-          "StopTransaction", 
-          { 
-            idTag: "1347738830", 
-            meterStop: 9972365, 
-            reason: "EVDisconnected", 
-            timestamp: "2025-03-17T23:33:29.456Z", 
-            transactionData: [ 
-              { 
-                sampledValue: [ 
-                  { 
+        const call = [
+          2,
+          "983728ed-5d83-467f-be81-81282b93e8b2",
+          "StopTransaction",
+          {
+            idTag: "1347738830",
+            meterStop: 9972365,
+            reason: "EVDisconnected",
+            timestamp: "2025-03-17T23:33:29.456Z",
+            transactionData: [
+              {
+                sampledValue: [
+                  {
                     context: "Transaction.End",
-                    format: "Raw", 
-                    location: "Body", 
-                    measurand: "Temperature", 
-                    unit: "Celsius", 
+                    format: "Raw",
+                    location: "Body",
+                    measurand: "Temperature",
+                    unit: "Celsius",
                     value: "60",
                   }
                 ],
@@ -74,7 +74,7 @@ describe('OCPP16 - Call', () => {
         ];
         deepStrictEqual(validate(call), true);
       });
-      
+
     });
 
   });
