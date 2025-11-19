@@ -5,9 +5,9 @@ import type { ChargingRateUnit, NumberOfPhases, ChargingLimits } from '../common
 import type { Models } from '../common/models.js';
 
 import { startOfDay, addMilliseconds, startOfWeek, differenceInMilliseconds, addWeeks, addDays, addSeconds, min, differenceInSeconds } from 'date-fns';
-import { AbstractChargingManager } from '../common/chargingmanager/chargingmanager.js'; 
+import { AbstractChargingManager } from '../common/chargingmanager/chargingmanager.js';
 
-export type getCompositeProfileOpts = Pick<SetChargingProfileRequest['csChargingProfiles'], 
+export type getCompositeProfileOpts = Pick<SetChargingProfileRequest['csChargingProfiles'],
   | 'stackLevel'
   | 'chargingProfileId'
   | 'chargingProfilePurpose'
@@ -15,7 +15,7 @@ export type getCompositeProfileOpts = Pick<SetChargingProfileRequest['csCharging
 
 export class ChargingManager extends AbstractChargingManager<SetChargingProfileRequest, ClearChargingProfileRequest> {
 
-  protected _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileRequest, fromDate: Date, toDate: Date, unit: ChargingRateUnit): MaybeChargingSchedule {
+  protected _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileRequest, fromDate: Date, toDate: Date, unit: ChargingRateUnit, maxNumberPhases: NumberOfPhases): MaybeChargingSchedule {
     const { csChargingProfiles: { chargingSchedule, validFrom, validTo, recurrencyKind, chargingProfileKind } } = profile;
     const schedule: MaybeChargingSchedule = [];
     if (validFrom && fromDate < new Date(validFrom)) {
@@ -44,7 +44,7 @@ export class ChargingManager extends AbstractChargingManager<SetChargingProfileR
         recurringProfileStartDate = addMilliseconds(startOfFn(fromDate), differenceInMilliseconds(recurringProfileStartDate, startOfFn(recurringProfileStartDate)));
         while (recurringProfileStartDate < toDate) {
           let recurringProfileEndDate = addFn(recurringProfileStartDate, 1);
-          let recurringProfileEndDateInclDuration = duration 
+          let recurringProfileEndDateInclDuration = duration
             ? min([recurringProfileEndDate, addSeconds(recurringProfileStartDate, duration)])
             : recurringProfileEndDate;
           scheduleStartEndDatePairs.push([recurringProfileStartDate, recurringProfileEndDateInclDuration]);
@@ -58,19 +58,20 @@ export class ChargingManager extends AbstractChargingManager<SetChargingProfileR
         const nextPeriod = chargingSchedulePeriod[periodIndex + 1];
         const periodStartDate = addSeconds(scheduleStartDate, startPeriod);
         const periodEndDate = nextPeriod ? addSeconds(scheduleStartDate, nextPeriod.startPeriod) : scheduleEndDate;
+        const realNumberPhases = Math.min(maxNumberPhases, numberPhases) as NumberOfPhases;
         schedule.push({
           start: periodStartDate,
           end: periodEndDate,
           data: {
-            charging: { 
-              min: context.model.convert(minChargingRate ?? 0, chargingRateUnit, unit, numberPhases as NumberOfPhases),
-              max: context.model.convert(limit >= 0 ? limit : 0, chargingRateUnit, unit, numberPhases as NumberOfPhases),
-              phases: { qty: numberPhases as NumberOfPhases },
+            charging: {
+              min: context.model.convert(minChargingRate ?? 0, chargingRateUnit, unit, realNumberPhases),
+              max: context.model.convert(limit >= 0 ? limit : 0, chargingRateUnit, unit, realNumberPhases),
+              phases: { qty: realNumberPhases },
             },
-            discharging: { 
-              min: context.model.convert(0, chargingRateUnit, unit, numberPhases as NumberOfPhases),
-              max: context.model.convert(limit < 0 ? Math.abs(limit) : 0, chargingRateUnit, unit, numberPhases as NumberOfPhases),
-              phases: { qty: numberPhases as NumberOfPhases },
+            discharging: {
+              min: context.model.convert(0, chargingRateUnit, unit, realNumberPhases),
+              max: context.model.convert(limit < 0 ? Math.abs(limit) : 0, chargingRateUnit, unit, realNumberPhases),
+              phases: { qty: realNumberPhases },
             },
             shouldDischarge: limit < 0,
             unit,
@@ -90,17 +91,17 @@ export class ChargingManager extends AbstractChargingManager<SetChargingProfileR
     this._clearChargingProfiles(request.chargingProfilePurpose, request.connectorId, request.stackLevel);
   }
 
-  getConnectorSchedule(fromDate: Date, toDate: Date, connectorId: number, unit: ChargingRateUnit, model: Models.ChargingSession): ChargingSchedule {
-    return this._getChargerSchedule(fromDate, toDate, connectorId, unit, model);
+  getConnectorSchedule(fromDate: Date, toDate: Date, connectorId: number, unit: ChargingRateUnit, model: Models.ChargingSession, maxNumPhases: NumberOfPhases, enablePriority: boolean): ChargingSchedule {
+    return this._getChargerSchedule(fromDate, toDate, connectorId, unit, model, maxNumPhases, enablePriority);
   }
 
-  getConnectorLimitsAtDate(atDate: Date, connectorId: number, unit: ChargingRateUnit, model: Models.ChargingSession): ChargingLimits {
-    return this._getChargerLimitsAtDate(atDate, connectorId, unit, model);
+  getConnectorLimitsAtDate(atDate: Date, connectorId: number, unit: ChargingRateUnit, model: Models.ChargingSession, maxNumPhases: NumberOfPhases, enablePriority: boolean): ChargingLimits {
+    return this._getChargerLimitsAtDate(atDate, connectorId, unit, model, maxNumPhases, enablePriority);
   }
 
-  getConnectorCompositeSchedule(fromDate: Date, toDate: Date, chargerId: number, model: Models.ChargingSession) {
+  getConnectorCompositeSchedule(fromDate: Date, toDate: Date, chargerId: number, model: Models.ChargingSession, maxNumPhases: NumberOfPhases, enablePriority: boolean) {
     const now = new Date();
-    const schedule = this._getChargerSchedule(fromDate, toDate, chargerId, 'W', model);
+    const schedule = this._getChargerSchedule(fromDate, toDate, chargerId, 'W', model, maxNumPhases, enablePriority);
     const min_date: Date = schedule[0].start;
     const max_date: Date = schedule.at(-1)!.end;
     return {
@@ -113,23 +114,23 @@ export class ChargingManager extends AbstractChargingManager<SetChargingProfileR
         chargingSchedulePeriod: schedule.map((interval) => {
           const { start, data: { charging, discharging, shouldDischarge} } = interval;
           return shouldDischarge
-            ? { 
-                startPeriod: differenceInSeconds(start, min_date), 
-                limit: -1 * discharging.max, 
+            ? {
+                startPeriod: differenceInSeconds(start, min_date),
+                limit: -1 * discharging.max,
                 numberPhases: discharging.phases.qty,
               }
-            : { 
-                startPeriod: differenceInSeconds(start, min_date), 
-                limit: charging.max,  
+            : {
+                startPeriod: differenceInSeconds(start, min_date),
+                limit: charging.max,
                 numberPhases: charging.phases.qty,
               }
         }),
       },
-    } satisfies GetCompositeScheduleResponse;  
+    } satisfies GetCompositeScheduleResponse;
   }
 
-  getConnectorCompositeProfile(fromDate: Date, toDate: Date, connectorId: number, model: Models.ChargingSession, opts: getCompositeProfileOpts): SetChargingProfileRequest {
-    const compositeSchedule = this.getConnectorCompositeSchedule(fromDate, toDate, connectorId, model);
+  getConnectorCompositeProfile(fromDate: Date, toDate: Date, connectorId: number, model: Models.ChargingSession, maxNumPhases: NumberOfPhases, enablePriority: boolean, opts: getCompositeProfileOpts): SetChargingProfileRequest {
+    const compositeSchedule = this.getConnectorCompositeSchedule(fromDate, toDate, connectorId, model, maxNumPhases, enablePriority);
     return {
       connectorId: compositeSchedule.connectorId,
       csChargingProfiles: {

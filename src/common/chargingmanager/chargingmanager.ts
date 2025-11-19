@@ -1,5 +1,5 @@
 
-import type { ChargingRateUnit, ChargingProfilePurpose, ChargingLimits } from '../utils.js';
+import type { ChargingRateUnit, ChargingProfilePurpose, ChargingLimits, NumberOfPhases } from '../utils.js';
 import type { ChargingContext, ChargingSchedule, MaybeChargingSchedule } from './utils.js';
 import type { MergeDataFn } from '../schedule/schedule.js';
 import type { Models } from '../models.js';
@@ -7,10 +7,10 @@ import type { Models } from '../models.js';
 import { addHours } from 'date-fns';
 import { merge, getPeriodForDate, fillGaps } from '../schedule/schedule.js';
 import { CHARGING_PROFILE_PURPOSES } from '../utils.js';
-import { 
-  mergeChargingLimitsMin, 
-  mergeChargingLimitsRight, 
-  mergeChargingLimitsAdd, 
+import {
+  mergeChargingLimitsMin,
+  mergeChargingLimitsRight,
+  mergeChargingLimitsAdd,
   cloneChargingLimits,
 } from './utils.js';
 
@@ -38,7 +38,13 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
       ['LocalGeneration']: [],
     };
   }
-  
+
+  size(purpose?: ChargingProfilePurpose): number {
+    return (purpose ? ([purpose] as const): CHARGING_PROFILE_PURPOSES).reduce((acc, p) => {
+      return acc + this.#profiles[p as ChargingProfilePurpose].length;
+    }, 0);
+  }
+
   getDefaultLimits = (fromDate: Date, toDate: Date, chargerId: number): ChargingLimits => {
     return {
       unit: 'W',
@@ -48,8 +54,8 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     };
   }
 
-  protected abstract  _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileType, fromDate: Date, endDate: Date, unit: ChargingRateUnit): MaybeChargingSchedule;
-  
+  protected abstract  _getScheduleFromProfile(context: ChargingContext, profile: SetChargingProfileType, fromDate: Date, endDate: Date, unit: ChargingRateUnit, maxNumPhases: NumberOfPhases): MaybeChargingSchedule;
+
   abstract setChargingProfile(profile: SetChargingProfileType): void;
 
   abstract clearChargingProfile(request: ClearChargingProfileRequestType): void;
@@ -86,13 +92,13 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     });
   }
 
-  #reduceChargingProfilesToSchedule(context: ChargingContext, purpose: ChargingProfilePurpose, profileFilterFn: (profile: WrappedProfile<SetChargingProfileType>) => boolean, fromDate: Date, toDate: Date, mergeLimits: MergeDataFn<ChargingLimits>, unit: ChargingRateUnit): MaybeChargingSchedule {
+  #reduceChargingProfilesToSchedule(context: ChargingContext, purpose: ChargingProfilePurpose, profileFilterFn: (profile: WrappedProfile<SetChargingProfileType>) => boolean, fromDate: Date, toDate: Date, mergeLimits: MergeDataFn<ChargingLimits>, unit: ChargingRateUnit, maxNumPhases: NumberOfPhases): MaybeChargingSchedule {
     return this.#profiles[purpose].reduce((schedule, profile) => {
       if (profileFilterFn(profile)) {
         return merge(
-          schedule, 
-          this._getScheduleFromProfile(context, profile.profile, fromDate, toDate, unit), 
-          cloneChargingLimits, 
+          schedule,
+          this._getScheduleFromProfile(context, profile.profile, fromDate, toDate, unit, maxNumPhases),
+          cloneChargingLimits,
           mergeLimits,
         );
       }
@@ -100,96 +106,103 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     }, [] as MaybeChargingSchedule);
   }
 
-  getStationSchedule(fromDate: Date, toDate: Date, unit: ChargingRateUnit, model: Models.ChargingStation): ChargingSchedule {
+  getStationSchedule(fromDate: Date, toDate: Date, unit: ChargingRateUnit, model: Models.ChargingStation, maxNumPhases: NumberOfPhases): ChargingSchedule {
     let schedule: MaybeChargingSchedule = [];
     const context = { model };
     const maxSchedule = this.#reduceChargingProfilesToSchedule(
       context,
-      'ChargingStationMaxProfile', 
+      'ChargingStationMaxProfile',
       (profile) => true,
       fromDate,
       toDate,
       mergeChargingLimitsRight,
       unit,
+      maxNumPhases,
     );
     schedule = merge(schedule, maxSchedule, cloneChargingLimits, mergeChargingLimitsRight);
     const localGenerationSchedule = this.#reduceChargingProfilesToSchedule(
       context,
-      'LocalGeneration', 
+      'LocalGeneration',
       (profile) => true,
       fromDate,
       toDate,
       mergeChargingLimitsRight,
       unit,
+      maxNumPhases,
     );
     schedule = merge(schedule, localGenerationSchedule, cloneChargingLimits, mergeChargingLimitsAdd);
     const externalMaxSchedule = this.#reduceChargingProfilesToSchedule(
       context,
-      'ChargingStationExternalConstraints', 
+      'ChargingStationExternalConstraints',
       (profile) => profile.chargerId === 0,
       fromDate,
       toDate,
       mergeChargingLimitsRight,
       unit,
+      maxNumPhases,
     );
     schedule = merge(schedule, externalMaxSchedule, cloneChargingLimits, mergeChargingLimitsMin);
     return fillGaps(schedule, fromDate, toDate, (fromDate, toDate) => this.getDefaultLimits(fromDate, toDate, 0));
   }
 
-  protected _getChargerSchedule(fromDate: Date, toDate: Date, chargerId: number, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingSchedule {
+  protected _getChargerSchedule(fromDate: Date, toDate: Date, chargerId: number, unit: ChargingRateUnit, model: Models.ChargingSession, maxNumPhases: NumberOfPhases, enablePriority: boolean): ChargingSchedule {
     let schedule: MaybeChargingSchedule = [];
     const context: ChargingContext = { model };
     const defaultSchedule = this.#reduceChargingProfilesToSchedule(
       context,
-      'TxDefaultProfile', 
+      'TxDefaultProfile',
       (profile) => profile.chargerId === 0 || profile.chargerId === chargerId,
       fromDate,
       toDate,
       mergeChargingLimitsRight,
       unit,
+      maxNumPhases,
     );
     schedule = merge(schedule, defaultSchedule, cloneChargingLimits, mergeChargingLimitsRight);
-    if (priority) {
+    if (enablePriority) {
       const defaultPrioritySchedule = this.#reduceChargingProfilesToSchedule(
         context,
-        'PriorityCharging', 
+        'PriorityCharging',
         (profile) => profile.chargerId === 0,
         fromDate,
         toDate,
         mergeChargingLimitsRight,
         unit,
-      ) 
+        maxNumPhases,
+      )
       schedule = merge(schedule, defaultPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight);
     }
     if (chargerId !== 0) {
       const transactionSchedule = this.#reduceChargingProfilesToSchedule(
         context,
-        'TxProfile', 
+        'TxProfile',
         (profile) => profile.chargerId === chargerId,
         fromDate,
         toDate,
         mergeChargingLimitsRight,
         unit,
-      ) 
+        maxNumPhases,
+      )
       schedule = merge(schedule, transactionSchedule, cloneChargingLimits, mergeChargingLimitsRight);
-      if (priority) {
+      if (enablePriority) {
         const transactionPrioritySchedule = this.#reduceChargingProfilesToSchedule(
           context,
-          'PriorityCharging', 
+          'PriorityCharging',
           (profile) => profile.chargerId === chargerId,
           fromDate,
           toDate,
           mergeChargingLimitsRight,
           unit,
-        ); 
+          maxNumPhases,
+        );
         merge(schedule, transactionPrioritySchedule, cloneChargingLimits, mergeChargingLimitsRight);
       }
     }
     return fillGaps(schedule, fromDate, toDate, (fromDate, toDate) => this.getDefaultLimits(fromDate, toDate, 0));
   }
 
-  getStationLimitsAtDate(atDate: Date, unit: ChargingRateUnit, model: Models.ChargingStation): ChargingLimits {
-    const schedule = this.getStationSchedule(atDate, addHours(atDate, 1), unit, model);
+  getStationLimitsAtDate(atDate: Date, unit: ChargingRateUnit, model: Models.ChargingStation, maxNumPhases: NumberOfPhases): ChargingLimits {
+    const schedule = this.getStationSchedule(atDate, addHours(atDate, 1), unit, model, maxNumPhases);
     const period = getPeriodForDate(schedule, atDate);
     if (!period) {
       throw new Error('period not found');
@@ -197,8 +210,8 @@ export abstract class AbstractChargingManager<SetChargingProfileType, ClearCharg
     return period.data;
   }
 
-  protected _getChargerLimitsAtDate(atDate: Date, chargerId: number, unit: ChargingRateUnit, model: Models.ChargingSession, priority?: boolean): ChargingLimits {
-    const schedule = this._getChargerSchedule(atDate, addHours(atDate, 1), chargerId, unit, model, priority);
+  protected _getChargerLimitsAtDate(atDate: Date, chargerId: number, unit: ChargingRateUnit, model: Models.ChargingSession, maxNumPhases: NumberOfPhases, enablePriority: boolean): ChargingLimits {
+    const schedule = this._getChargerSchedule(atDate, addHours(atDate, 1), chargerId, unit, model, maxNumPhases, enablePriority);
     const period = getPeriodForDate(schedule, atDate);
     if (!period) {
       throw new Error('period not found');

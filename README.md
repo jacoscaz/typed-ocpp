@@ -77,7 +77,7 @@ The TS compiler will then be able to use known types to infer others:
 const value = [2,"test","BootNotification",{"chargePointModel":"model","chargePointVendor":"vendor"}];
 if (OCPP16.validate(value)) {
   if (OCPP16.isCall(value)) {
-    value[2];                                        // TS gives type "OCPP.Action"          
+    value[2];                                        // TS gives type "OCPP.Action"
     if (value[2] === OCPP16.Action.BootNotification) {
       // TS infers the shape of the call payload based on the action
       value[3].chargePointModel;                     // TS gives type "string"
@@ -104,19 +104,19 @@ if (!OCPP16.validate(value)) {
 
 The `validateCall()`, `validateCallError()` and `validateCallResult()`
 functions are user-defined, validating type guards specific to each type of
-message defined by the OCPP specs: **_call_**, **_call error_** and 
+message defined by the OCPP specs: **_call_**, **_call error_** and
 **_call result_**.
 
 These functions behave in the same way as the `validate()` function but only
 return `true` when provided with values of the corresponding message type.
 Validation errors can be retrieved via the `.errors` property, just as with
-`validate()`. 
+`validate()`.
 
 ### `isCall()`, `isCallResult()` and `isCallError()`
 
 The `isCall()`, `isCallResult()` and `isCallError()` functions are
 user-defined, _non-validating_ type guards that facilitate identifying the type
-of a valid message: 
+of a valid message:
 
 ```typescript
 if (OCPP16.validate(message)) {
@@ -143,11 +143,11 @@ Complete validation of a **_call result_** message against its originating
 **_call_** message can be done through the `checkCallResult()` user-defined,
 validating type guard.
 
-If `checkCallResult()` returns `true`, the provided **_call result_** message 
+If `checkCallResult()` returns `true`, the provided **_call result_** message
 is guaranteed to match the provided **_call_** message in terms of:
 
 - Matching the expected type, incl. the payload (for example: being of type
-  `OCPP16.BootNotificationCallResult` given an originating 
+  `OCPP16.BootNotificationCallResult` given an originating
   `OCPP16.BootNotificationCall` essage).
 - Sharing the same _call identifier_ with the originating **_call_** message.
 
@@ -160,18 +160,18 @@ const call = [
 ] satisfies OCPP16.Call;
 
 const result = [
-  3, 
-  "test", 
+  3,
+  "test",
   { status: "Accepted", currentTime: "1970-01-01T00:00:00.000Z", interval: 10 },
 ] satisfies OCPP16.UncheckedCallResult<any>;
 
 // Narrows the type of `call` to `OCPP16.BootNotificationCall`
-if (call[2] === OCPP16.Action.BootNotification) {   
+if (call[2] === OCPP16.Action.BootNotification) {
   // Validates `result` against `call`, narrowing the type of
-  //     `result` to `OCPP16.BootNotificationCallResult`             
+  //     `result` to `OCPP16.BootNotificationCallResult`
   if (OCPP16.checkCallResult(result, call)) {
     // Inferred as "Accepted" | "Pending" | "Rejected"
-    result[2].status; 
+    result[2].status;
   } else {
     // The `result` message does not match the originating `call` message
     console.log(OCPP16.checkCallResult.errors);
@@ -192,16 +192,16 @@ messages.
 
 ```typescript
 // Union of all types of Call messages
-OCPP16.Call               
+OCPP16.Call
 
 // Union of all Call Result message types
 OCPP16.CallResult
 
 // Type for Call Error messages
-OCPP16.CallError            
+OCPP16.CallError
 
 // Type for "unchecked" Call Result messages
-OCPP16.UncheckedCallResult  
+OCPP16.UncheckedCallResult
 
 // Generic type of Call Result message that resolves to the specific type of
 // Call Result message matching the provided type of Call message "C"
@@ -213,7 +213,7 @@ OCPP16.AuthorizationCallResult
 OCPP16.BootNotificationCall
 OCPP16.BootNotificationCallResult
 /* ... */
-```                  
+```
 
 #### Types for specific messages
 
@@ -250,12 +250,12 @@ own to model a **_call result_** message after a known or inferred type of
 
 ```typescript
 const result: OCPP16.CheckedCallResult<OCPP16.GetConfigurationCall> = [
-  OCPP16.MessageType.CALLRESULT, 
-  '<call_id>', 
-  { 
+  OCPP16.MessageType.CALLRESULT,
+  '<call_id>',
+  {
     configurationKey: [
       { key: 'some_key', value: 'some_value', readonly: true },
-    ], 
+    ],
     // the TS compiler will return an error here due to unsupported property
     // "foobar" in OCPP16.GetConfigurationCallResult payloads.
     foobar: 42,
@@ -288,7 +288,7 @@ OCPP21.ErrorCode            // enum of error code in Call Error messages ("NotIm
 OCPP 2.1 introduced two new types of messages: `CALLRESULTERROR` and `SEND`,
 using the values `5` and `6` respectively.
 
-This library allows OCPP 2.1 **_Call_** messages to have either the `CALL` or 
+This library allows OCPP 2.1 **_Call_** messages to have either the `CALL` or
 the `SEND` type, regardless of the specific action.
 
 This library also allows OCPP 2.1 **_Call Error_** messages to have either the
@@ -334,7 +334,7 @@ OCPP21.ChargingState        // charging status ("Charging", "EVConnected", ...)
 ### `ChargingManager` class
 
 > **WARNING: experimental!**
-> 
+>
 > The `ChargingManager` class is experimental and unstable. It is only
 > available in its OCPP 1.6 variant under the respective namespace, though the
 > plan is to eventually provide implementations for OCPP 2.0 and OCPP 2.1.
@@ -347,14 +347,14 @@ export type ChargingSchedule = {
   start: Date;
   end: Date;
   data: {
-    charging: { 
-      min: number;  
-      max: number; 
+    charging: {
+      min: number;
+      max: number;
       phases: { qty: number; };
     };
-    discharging: { 
-      min: number; 
-      max: number; 
+    discharging: {
+      min: number;
+      max: number;
       phases: { qty: number; };
     };
     shouldDischarge: boolean;
@@ -375,11 +375,11 @@ import { OCPP16, Models } from 'typed-ocpp';
 const manager = new OCPP16.ChargingManager();
 
 // Add a new profile by passing the payload of a SetChargingProfile call.
-const setProfileCall = {} as OCPP16.SetChargingProfileCall; 
+const setProfileCall = {} as OCPP16.SetChargingProfileCall;
 manager.setChargingProfile(setProfileCall[3]);
 
 // Clear profiles by passing the payload of a ClearChargingProfiles call.
-const clearProfileCall = {} as OCPP16.ClearChargingProfilesCall; 
+const clearProfileCall = {} as OCPP16.ClearChargingProfilesCall;
 manager.clearChargingProfile(clearProfileCall[3]);
 
 // Get an absolute schedule for the entire station
@@ -388,7 +388,7 @@ const schedule = manager.getStationSchedule(
   new Date(Date.now() + 14_400_000),  // end date
   'W',                                // charging rate unit ("W" or "A")
   new Models.ACChargingStation(230),  // model used for unit conversions
-); 
+);
 
 // Get charging limits for the entire station at the given date
 const limits = manager.getStationLimitsAtDate(
@@ -404,7 +404,7 @@ const schedule = manager.getConnectorSchedule(
   1,                                  // connector id
   'W',                                // charging rate unit ("W" or "A")
   new Models.DCChargingSession(400),  // model used for unit conversions
-); 
+);
 
 // Get charging limits for connector 1 at the given date
 const limits = manager.getConnectorLimitsAtDate(
@@ -422,7 +422,7 @@ const schedule = manager.getConnectorCompositeSchedule(
   1,                                  // connector id
   'W',                                // charging rate unit ("W" or "A")
   new Models.DCChargingSession(400),  // model used for unit conversions
-); 
+);
 
 // Uses the `getConnectorCompositeSchedule()` to get the composite schedule for
 // connector 1 and return it as the payload for an OCPP16.SetChargingProfileCall
@@ -436,7 +436,10 @@ const limits = manager.getConnectorCompositeProfile(
 );
 ```
 
-### JSON Schema(s) 
+Note that schedules expressed in `A` (Ampere) indicate _per phase_ current
+while schedules expressed in `W` (Watt) indicate total power across all phases.
+
+### JSON Schema(s)
 
 The `OCPP16`, `OCPP20` and `OCPP21` namespaces export the official JSON Schema
 documents provided by the OCPP Alliance as ready-to-use objects, slightly
