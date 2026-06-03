@@ -8,6 +8,7 @@ import { EMPTY_ARR } from './utils.js';
 const ajv = addFormats(new Ajv({
   strict: false,
   multipleOfPrecision: 3,
+  removeAdditional: true,
 }));
 
 export interface AjvValidateFn {
