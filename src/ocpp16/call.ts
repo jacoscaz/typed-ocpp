@@ -37,6 +37,18 @@ export type TriggerMessageCall = BaseMessage<MessageType.CALL, [action: Action.T
 export type UnlockConnectorCall = BaseMessage<MessageType.CALL, [action: Action.UnlockConnector, payload: types.UnlockConnectorRequest]>;
 export type UpdateFirmwareCall = BaseMessage<MessageType.CALL, [action: Action.UpdateFirmware, payload: types.UpdateFirmwareRequest]>;
 
+export type CertificateSignedCall = BaseMessage<MessageType.CALL, [action: Action.CertificateSigned, types.CertificateSignedRequest]>;
+export type DeleteCertificateCall = BaseMessage<MessageType.CALL, [action: Action.DeleteCertificate, types.DeleteCertificateRequest]>;
+export type ExtendedTriggerMessageCall = BaseMessage<MessageType.CALL, [action: Action.ExtendedTriggerMessage, types.ExtendedTriggerMessageRequest]>;
+export type GetInstalledCertificateIdsCall = BaseMessage<MessageType.CALL, [action: Action.GetInstalledCertificateIds, types.GetInstalledCertificateIdsRequest]>;
+export type GetLogCall = BaseMessage<MessageType.CALL, [action: Action.GetLog, types.GetLogRequest]>;
+export type InstallCertificateCall = BaseMessage<MessageType.CALL, [action: Action.InstallCertificate, types.InstallCertificateRequest]>;
+export type LogStatusNotificationCall = BaseMessage<MessageType.CALL, [action: Action.LogStatusNotification, types.LogStatusNotificationRequest]>;
+export type SecurityEventNotificationCall = BaseMessage<MessageType.CALL, [action: Action.SecurityEventNotification, types.SecurityEventNotificationRequest]>;
+export type SignCertificateCall = BaseMessage<MessageType.CALL, [action: Action.SignCertificate, types.SignCertificateRequest]>;
+export type SignedFirmwareStatusNotificationCall = BaseMessage<MessageType.CALL, [action: Action.SignedFirmwareStatusNotification, types.SignedFirmwareStatusNotificationRequest]>;
+export type SignedUpdateFirmwareCall = BaseMessage<MessageType.CALL, [action: Action.SignedUpdateFirmware, types.SignedUpdateFirmwareRequest]>;
+
 export type Call = AuthorizeCall
   | BootNotificationCall
   | CancelReservationCall
@@ -65,6 +77,17 @@ export type Call = AuthorizeCall
   | TriggerMessageCall
   | UnlockConnectorCall
   | UpdateFirmwareCall
+  | CertificateSignedCall
+  | DeleteCertificateCall
+  | ExtendedTriggerMessageCall
+  | GetInstalledCertificateIdsCall
+  | GetLogCall
+  | InstallCertificateCall
+  | LogStatusNotificationCall
+  | SecurityEventNotificationCall
+  | SignCertificateCall
+  | SignedFirmwareStatusNotificationCall
+  | SignedUpdateFirmwareCall
 ;
 
 const schemasByCommand: Record<Action, object> = {
@@ -96,6 +119,17 @@ const schemasByCommand: Record<Action, object> = {
   [Action.TriggerMessage]: schemas.TriggerMessageRequest,
   [Action.UnlockConnector]: schemas.UnlockConnectorRequest,
   [Action.UpdateFirmware]: schemas.UpdateFirmwareRequest,
+  [Action.CertificateSigned]: schemas.CertificateSignedRequest,
+  [Action.DeleteCertificate]: schemas.DeleteCertificateRequest,
+  [Action.ExtendedTriggerMessage]: schemas.ExtendedTriggerMessageRequest,
+  [Action.GetInstalledCertificateIds]: schemas.GetInstalledCertificateIdsRequest,
+  [Action.GetLog]: schemas.GetLogRequest,
+  [Action.InstallCertificate]: schemas.InstallCertificateRequest,
+  [Action.LogStatusNotification]: schemas.LogStatusNotificationRequest,
+  [Action.SecurityEventNotification]: schemas.SecurityEventNotificationRequest,
+  [Action.SignCertificate]: schemas.SignCertificateRequest,
+  [Action.SignedFirmwareStatusNotification]: schemas.SignedFirmwareStatusNotificationRequest,
+  [Action.SignedUpdateFirmware]: schemas.SignedUpdateFirmwareRequest,
 };
 
 type BaseCall = BaseMessage<MessageType.CALL, [action: Action, payload: {}]>;

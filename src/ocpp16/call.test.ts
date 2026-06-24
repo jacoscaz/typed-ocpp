@@ -77,6 +77,24 @@ describe('OCPP16 - Call', () => {
 
     });
 
+    describe('GetLog', () => {
+      it('should validate GetLog request', () => {
+        const call = [
+          2,
+          "983728ed-5d83-467f-be81-81282b93e8b2",
+          OCPP16.Action.GetLog,
+          {
+            log: {
+              remoteLocation: 'remote',
+            },
+            logType: 'DiagnosticsLog',
+            requestId: 0,
+          }
+        ];
+        deepStrictEqual(validate(call), true);
+      });
+    });
+
   });
 
 });

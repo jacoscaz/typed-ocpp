@@ -51,8 +51,19 @@ export type StopTransactionCallResult = UncheckedCallResult<types.StopTransactio
 export type TriggerMessageCallResult = UncheckedCallResult<types.TriggerMessageResponse>;
 export type UnlockConnectorCallResult = UncheckedCallResult<types.UnlockConnectorResponse>;
 export type UpdateFirmwareCallResult = UncheckedCallResult<types.UpdateFirmwareResponse>;
+export type CertificateSignedCallResult = UncheckedCallResult<types.CertificateSignedResponse>;
+export type DeleteCertificateCallResult = UncheckedCallResult<types.DeleteCertificateResponse>;
+export type ExtendedTriggerMessageCallResult = UncheckedCallResult<types.ExtendedTriggerMessageResponse>;
+export type GetInstalledCertificateIdsCallResult = UncheckedCallResult<types.GetInstalledCertificateIdsResponse>;
+export type GetLogCallResult = UncheckedCallResult<types.GetLogResponse>;
+export type InstallCertificateCallResult = UncheckedCallResult<types.InstallCertificateResponse>;
+export type LogStatusNotificationCallResult = UncheckedCallResult<types.LogStatusNotificationResponse>;
+export type SecurityEventNotificationCallResult = UncheckedCallResult<types.SecurityEventNotificationResponse>;
+export type SignCertificateCallResult = UncheckedCallResult<types.SignCertificateResponse>;
+export type SignedFirmwareStatusNotificationCallResult = UncheckedCallResult<types.SignedFirmwareStatusNotificationResponse>;
+export type SignedUpdateFirmwareCallResult = UncheckedCallResult<types.SignedUpdateFirmwareResponse>;
 
-export type CallResult = 
+export type CallResult =
   | AuthorizeCallResult
   | BootNotificationCallResult
   | CancelReservationCallResult
@@ -81,6 +92,17 @@ export type CallResult =
   | TriggerMessageCallResult
   | UnlockConnectorCallResult
   | UpdateFirmwareCallResult
+  | CertificateSignedCallResult
+  | DeleteCertificateCallResult
+  | ExtendedTriggerMessageCallResult
+  | GetInstalledCertificateIdsCallResult
+  | GetLogCallResult
+  | InstallCertificateCallResult
+  | LogStatusNotificationCallResult
+  | SecurityEventNotificationCallResult
+  | SignCertificateCallResult
+  | SignedFirmwareStatusNotificationCallResult
+  | SignedUpdateFirmwareCallResult
 ;
 
 const schemasByCommand: Record<Action, object> = {
@@ -112,6 +134,17 @@ const schemasByCommand: Record<Action, object> = {
   [Action.TriggerMessage]: schemas.TriggerMessageResponse,
   [Action.UnlockConnector]: schemas.UnlockConnectorResponse,
   [Action.UpdateFirmware]: schemas.UpdateFirmwareResponse,
+  [Action.CertificateSigned]: schemas.CertificateSignedResponse,
+  [Action.DeleteCertificate]: schemas.DeleteCertificateResponse,
+  [Action.ExtendedTriggerMessage]: schemas.ExtendedTriggerMessageResponse,
+  [Action.GetInstalledCertificateIds]: schemas.GetInstalledCertificateIdsResponse,
+  [Action.GetLog]: schemas.GetLogResponse,
+  [Action.InstallCertificate]: schemas.InstallCertificateResponse,
+  [Action.LogStatusNotification]: schemas.LogStatusNotificationResponse,
+  [Action.SecurityEventNotification]: schemas.SecurityEventNotificationResponse,
+  [Action.SignCertificate]: schemas.SignCertificateResponse,
+  [Action.SignedFirmwareStatusNotification]: schemas.SignedFirmwareStatusNotificationResponse,
+  [Action.SignedUpdateFirmware]: schemas.SignedUpdateFirmwareResponse,
 };
 
 export const validateCallResult: ValidateFn<any, UncheckedCallResult> = assign(
@@ -155,6 +188,17 @@ export interface CallResultTypesByAction extends Record<Action, CallResult> {
   [Action.TriggerMessage]: TriggerMessageCallResult,
   [Action.UnlockConnector]: UnlockConnectorCallResult,
   [Action.UpdateFirmware]: UpdateFirmwareCallResult,
+  [Action.CertificateSigned]: CertificateSignedCallResult,
+  [Action.DeleteCertificate]: DeleteCertificateCallResult,
+  [Action.ExtendedTriggerMessage]: ExtendedTriggerMessageCallResult,
+  [Action.GetInstalledCertificateIds]: GetInstalledCertificateIdsCallResult,
+  [Action.GetLog]: GetLogCallResult,
+  [Action.InstallCertificate]: InstallCertificateCallResult,
+  [Action.LogStatusNotification]: LogStatusNotificationCallResult,
+  [Action.SecurityEventNotification]: SecurityEventNotificationCallResult,
+  [Action.SignCertificate]: SignCertificateCallResult,
+  [Action.SignedFirmwareStatusNotification]: SignedFirmwareStatusNotificationCallResult,
+  [Action.SignedUpdateFirmware]: SignedUpdateFirmwareCallResult,
 };
 
 export type CheckedCallResult<C extends Call> = CallResultTypesByAction[C[2]];
