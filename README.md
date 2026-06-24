@@ -25,6 +25,7 @@ by the [Open Charge Alliance][i1].
       - [Utility enums](#utility-enums)
       - [Message types `SEND` and `CALLRESULTERROR` in OCPP 2.1](#message-types-send-and-callresulterror-in-ocpp-21)
       - [Utility types for OCPP 1.6](#utility-types-for-ocpp-16)
+      - [OCPP 1.6 Security Whitepaper](#ocpp-16-security-whitepaper)
       - [Utility types for OCPP 2.0](#utility-types-for-ocpp-20)
       - [Utility types for OCPP 2.1](#utility-types-for-ocpp-21)
     - [`ChargingManager` class](#chargingmanager-class)
@@ -316,6 +317,15 @@ The following types may be used to model value descriptors within
 ```typescript
 OCPP16.Status               // status ("Available", "Reserved", ...)
 ```
+
+#### OCPP 1.6 Security Whitepaper
+
+This library includes types and schemas from the [OCPP 1.6 Security Whitepaper]
+(4th edition) released on Feb 5th, 2026. The paper standardizes additional OCPP
+messages that model some of the security enhancements introduced in OCPP 2.0,
+backporting these features to OCPP 1.6.
+
+[OCPP 1.6 Security Whitepaper]: https://openchargealliance.org/ocpp-info-whitepapers/ocpp-1-6-security-whitepaper-4th-edition/
 
 #### Utility types for OCPP 2.0
 
