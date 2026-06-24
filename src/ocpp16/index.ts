@@ -28,6 +28,17 @@ import type {
   TriggerMessageRequest,
   UnlockConnectorRequest,
   UpdateFirmwareRequest,
+  CertificateSignedRequest,
+  DeleteCertificateRequest,
+  ExtendedTriggerMessageRequest,
+  GetInstalledCertificateIdsRequest,
+  GetLogRequest,
+  InstallCertificateRequest,
+  LogStatusNotificationRequest,
+  SecurityEventNotificationRequest,
+  SignCertificateRequest,
+  SignedFirmwareStatusNotificationRequest,
+  SignedUpdateFirmwareRequest,
 } from './types.js';
 
 import type {
@@ -59,6 +70,17 @@ import type {
   TriggerMessageResponse,
   UnlockConnectorResponse,
   UpdateFirmwareResponse,
+  CertificateSignedResponse,
+  DeleteCertificateResponse,
+  ExtendedTriggerMessageResponse,
+  GetInstalledCertificateIdsResponse,
+  GetLogResponse,
+  InstallCertificateResponse,
+  LogStatusNotificationResponse,
+  SecurityEventNotificationResponse,
+  SignCertificateResponse,
+  SignedFirmwareStatusNotificationResponse,
+  SignedUpdateFirmwareResponse,
 } from './types.js';
 
 import type {
@@ -90,6 +112,17 @@ import type {
   TriggerMessageCall,
   UnlockConnectorCall,
   UpdateFirmwareCall,
+  CertificateSignedCall,
+  DeleteCertificateCall,
+  ExtendedTriggerMessageCall,
+  GetInstalledCertificateIdsCall,
+  GetLogCall,
+  InstallCertificateCall,
+  LogStatusNotificationCall,
+  SecurityEventNotificationCall,
+  SignCertificateCall,
+  SignedFirmwareStatusNotificationCall,
+  SignedUpdateFirmwareCall,
 } from './call.js';
 
 import type {
@@ -121,16 +154,27 @@ import type {
   TriggerMessageCallResult,
   UnlockConnectorCallResult,
   UpdateFirmwareCallResult,
+  CertificateSignedCallResult,
+  DeleteCertificateCallResult,
+  ExtendedTriggerMessageCallResult,
+  GetInstalledCertificateIdsCallResult,
+  GetLogCallResult,
+  InstallCertificateCallResult,
+  LogStatusNotificationCallResult,
+  SecurityEventNotificationCallResult,
+  SignCertificateCallResult,
+  SignedFirmwareStatusNotificationCallResult,
+  SignedUpdateFirmwareCallResult,
 } from './callresult.js';
 
 import type {
-  Context, 
-  Measurand, 
-  Phase, 
-  Location, 
-  Unit, 
-  Format, 
-  SampledValue, 
+  Context,
+  Measurand,
+  Phase,
+  Location,
+  Unit,
+  Format,
+  SampledValue,
   MeterValue,
   Status,
 } from './utils.js';
@@ -139,7 +183,7 @@ import type { Call } from './call.js';
 
 import type { CallError } from './callerror.js';
 
-import type { 
+import type {
   CallResult,
   CheckedCallResult,
   UncheckedCallResult,
@@ -190,6 +234,17 @@ export declare namespace OCPP16 {
     TriggerMessageCall,
     UnlockConnectorCall,
     UpdateFirmwareCall,
+    CertificateSignedCall,
+    DeleteCertificateCall,
+    ExtendedTriggerMessageCall,
+    GetInstalledCertificateIdsCall,
+    GetLogCall,
+    InstallCertificateCall,
+    LogStatusNotificationCall,
+    SecurityEventNotificationCall,
+    SignCertificateCall,
+    SignedFirmwareStatusNotificationCall,
+    SignedUpdateFirmwareCall,
   };
 
   export type {
@@ -221,6 +276,17 @@ export declare namespace OCPP16 {
     TriggerMessageCallResult,
     UnlockConnectorCallResult,
     UpdateFirmwareCallResult,
+    CertificateSignedCallResult,
+    DeleteCertificateCallResult,
+    ExtendedTriggerMessageCallResult,
+    GetInstalledCertificateIdsCallResult,
+    GetLogCallResult,
+    InstallCertificateCallResult,
+    LogStatusNotificationCallResult,
+    SecurityEventNotificationCallResult,
+    SignCertificateCallResult,
+    SignedFirmwareStatusNotificationCallResult,
+    SignedUpdateFirmwareCallResult,
   };
 
   export type {
@@ -252,6 +318,17 @@ export declare namespace OCPP16 {
     TriggerMessageRequest,
     UnlockConnectorRequest,
     UpdateFirmwareRequest,
+    CertificateSignedRequest,
+    DeleteCertificateRequest,
+    ExtendedTriggerMessageRequest,
+    GetInstalledCertificateIdsRequest,
+    GetLogRequest,
+    InstallCertificateRequest,
+    LogStatusNotificationRequest,
+    SecurityEventNotificationRequest,
+    SignCertificateRequest,
+    SignedFirmwareStatusNotificationRequest,
+    SignedUpdateFirmwareRequest,
   };
 
   export type {
@@ -283,16 +360,27 @@ export declare namespace OCPP16 {
     TriggerMessageResponse,
     UnlockConnectorResponse,
     UpdateFirmwareResponse,
+    CertificateSignedResponse,
+    DeleteCertificateResponse,
+    ExtendedTriggerMessageResponse,
+    GetInstalledCertificateIdsResponse,
+    GetLogResponse,
+    InstallCertificateResponse,
+    LogStatusNotificationResponse,
+    SecurityEventNotificationResponse,
+    SignCertificateResponse,
+    SignedFirmwareStatusNotificationResponse,
+    SignedUpdateFirmwareResponse,
   };
 
   export type {
-    Context, 
-    Measurand, 
-    Phase, 
-    Location, 
-    Unit, 
-    Format, 
-    SampledValue, 
+    Context,
+    Measurand,
+    Phase,
+    Location,
+    Unit,
+    Format,
+    SampledValue,
     MeterValue,
     Status,
   };
@@ -309,8 +397,8 @@ export declare namespace OCPP16 {
 
 export namespace OCPP16 {
 
-  export import MessageType = MessageType_; 
-  export import Action = Action_; 
+  export import MessageType = MessageType_;
+  export import Action = Action_;
   export import ErrorCode = ErrorCode_;
 
   export const checkCallResult = checkCallResult_;

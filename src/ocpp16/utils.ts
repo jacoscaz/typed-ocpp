@@ -29,7 +29,18 @@ export enum Action {
   StopTransaction = 'StopTransaction',
   TriggerMessage = 'TriggerMessage',
   UnlockConnector = 'UnlockConnector',
-  UpdateFirmware = 'UpdateFirmware'
+  UpdateFirmware = 'UpdateFirmware',
+  CertificateSigned = 'CertificateSigned',
+  DeleteCertificate = 'DeleteCertificate',
+  ExtendedTriggerMessage = 'ExtendedTriggerMessage',
+  GetInstalledCertificateIds = 'GetInstalledCertificateIds',
+  GetLog = 'GetLog',
+  InstallCertificate = 'InstallCertificate',
+  LogStatusNotification = 'LogStatusNotification',
+  SecurityEventNotification = 'SecurityEventNotification',
+  SignCertificate = 'SignCertificate',
+  SignedFirmwareStatusNotification = 'SignedFirmwareStatusNotification',
+  SignedUpdateFirmware = 'SignedUpdateFirmware',
 }
 
 export enum ErrorCode {
