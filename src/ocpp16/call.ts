@@ -37,17 +37,17 @@ export type TriggerMessageCall = BaseMessage<MessageType.CALL, [action: Action.T
 export type UnlockConnectorCall = BaseMessage<MessageType.CALL, [action: Action.UnlockConnector, payload: types.UnlockConnectorRequest]>;
 export type UpdateFirmwareCall = BaseMessage<MessageType.CALL, [action: Action.UpdateFirmware, payload: types.UpdateFirmwareRequest]>;
 
-export type CertificateSignedCall = BaseMessage<MessageType.CALL, [action: Action.CertificateSigned, types.CertificateSignedRequest]>;
-export type DeleteCertificateCall = BaseMessage<MessageType.CALL, [action: Action.DeleteCertificate, types.DeleteCertificateRequest]>;
-export type ExtendedTriggerMessageCall = BaseMessage<MessageType.CALL, [action: Action.ExtendedTriggerMessage, types.ExtendedTriggerMessageRequest]>;
-export type GetInstalledCertificateIdsCall = BaseMessage<MessageType.CALL, [action: Action.GetInstalledCertificateIds, types.GetInstalledCertificateIdsRequest]>;
-export type GetLogCall = BaseMessage<MessageType.CALL, [action: Action.GetLog, types.GetLogRequest]>;
-export type InstallCertificateCall = BaseMessage<MessageType.CALL, [action: Action.InstallCertificate, types.InstallCertificateRequest]>;
-export type LogStatusNotificationCall = BaseMessage<MessageType.CALL, [action: Action.LogStatusNotification, types.LogStatusNotificationRequest]>;
-export type SecurityEventNotificationCall = BaseMessage<MessageType.CALL, [action: Action.SecurityEventNotification, types.SecurityEventNotificationRequest]>;
-export type SignCertificateCall = BaseMessage<MessageType.CALL, [action: Action.SignCertificate, types.SignCertificateRequest]>;
-export type SignedFirmwareStatusNotificationCall = BaseMessage<MessageType.CALL, [action: Action.SignedFirmwareStatusNotification, types.SignedFirmwareStatusNotificationRequest]>;
-export type SignedUpdateFirmwareCall = BaseMessage<MessageType.CALL, [action: Action.SignedUpdateFirmware, types.SignedUpdateFirmwareRequest]>;
+export type CertificateSignedCall = BaseMessage<MessageType.CALL, [action: Action.CertificateSigned, payload: types.CertificateSignedRequest]>;
+export type DeleteCertificateCall = BaseMessage<MessageType.CALL, [action: Action.DeleteCertificate, payload: types.DeleteCertificateRequest]>;
+export type ExtendedTriggerMessageCall = BaseMessage<MessageType.CALL, [action: Action.ExtendedTriggerMessage, payload: types.ExtendedTriggerMessageRequest]>;
+export type GetInstalledCertificateIdsCall = BaseMessage<MessageType.CALL, [action: Action.GetInstalledCertificateIds, payload: types.GetInstalledCertificateIdsRequest]>;
+export type GetLogCall = BaseMessage<MessageType.CALL, [action: Action.GetLog, payload: types.GetLogRequest]>;
+export type InstallCertificateCall = BaseMessage<MessageType.CALL, [action: Action.InstallCertificate, payload: types.InstallCertificateRequest]>;
+export type LogStatusNotificationCall = BaseMessage<MessageType.CALL, [action: Action.LogStatusNotification, payload: types.LogStatusNotificationRequest]>;
+export type SecurityEventNotificationCall = BaseMessage<MessageType.CALL, [action: Action.SecurityEventNotification, payload: types.SecurityEventNotificationRequest]>;
+export type SignCertificateCall = BaseMessage<MessageType.CALL, [action: Action.SignCertificate, payload: types.SignCertificateRequest]>;
+export type SignedFirmwareStatusNotificationCall = BaseMessage<MessageType.CALL, [action: Action.SignedFirmwareStatusNotification, payload: types.SignedFirmwareStatusNotificationRequest]>;
+export type SignedUpdateFirmwareCall = BaseMessage<MessageType.CALL, [action: Action.SignedUpdateFirmware, payload: types.SignedUpdateFirmwareRequest]>;
 
 export type Call = AuthorizeCall
   | BootNotificationCall
