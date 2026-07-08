@@ -95,6 +95,42 @@ describe('OCPP16 - Call', () => {
       });
     });
 
+    describe('StatusNotification', () => {
+      it('should validate requests with `info` field above the standard length limit of 50 characters', () => {
+        const call = [
+          2,
+          "983728ed-5d83-467f-be81-81282b93e8b2",
+          OCPP16.Action.StatusNotification,
+          {
+            info: 'a'.repeat(51),
+            status: 'Available',
+            connectorId: 0,
+            timestamp: '2025-03-17T23:33:29.456Z',
+            errorCode: 'NoError',
+          }
+        ];
+        deepStrictEqual(validate(call), true);
+        deepStrictEqual(validate.errors, []);
+      });
+
+      it('should not validate requests with `info` field above 100 characters', () => {
+        const call = [
+          2,
+          "983728ed-5d83-467f-be81-81282b93e8b2",
+          OCPP16.Action.StatusNotification,
+          {
+            info: 'a'.repeat(101),
+            status: 'Available',
+            connectorId: 0,
+            timestamp: '2025-03-17T23:33:29.456Z',
+            errorCode: 'NoError',
+          }
+        ];
+        deepStrictEqual(validate(call), false);
+        deepStrictEqual(validate.errors, ['Invalid OCPP call: /info must NOT have more than 100 characters']);
+      });
+    });
+
   });
 
 });

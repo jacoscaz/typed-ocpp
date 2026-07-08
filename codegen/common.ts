@@ -23,7 +23,7 @@ const ensureMode = (mode: any): Mode => {
 
 /**
  * Strips a JSON schema of anything that might anger or alter the behavior of
- * AJV and/or json-schema-to-typescript . 
+ * AJV and/or json-schema-to-typescript .
  */
 const cleanupSchema = (mode: Mode, schema_name: string, schema_defn: any, parent_schema: any) => {
   delete schema_defn.id;
@@ -35,7 +35,7 @@ const cleanupSchema = (mode: Mode, schema_name: string, schema_defn: any, parent
 };
 
 /**
- * Fixes issues hardcoded into the official JSON schema packages released by 
+ * Fixes issues hardcoded into the official JSON schema packages released by
  * the Open Charge Alliance as an attachment to the OCPP specifications.
  */
 const applySchemaFixes = (mode: Mode, schema_name: string, schema_defn: any) => {
@@ -44,6 +44,12 @@ const applySchemaFixes = (mode: Mode, schema_name: string, schema_defn: any) => 
   // spelling wherever needed.
   if (mode === 'OCPP16' && schema_name === 'StopTransactionRequest') {
     schema_defn.properties.transactionData.items.properties.sampledValue.items.properties.unit.enum.push('Celsius');
+  }
+  // The length limit of the `info` field in the `StatusNotification` schema
+  // (OCPP 1.6) is set to 50 characters but a significant number of firmware
+  // vendors use longer strings.
+  if (mode === 'OCPP16' && schema_name === 'StatusNotificationRequest') {
+    schema_defn.properties.info.maxLength = 100;
   }
 };
 
