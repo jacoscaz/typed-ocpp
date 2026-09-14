@@ -131,6 +131,38 @@ describe('OCPP16 - Call', () => {
       });
     });
 
+    describe('ChangeConfiguration', () => {
+      it('should validate requests with `value` above the standard length limit of 500 characters', () => {
+        const call = [
+          2,
+          "983728ed-5d83-467f-be81-81282b93e8b2",
+          OCPP16.Action.ChangeConfiguration,
+          {
+            key: 'MeterValuesSampledAdditionalData',
+            // 720 characters, well above the official 500-characters limit
+            // and in line with values observed in the wild.
+            value: 'DPM.Current.Import.L1, DPM.Current.Import.L2, '.repeat(16),
+          }
+        ];
+        deepStrictEqual(validate(call), true);
+        deepStrictEqual(validate.errors, []);
+      });
+
+      it('should not validate requests with `value` above 2048 characters', () => {
+        const call = [
+          2,
+          "983728ed-5d83-467f-be81-81282b93e8b2",
+          OCPP16.Action.ChangeConfiguration,
+          {
+            key: 'MeterValuesSampledAdditionalData',
+            value: 'a'.repeat(2049),
+          }
+        ];
+        deepStrictEqual(validate(call), false);
+        deepStrictEqual(validate.errors, ['Invalid OCPP call: /value must NOT have more than 2048 characters']);
+      });
+    });
+
   });
 
 });
