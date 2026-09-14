@@ -51,6 +51,19 @@ const applySchemaFixes = (mode: Mode, schema_name: string, schema_defn: any) => 
   if (mode === 'OCPP16' && schema_name === 'StatusNotificationRequest') {
     schema_defn.properties.info.maxLength = 100;
   }
+  // The length limit of the `value` field of configuration keys in the
+  // `GetConfigurationResponse` schema (OCPP 1.6) is set to 500 characters
+  // but some firmware vendors use longer values for vendor-specific keys,
+  // causing entire GetConfiguration.conf payloads to be rejected.
+  if (mode === 'OCPP16' && schema_name === 'GetConfigurationResponse') {
+    schema_defn.properties.configurationKey.items.properties.value.maxLength = 2048;
+  }
+  // Same limit for the `value` field of the `ChangeConfigurationRequest`
+  // schema (OCPP 1.6), kept in sync with the relaxation above as oversized
+  // keys may need to be written back.
+  if (mode === 'OCPP16' && schema_name === 'ChangeConfigurationRequest') {
+    schema_defn.properties.value.maxLength = 2048;
+  }
 };
 
 /**
